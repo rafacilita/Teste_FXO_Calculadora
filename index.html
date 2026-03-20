@@ -84,9 +84,13 @@
     :root[data-theme="light"] .tab,
     :root[data-theme="light"] .action,
     :root[data-theme="light"] .pill{
-      border:1px solid rgba(15,23,42,.14);
-      background: rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
       color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 13px;
     }
     :root[data-theme="light"] .hr{ background: rgba(15,23,42,.10); }
     :root[data-theme="light"] .muted{ color: var(--muted); }
@@ -305,16 +309,87 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
   
 
-    .topRow{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .themeCtl{ display:flex; align-items:center; gap:8px; }
-    .themeCtl label{ font-size:12px; color: var(--muted); font-weight:800; }
-    .themeCtl select{
-      width:auto; min-width: 130px;
+    .topRow{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .themeCtl{ margin-left:auto; }
+    .themeCtl{
+      display:flex; align-items:center; gap:10px;
       padding: 8px 10px;
-      border-radius: 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
     }
-    
-    .grid3{ display:grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 10px; }
+    :root[data-theme="light"] .themeCtl{
+      background: rgba(15,23,42,.04);
+      border-color: rgba(15,23,42,.16);
+      box-shadow: 0 10px 22px rgba(2,6,23,.10);
+    }
+    .themeCtl label{
+      font-size:12px;
+      color: var(--muted);
+      font-weight:900;
+      letter-spacing:.2px;
+    }
+    .themeIcon{
+      width:28px; height:28px;
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius: 999px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.14);
+      font-size: 14px;
+      line-height: 1;
+    }
+    :root[data-theme="light"] .themeIcon{
+      background: rgba(15,23,42,.06);
+      border-color: rgba(15,23,42,.16);
+    }
+    .themeCtl select{
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      color: var(--text);
+      font-weight: 900;
+      padding: 8px 34px 8px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      min-width: 140px;
+      outline: none;
+      position: relative;
+    }
+    :root[data-theme="light"] .themeCtl select{
+      background: rgba(255,255,255,.9);
+      border-color: rgba(15,23,42,.16);
+    }
+    .themeCtl select:focus{
+      box-shadow: 0 0 0 3px rgba(155,92,255,.30);
+      border-color: rgba(155,92,255,.55);
+    }
+    /* setinha */
+    .themeCtl{ position: relative; }
+    .themeCtl select{
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(255,255,255,.85) 50%),
+        linear-gradient(135deg, rgba(255,255,255,.85) 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+      background-position:
+        calc(100% - 16px) calc(50% - 2px),
+        calc(100% - 11px) calc(50% - 2px),
+        calc(100% - 32px) 50%;
+      background-size:
+        6px 6px,
+        6px 6px,
+        1px 18px;
+      background-repeat: no-repeat;
+    }
+    :root[data-theme="light"] .themeCtl select{
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(15,23,42,.85) 50%),
+        linear-gradient(135deg, rgba(15,23,42,.85) 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+    }
+.grid3{ display:grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 10px; }
     @media (max-width: 720px){ .grid3{ grid-template-columns: 1fr; } }
 
     :root[data-theme="light"] input::placeholder, :root[data-theme="light"] textarea::placeholder{ color:#64748b; opacity:1; }
@@ -487,6 +562,151 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 .airLogo{display:inline-flex;align-items:center;justify-content:center;height:30px;width:auto;max-width:86px;border-radius:10px;overflow:hidden;background:transparent}
 .airLogo img{display:block;height:30px;width:auto}
 .airCode{font-weight:900;font-size:12px;color:#111827;opacity:.8}
+
+
+
+/* --- Theme control: basic (no pill / no custom arrow) --- */
+.themeCtl{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+.themeCtl label{
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--muted) !important;
+}
+.themeCtl select{
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+
+  padding: 6px 10px !important;
+  border-radius: 10px !important;
+  min-width: 110px !important;
+
+  border: 1px solid rgba(255,255,255,.18) !important;
+  background: rgba(255,255,255,.06) !important;
+  color: var(--text) !important;
+}
+.themeCtl select:focus{
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(155,92,255,.25) !important;
+  border-color: rgba(155,92,255,.55) !important;
+}
+:root[data-theme="light"] .themeCtl select{
+  border-color: rgba(15,23,42,.20) !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+/* --- end theme control override --- */
+
+
+/* Theme select dropdown options legibility (dark) */
+:root[data-theme="dark"] .themeCtl select option{
+  background: #0b1020;
+  color: #e9eefc;
+}
+:root[data-theme="light"] .themeCtl select option{
+  background: #ffffff;
+  color: #0f172a;
+}
+
+
+/* =========================
+   FIX: Botões Nacional/Internacional (tema claro)
+   - mais contraste para ver o selecionado
+   - estilo tipo "segmented control"
+   ========================= */
+:root[data-theme="light"] .card.calcCard .tabs{
+  background: rgba(124,58,237,.08);
+  border: 1px solid rgba(124,58,237,.18);
+  padding: 6px;
+  border-radius: 999px;
+  gap: 6px;
+}
+:root[data-theme="light"] .card.calcCard .tabs .tab{
+  border: 1px solid transparent;
+  background: transparent;
+  color: #0f172a;
+  font-weight: 900;
+  padding: 9px 15px;
+  border-radius: 999px;
+}
+:root[data-theme="light"] .card.calcCard .tabs .tab:hover{
+  background: rgba(124,58,237,.10);
+}
+:root[data-theme="light"] .card.calcCard .tabs .tab[aria-selected="true"]{
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: rgba(109,40,217,.65);
+  box-shadow: 0 10px 22px rgba(124,58,237,.22);
+}
+:root[data-theme="light"] .card.calcCard .tabs .tab:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(124,58,237,.22);
+}
+
+
+
+/* ===== Saídas em abas ===== */
+.outputsTabs{display:grid;grid-template-columns:repeat(4,minmax(96px,1fr));gap:10px;margin:6px 0 12px}
+@media (max-width:760px){.outputsTabs{grid-template-columns:repeat(2,minmax(96px,1fr));}}
+.outputTabBtn{
+  appearance:none;display:inline-flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;
+  border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.16);color:var(--text);
+  padding:9px 14px;border-radius:16px;cursor:pointer;font-weight:850;font-size:12.5px;min-height:46px;min-width:0;
+  box-shadow:0 6px 16px rgba(2,6,23,.12);
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background-color .12s ease;
+}
+.outputTabBtn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(2,6,23,.16)}
+.outputTabBtn[aria-selected="true"]{
+  border-color: rgba(155,92,255,.55);
+  box-shadow: 0 0 0 2px rgba(155,92,255,.15) inset, 0 10px 20px rgba(76,29,149,.14);
+  background: rgba(155,92,255,.14);
+}
+.outputPanel{display:none}
+.outputPanel.is-active{display:block}
+.outputEmpty{border:1px dashed rgba(255,255,255,.14);border-radius:14px;padding:16px;background:rgba(0,0,0,.10);color:var(--muted)}
+.agencyOptBox{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed rgba(155,92,255,.28);background:rgba(155,92,255,.08)}
+.agencyOpt{display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:13px;color:var(--text);font-weight:700}
+.agencyOpt input[type="checkbox"]{width:16px;height:16px}
+.outputsCard .hd{padding:14px 16px 8px}
+.outputsCard .bd{padding:10px 16px 16px}
+.outputsCard .btns{align-items:stretch;gap:10px;margin-top:12px}
+.outputsCard .btns .action{
+  flex:1 1 220px;
+  min-height:48px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.1;
+  padding:10px 16px;
+  border-radius:16px;
+  box-shadow:0 6px 16px rgba(2,6,23,.10);
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background-color .12s ease;
+}
+.outputsCard .btns .action:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(2,6,23,.14)}
+.outputsCard .preview,
+.outputsCard .codebox{border-radius:16px}
+.outputsCard .tag{font-size:12px;padding:7px 12px}
+#previewHint{margin:2px 0 0;line-height:1.45}
+.outTitle{line-height:1.45;font-size:12.5px}
+:root[data-theme="light"] .outputTabBtn{border:1px solid rgba(15,23,42,.12);background:#fff;color:#0f172a;box-shadow:0 5px 14px rgba(15,23,42,.05)}
+:root[data-theme="light"] .outputTabBtn:hover{box-shadow:0 10px 20px rgba(15,23,42,.08)}
+:root[data-theme="light"] .outputTabBtn[aria-selected="true"]{border-color: rgba(124,58,237,.50);background: rgba(124,58,237,.10);color:#111827;box-shadow: 0 0 0 2px rgba(124,58,237,.16) inset, 0 10px 20px rgba(124,58,237,.10)}
+:root[data-theme="light"] .outputsCard .btns .action{box-shadow:0 5px 14px rgba(15,23,42,.05)}
+:root[data-theme="light"] .outputsCard .btns .action:hover{box-shadow:0 10px 20px rgba(15,23,42,.08)}
+:root[data-theme="light"] .outputEmpty{border-color:rgba(15,23,42,.14);background:rgba(15,23,42,.03)}
+:root[data-theme="light"] .agencyOptBox{border-color:rgba(124,58,237,.24);background:rgba(124,58,237,.06)}
 </style>
 </head>
 <body>
@@ -502,7 +722,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
       <div class="themeCtl">
         <label for="themeSel">Tema</label>
-        <select id="themeSel">
+<select id="themeSel" aria-label="Tema">
           <option value="dark">Escuro</option>
           <option value="light">Claro</option>
         </select>
@@ -806,12 +1026,12 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             <div>
               <label>Forma de pagamento</label>
               <select id="nac_fp">
-                <option>Faturado</option>
-                <option>Link de pagamento</option>
+                <option value="Faturado" selected>Faturado ou Cartão de Crédito</option>
+                <option value="Link de pagamento">Link de pagamento</option>
               </select>
             </div>
             <div>
-              <label>Link de pagamento (se aplicável)</label>
+              <label>Link de pagamento (opcional)</label>
               <input id="nac_link" placeholder="Cole o link aqui (opcional)" />
             </div>
           </div>
@@ -865,6 +1085,10 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <div id="nac_folio_wrap" style="display:none; flex:1; min-width:260px; max-width:520px">
                 <label>Fólio (texto livre)</label>
                 <textarea id="nac_folio_text" placeholder="Digite o fólio/observação aqui (opcional)" style="min-height:42px"></textarea>
+                <div class="agencyOptBox">
+                  <label class="agencyOpt"><input type="checkbox" id="nac_folio_agencia" /> Incluir fólio também no e-mail da agência</label>
+                  <div class="muted small" style="margin-top:6px">Desmarcado = o fólio fica apenas no contexto interno.</div>
+                </div>
               </div>
             </div>
           </div>
@@ -932,45 +1156,15 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
                 <option>Automático</option>
               </select>
             </div>
-            
-            <div id="inter_auto_wrap" style="grid-column: 1 / -1; display:none; margin-top:6px;">
-              <label>Automático (FXQ) — cole o texto do Amadeus</label>
-              <textarea id="fxq_text" placeholder="Cole aqui o bloco do PNR + FXQ (pode ser tudo junto)"></textarea>
-              <div class="row" style="margin-top:8px;">
-                <div style="flex: 2 1 260px;">
-                  <label style="display:flex;align-items:center;gap:10px;cursor:pointer;margin:0">
-                    <input type="checkbox" id="fxq_dividir_qtd" />
-                    <span class="muted small"><b>Dividir valores por QTD</b> (se o FXQ vier total)</span>
-                  </label>
-                </div>
-                <div style="flex: 0 0 auto;">
-                  <button type="button" class="action calc" id="btnParseFxq">Extrair do FXQ</button>
-                </div>
-                <div style="flex: 3 1 260px;" class="muted small" id="fxq_status"></div>
-              </div>
-              <div class="muted small" style="margin-top:6px;">
-                Ele tenta identificar <b>LOC</b>, <b>PAX</b>, <b>itinerário</b>, <b>família tarifária</b>, <b>bagagem</b>, <b>dif. tarifa</b>, <b>multa</b> e <b>dif. taxas</b>.
-                Se algo não for encontrado, não altera aquele campo.
-              </div>
-            </div>
-              <details style="margin-top:10px;">
-                <summary class="muted small" style="cursor:pointer;">FXQ/FXO colado (salvo no CRR4/CRR5) — clique para ver</summary>
-                <div class="muted small" style="margin-top:6px;">
-                  Esse campo é só para <b>guardar</b> o texto colado no GDS dentro do CRR4/CRR5.
-                  <b>Não entra no e-mail automaticamente.</b>
-                </div>
-                <textarea id="inter_fxq_raw" placeholder="(auto) o texto colado em Automático (FXQ) ficará salvo aqui"></textarea>
-              </details>
-
-<div>
+            <div>
               <label>Forma de pagamento</label>
               <select id="inter_fp">
-                <option>Faturado</option>
-                <option>Link de pagamento</option>
+                <option value="Faturado" selected>Faturado ou Cartão de Crédito</option>
+                <option value="Link de pagamento">Link de pagamento</option>
               </select>
             </div>
             <div style="grid-column: 1 / -1;">
-              <label>Link de pagamento (se aplicável)</label>
+              <label>Link de pagamento (opcional)</label>
               <input id="inter_link" placeholder="Cole o link aqui (opcional)" />
             </div>
           </div>
@@ -979,6 +1173,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
           <div class="muted small"><b>Valores por tipo de pax (na moeda selecionada • RC sempre em USD)</b></div>
           <div class="hr"></div>
+
           
 
           <div class="row paxTypeRow" data-pax-type="ADT" id="interRow_ADT">
@@ -1019,22 +1214,82 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             </div>
           </div>
 
+          
+          <div class="hr"></div>
+
+          <!-- INTER: Endosso (texto livre) -->
+          <div class="row" style="margin-top:10px">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" id="inter_endosso_on" />
+                <span><b>Endosso</b></span>
+              </label>
+              <div id="inter_endosso_wrap" style="display:none; flex:1; min-width:260px; max-width:720px">
+                <label>Endosso (texto livre)</label>
+                <textarea id="inter_endosso_text" placeholder="Digite o endosso aqui (opcional)" style="min-height:42px"></textarea>
+                <div class="agencyOptBox">
+                  <label class="agencyOpt"><input type="checkbox" id="inter_endosso_agencia" /> Incluir endosso também no e-mail da agência</label>
+                  <div class="muted small" style="margin-top:6px">Desmarcado = o endosso fica apenas no contexto interno.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
           <div id="rentAnchorInter"></div>
 
           <div class="hr"></div>
 
-          <label>Bilhete original (opcional)</label>
-          <textarea id="inter_original" placeholder="Cole aqui dados do bilhete original"></textarea>
+
+
+                    <div id="interFxqIntro" class="note" style="border-left:3px solid rgba(155,92,255,.65); background: rgba(155,92,255,.10);">
+            <div class="muted small"><b>Automático (Amadeus FXQ/FXO)</b> — fluxo: <b>1)</b> cole a máscara do PNR → <b>2)</b> cole o FXO por tipo → <b>3)</b> cole FA/FHE dos bilhetes. <b>CRR5 intocado.</b></div>
+            <div class="muted small" id="fxqStatus" style="margin-top:6px"></div>
+          </div>
 
           <div class="hr"></div>
 
-          <label>Voos simulados (opcional)</label>
-          <textarea id="inter_voos" placeholder="Cole aqui os voos simulados (um por linha)"></textarea>
+          <label id="lbl_inter_voos">1) Itinerário / Máscara (cole o PNR)</label>
+          <textarea id="inter_voos" placeholder="Cole aqui RP/... com PAX + segmentos (Amadeus)."></textarea>
 
           <div class="hr"></div>
 
-          <label>Cálculo (uso interno) — opcional</label>
-          <textarea id="inter_interno" placeholder="Cole aqui observações internas / máscara / prints (não enviar ao cliente se não quiser)"></textarea>
+          <div id="fxoWrap" class="hidden">
+            <div class="muted small"><b>2) Recálculo por tipo (FXO)</b> — cole o FXO (ou FXQ) de cada tipo abaixo. O sistema preenche Dif. tarifa, Multa e Dif. taxas automaticamente.</div>
+            <div class="hr"></div>
+
+            <div id="fxoBox_ADT_wrap" class="hidden">
+              <label>FXO (ADT)</label>
+              <textarea id="fxoBox_ADT" placeholder="Cole aqui o FXO do ADT"></textarea>
+              <div class="muted small" id="fxoBox_ADT_status" style="margin-top:6px"></div>
+            </div>
+
+            <div id="fxoBox_CHD_wrap" class="hidden">
+              <label>FXO (CHD)</label>
+              <textarea id="fxoBox_CHD" placeholder="Cole aqui o FXO do CHD"></textarea>
+              <div class="muted small" id="fxoBox_CHD_status" style="margin-top:6px"></div>
+            </div>
+
+            <div id="fxoBox_INF_wrap" class="hidden">
+              <label>FXO (INF)</label>
+              <textarea id="fxoBox_INF" placeholder="Cole aqui o FXO do INF"></textarea>
+              <div class="muted small" id="fxoBox_INF_status" style="margin-top:6px"></div>
+            </div>
+          </div>
+
+          <div id="manualInternoWrap">
+            <label>Cálculo (uso interno) — opcional</label>
+            <textarea id="inter_interno" placeholder="Cole aqui observações internas / máscara / prints (não enviar ao cliente se não quiser)"></textarea>
+          </div>
+
+          <div class="hr"></div>
+
+          <div id="ticketsWrap" class="hidden">
+            <label id="lbl_inter_original">3) Bilhetes (FA/FHE)</label>
+            <textarea id="inter_original" placeholder="Cole aqui FA/FHE (com /P1, /P2...)"></textarea>
+            <div class="muted small" id="ticketsStatus" style="margin-top:6px"></div>
+          </div>
         </div>
 
         <div class="hr"></div>
@@ -1050,55 +1305,60 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       <div class="hd">
         <div>
           <div style="font-weight:900">Saídas</div>
-          <div class="muted small" id="previewHint">Gere o e-mail e/ou copie o código pro RF.</div>
+          <div class="muted small" id="previewHint">Gere o e-mail. Se alterar qualquer dado, clique novamente em <b>Gerar / Atualizar E-mail</b> para renovar o CRR.</div>
         </div>
         <span class="pill" id="subjectPill">Assunto: —</span>
       </div>
       <div class="bd">
-        <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--agency">AGÊNCIA</span> <b>1) Preview do e-mail (agência)</b> — isso é o que você cola no Outlook.</div>
-        <div id="preview" class="preview" contenteditable="true" aria-label="Pré-visualização do e-mail"></div>
-
-        <div class="btns" style="margin-top:10px">
-          <button class="action primary calc" id="btnGerar">Gerar E-mail (preview)</button>
-          <button class="action good" id="btnCopiarHtml">Copiar E-mail (HTML)</button>
+        <div class="outputsTabs" role="tablist" aria-label="Saídas da calculadora">
+          <button type="button" class="outputTabBtn" id="outTabBtnAgency" data-output-tab="agency" aria-selected="true">Agência</button>
+          <button type="button" class="outputTabBtn" id="outTabBtnCco" data-output-tab="cco" aria-selected="false">CCO</button>
+          <button type="button" class="outputTabBtn" id="outTabBtnRent" data-output-tab="rent" aria-selected="false">Rent</button>
+          <button type="button" class="outputTabBtn" id="outTabBtnCrr" data-output-tab="crr" aria-selected="false">CRR</button>
         </div>
 
-        <div class="hr"></div>
-
-        <div id="outRentSicaSection">
-        <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--rent">RENT</span> <b>2) Formulário de rentabilidade (SICA)</b> — copie e cole no e-mail para o time de Rentabilização lançar no SICA.</div>
-        <div id="rentFormWrap">
-          <div id="rentFormPreview" class="preview" style="min-height:180px" contenteditable="true" aria-label="Formulário de Rentabilização (SICA)"></div>
+        <div class="outputPanel is-active" id="outPanelAgency" data-output-panel="agency">
+          <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--agency">AGÊNCIA</span> <b>1) Preview do e-mail (agência)</b> — gere/atualize antes de colar no Outlook.</div>
+          <div id="preview" class="preview" contenteditable="true" aria-label="Pré-visualização do e-mail"></div>
           <div class="btns" style="margin-top:10px">
-            <button class="action rent" id="btnCopiarRentForm">Formulário Rentabilização</button>
+            <button class="action primary calc" id="btnGerar">Gerar / Atualizar E-mail</button>
+            <button class="action good" id="btnCopiarHtml">Copiar E-mail (HTML)</button>
           </div>
         </div>
 
-        <div class="hr"></div>
+        <div class="outputPanel" id="outPanelCco" data-output-panel="cco">
+          <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--cco">CCO</span> <b>2) Código para OBS (OP no RF)</b> — cole direto na observação pra equipe de reemissão (CCO) ver a tabela.</div>
+          <textarea id="obsCode" class="codebox" style="min-height:240px" spellcheck="false" aria-label="Código para Observação no RF"></textarea>
+          <div class="btns" style="margin-top:10px">
+            <button class="action cco" id="btnCopiarObs">Copiar código OBS (RF)</button>
+          </div>
+          <div class="muted small" style="margin-top:8px">
+            “Copiar código OBS (RF)” copia o <b>código</b> pra colar na observação da OP no RF. Se o RF não renderizar, teste colar só a tabela (sem o título).
+          </div>
         </div>
 
-        <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--cco">CCO</span> <b>3) Código para OBS (OP no RF)</b> — cole direto na observação pra equipe de reemissão (CCO) ver a tabela.</div>
-        <textarea id="obsCode" class="codebox" style="display:none" spellcheck="false" aria-label="Código para Observação no RF"></textarea>
-
-        <div class="btns" style="margin-top:10px">
-          <button class="action cco" id="btnCopiarObs">Copiar código OBS (RF)</button>
+        <div class="outputPanel" id="outPanelRent" data-output-panel="rent">
+          <div id="outRentSicaSection">
+            <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--rent">RENT</span> <b>3) Formulário de rentabilidade (SICA)</b> — copie e cole no e-mail para o time de Rentabilização lançar no SICA.</div>
+            <div id="rentFormWrap">
+              <div id="rentFormPreview" class="preview" style="min-height:180px" contenteditable="true" aria-label="Formulário de Rentabilização (SICA)"></div>
+              <div class="btns" style="margin-top:10px">
+                <button class="action rent" id="btnCopiarRentForm">Formulário Rentabilização</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="muted small" style="margin-top:8px">
-          “Copiar código OBS (RF)” copia o <b>código</b> pra colar na observação da OP no RF. Se o RF não renderizar, teste colar só a tabela (sem o título).
+
+        <div class="outputPanel" id="outPanelCrr" data-output-panel="crr">
+          <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--sys">CRR</span> <b>4) CRR (código de registro de reemissão)</b> — o código é atualizado ao clicar em <b>Gerar / Atualizar E-mail</b> ou <b>Copiar E-mail (HTML)</b>. Cole aqui um código salvo para carregar o cálculo.</div>
+          <textarea id="raCode" class="codebox" style="min-height:96px" spellcheck="false" aria-label="CRR para reabrir cálculo"></textarea>
+          <div class="btns" style="margin-top:10px">
+            <button class="action" id="btnCarregarRACode">Carregar CRR</button>
+          </div>
+          <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR5/CRR4/CRR2-...</b> (ou <b>CRR1/RA1</b> antigos).</div>
         </div>
 
-        <div class="hr"></div>
-
-        <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--sys">CRR</span> <b>4) CRR (código de registro de reemissão)</b> — copie/cole este código na OP (RF) ou no Teams/e-mail. Depois, cole aqui e clique em “Carregar”.</div>
-        <textarea id="raCode" class="codebox" style="min-height:96px" spellcheck="false" aria-label="CRR para reabrir cálculo"></textarea>
-        <div class="btns" style="margin-top:10px">
-          <button class="action good" id="btnGerarCRR5">Gerar CRR curto (CRR5)</button>
-          <button class="action" id="btnCarregarRACode">Carregar CRR</button>
-        </div>
-        <div id="crr5Status" class="muted small" style="margin-top:6px"></div>
-        <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR2-...</b> (ou <b>CRR1/RA1</b> antigos).</div>
-
-      </div>
+      </div>      </div>
     </section>
   </div>
 
@@ -1181,7 +1441,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       // saída (SICA): ocultar quando Rentabilização estiver desabilitado
       const outSica = document.getElementById("outRentSicaSection");
       if(outSica) outSica.style.display = rd.enabled ? "block" : "none";
-
+      try{ syncOutputTabs(); }catch(e){}
 
     }
 
@@ -2303,7 +2563,7 @@ const store = getPaxStore();
 
     // ----- CRR4: mesmo conteúdo do CRR3, mas com chaves compactadas (reduz bem o tamanho) -----
     // Mapeia ids de campos -> índice base36 (ex.: "cia" -> "a") antes de compactar.
-    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks","inter_fxq_raw"];
+    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_folio_agencia","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_endosso_on","inter_endosso_text","inter_endosso_agencia","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
     const CRR4_ID2K = {};
     const CRR4_K2ID = {};
     for(let i=0;i<CRR4_KEYS.length;i++){ 
@@ -2355,143 +2615,88 @@ function buildCRRCode(){
     }
 
 
+// ===== CRR5 (curto via Cloudflare Worker + Upstash) =====
+// Mantém o CRR4 local como fallback/offline.
+const CRR5_API = "https://crr-api.rexturfacilita.workers.dev/".replace(/\/+$/,"");
 
-    // ===== CRR5 (curto via Worker + Upstash) =====
-    const CRR5_API = "https://crr-api.rexturfacilita.workers.dev/".replace(/\/+$/,"");
+function extractCRR5(text){
+  const compact = String(text || "").replace(/\s+/g,"");
+  const mm = compact.match(/CRR5-([A-Za-z0-9]{6,64})/i);
+  if(!mm) return null;
+  return `CRR5-${mm[1].toLowerCase()}`;
+}
 
-    async function saveCRR5FromCRR4(crr4){
-      const r = await fetch(`${CRR5_API}/save`, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({ payload: crr4 })
-      });
-      const txt = await r.text();
-      if(!r.ok) throw new Error(txt || `Falha ao salvar (HTTP ${r.status})`);
-      let data = null;
-      try{ data = JSON.parse(txt); }catch(e){ throw new Error("Resposta inválida do servidor"); }
-      if(!data || !data.id) throw new Error("Resposta inválida do servidor");
-      return `CRR5-${data.id}`;
+async function saveCRR5FromCRR4(crr4){
+  const r = await fetch(`${CRR5_API}/save`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ payload: String(crr4 || "") }),
+  });
+  if(!r.ok) throw new Error("Falha ao salvar CRR curto");
+  const data = await r.json().catch(()=>null);
+  if(!data || !data.id) throw new Error("Resposta inválida do servidor");
+  return `CRR5-${String(data.id).toLowerCase()}`;
+}
+
+async function loadCRR5ToCRR4(crr5){
+  const id = String(crr5 || "").trim().replace(/^CRR5-/i,"").toLowerCase();
+  const r = await fetch(`${CRR5_API}/load?id=${encodeURIComponent(id)}`);
+  if(!r.ok) throw new Error("CRR curto não encontrado (ou expirou)");
+  const data = await r.json().catch(()=>null);
+  if(!data || typeof data.payload !== "string") throw new Error("Resposta inválida do servidor");
+  return data.payload;
+}
+
+const __CRR5_CACHE = new Map(); // key: CRR4 -> CRR5
+
+function getCRRCodeForEmail(){
+  const ta = document.getElementById("raCode");
+  const c5 = extractCRR5(ta ? ta.value : "");
+  return c5 || buildCRRCode();
+}
+
+function invalidateCRR5OnEdit(){
+  const ta = document.getElementById("raCode");
+  if(!ta) return;
+  // se estava "travado" em CRR5, destrava para obrigar gerar um novo após qualquer ajuste
+  if(ta.dataset && ta.dataset.manual === "1" && extractCRR5(ta.value)){
+    ta.dataset.manual = "0";
+    ta.dataset.sig = "";
+  }
+}
+
+async function ensureCRR5Current(){
+  const crr4 = buildCRRCode();
+  const ta = document.getElementById("raCode");
+  const existing5 = extractCRR5(ta ? ta.value : "");
+
+  // Reaproveita CRR5 se ele foi gerado para este mesmo CRR4 (assinatura)
+  if(existing5 && ta && ta.dataset && ta.dataset.sig === crr4){
+    __CRR5_CACHE.set(crr4, existing5);
+    return existing5;
+  }
+
+  const cached = __CRR5_CACHE.get(crr4);
+  if(cached){
+    if(ta){
+      ta.dataset.manual = "1";
+      ta.dataset.sig = crr4;
+      ta.value = cached;
     }
+    return cached;
+  }
 
-    async function loadCRR5ToCRR4(crr5){
-      const id = String(crr5 || "").trim().replace(/^CRR5-/i,"");
-      const r = await fetch(`${CRR5_API}/load?id=${encodeURIComponent(id)}`);
-      const txt = await r.text();
-      if(!r.ok) throw new Error(txt || `Não encontrado (HTTP ${r.status})`);
-      let data = null;
-      try{ data = JSON.parse(txt); }catch(e){ throw new Error("Resposta inválida do servidor"); }
-      if(!data || typeof data.payload !== "string") throw new Error("Resposta inválida do servidor");
-      return data.payload; // deve ser CRR4-...
-    }
+  const crr5 = await saveCRR5FromCRR4(crr4);
+  __CRR5_CACHE.set(crr4, crr5);
+  if(ta){
+    ta.dataset.manual = "1";
+    ta.dataset.sig = crr4;
+    ta.value = crr5;
+  }
+  return crr5;
+}
 
-    function extractCRR5(text){
-      const compact = String(text || "").replace(/\s+/g,"");
-      const mm = compact.match(/CRR5-[A-Za-z0-9]{6,32}/i);
-      return mm ? mm[0] : null;
-    }
 
-    // ===== CRR5 no e-mail (reuso para evitar duplicar no Upstash) =====
-    let __agencyCRR5 = "";
-    let __agencyCRR4Sig = "";       // CRR4 usado quando gerou/validou o CRR5
-    let __agencyCRR5Promise = null; // evita gerar 2x em clique duplo
-
-    function setCRRFieldToCRR5(crr5){
-      const ta = document.getElementById("raCode");
-      if(!ta) return;
-      // trava para não sobrescrever com CRR4 no updateAll
-      if(ta.dataset) ta.dataset.manual = "1";
-      if(document.activeElement !== ta) ta.value = crr5;
-    }
-
-function getAgencyCRRCode(){
-      const sig = buildCRRCode();
-      if(__agencyCRR5 && __agencyCRR4Sig === sig) return __agencyCRR5;
-
-      // Se o campo CRR estiver com CRR5, mostra no preview (sem criar novo)
-      const ta = document.getElementById("raCode");
-      const fromField = ta ? extractCRR5(ta.value) : null;
-      return fromField || "CRR5-(gerar antes de enviar)"; // sem vazar CRR4 no e-mail
-    }
-
-    async function ensureAgencyCRR5(){
-      const sig = buildCRRCode();
-
-      // já tenho CRR5 válido pro estado atual
-      if(__agencyCRR5 && __agencyCRR4Sig === sig) return __agencyCRR5;
-
-      // se já tem uma geração em andamento pro mesmo estado, reaproveita
-      if(__agencyCRR5Promise && __agencyCRR4Sig === sig) return await __agencyCRR5Promise;
-
-      // tenta reaproveitar CRR5 do campo (sem criar novo) — valida se bate com o estado atual
-      const ta = document.getElementById("raCode");
-      const crr5Field = ta ? extractCRR5(ta.value) : null;
-      if(crr5Field){
-        try{
-          const stored = await loadCRR5ToCRR4(crr5Field);
-          if(String(stored || "").trim() === String(sig || "").trim()){
-            __agencyCRR5 = crr5Field;
-            __agencyCRR4Sig = sig;
-            setCRRFieldToCRR5(__agencyCRR5);
-            return __agencyCRR5;
-          }
-        }catch(e){
-          // ignora e segue para gerar outro
-        }
-      }
-
-      // gera um novo CRR5 (salva o CRR4 atual no Upstash)
-      __agencyCRR4Sig = sig;
-      __agencyCRR5Promise = (async ()=>{
-        const c5 = await saveCRR5FromCRR4(sig);
-        __agencyCRR5 = c5;
-        setCRRFieldToCRR5(__agencyCRR5);
-        return c5;
-      })();
-
-      try{
-        return await __agencyCRR5Promise;
-      } finally {
-        __agencyCRR5Promise = null;
-      }
-    }
-
-    function invalidateAgencyCRR5(){
-      __agencyCRR5 = "";
-      __agencyCRR4Sig = "";
-      __agencyCRR5Promise = null;
-      lastEmailHtml = ""; // força regenerar e-mail
-
-      // libera o campo para voltar a mostrar CRR4 automaticamente
-      const ta = document.getElementById("raCode");
-      if(ta && ta.dataset){
-        ta.dataset.manual = "0";
-        if(document.activeElement !== ta){
-          try{ ta.value = buildCRRCode(); }catch(e){}
-        }
-      }
-    }
-      try{ renderCRR5Status(); }catch(e){}
-
-    function renderCRR5Status(){
-      const el = document.getElementById("crr5Status");
-      if(!el) return;
-      let sig = "";
-      try{ sig = buildCRRCode(); }catch(e){ sig = ""; }
-
-      if(__agencyCRR5 && __agencyCRR4Sig && sig && __agencyCRR4Sig === sig){
-        el.textContent = "CRR5 pronto: " + __agencyCRR5;
-        return;
-      }
-
-      const ta = document.getElementById("raCode");
-      const fromField = ta ? extractCRR5(ta.value) : null;
-      if(fromField){
-        el.textContent = "CRR5 no campo (a validar): " + fromField;
-        return;
-      }
-
-      el.textContent = "CRR5 pendente — gere pelo botão (ou ao copiar o e-mail).";
-    }
 
     function loadCRRCode(code){
       // aceita CRR colado puro, dentro de texto maior (OBS RF / e-mail), com quebras de linha, etc.
@@ -2730,14 +2935,51 @@ function getAgencyCRRCode(){
       return escapeHtml(p || t || "");
     }
 // ---------- email templates (Outlook) ----------
+    function buildEmailSectionBlock(title, content, opts){
+      const o = opts || {};
+      const strong = !!o.strong;
+      const isHtml = !!o.html;
+      const useMono = o.mono !== false;
+      const value = String(content || "").trim();
+      const emptyHtml = `<span style="color:#999">${escapeHtml(o.emptyLabel || "-")}</span>`;
+      const bodyHtml = isHtml ? (value || emptyHtml) : (value ? brToHtml(value) : emptyHtml);
+      const headerBg = strong ? "#6d28d9" : "#efe8ff";
+      const headerColor = strong ? "#ffffff" : "#4c1d95";
+      const bodyBg = strong ? "#f7f3ff" : "#fbf9ff";
+      const border = strong ? "#d9c8f2" : "#e4daf8";
+      const marginTop = strong ? 22 : 18;
+      const bodyFont = useMono ? 'Consolas, &quot;Courier New&quot;, monospace' : 'Arial, sans-serif';
+      const bodyFontSize = useMono ? '14px' : '13px';
+      const bodyLineHeight = useMono ? '1.55' : '1.5';
+      const extraBodyStyle = o.bodyStyle ? `; ${o.bodyStyle}` : '';
+      return `
+        <table border="0" cellspacing="0" cellpadding="0" width="760" style="width:760px; max-width:760px; margin:${marginTop}px 0 0; mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse;">
+          <tr>
+            <td style="padding:0;">
+              <div style="padding:10px 12px; background:${headerBg}; color:${headerColor}; font-weight:900; border-radius:12px; letter-spacing:.3px; border:${strong ? 'none' : '1px solid ' + border};">${escapeHtml(title)}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:12px 0 0;">
+              <div style="padding:14px 14px; border:1px solid ${border}; border-radius:12px; background:${bodyBg}; font-family:${bodyFont}; font-size:${bodyFontSize}; line-height:${bodyLineHeight}${extraBodyStyle}">${bodyHtml}</div>
+            </td>
+          </tr>
+        </table>
+      `.trim();
+    }
     function buildEmailHtmlNac(){
       const common = getCommon();
       const calc = calcNac();
-      const crr = getAgencyCRRCode();
+      const crr = getCRRCodeForEmail();
       const crrEmailHtml = escapeHtml(crr) + (common.rentab ? "<br/>@#" : "");
       const fp = document.getElementById("nac_fp").value;
       const link = document.getElementById("nac_link").value.trim();
       const voos = document.getElementById("nac_voos").value.trim();
+      const folioOn = !!(document.getElementById("nac_folio_on") && document.getElementById("nac_folio_on").checked);
+      const folioAgencyOn = !!(document.getElementById("nac_folio_agencia") && document.getElementById("nac_folio_agencia").checked);
+      const folio = (document.getElementById("nac_folio_text") ? document.getElementById("nac_folio_text").value.trim() : "");
+      const folioRow = (folioOn && folio && folioAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>Fólio</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(folio)}</td></tr>` : "";
+
       const regrasUserRaw = document.getElementById("nac_regras").value.trim();
       const isAzul = /(^|[\s,\/])(?:AD|AZUL)($|[\s,\/])/i.test(String(common.cia||"").trim());
       const isLatamGol = /(^|[\s,\/])(?:LA|LATAM|G3|GOL)($|[\s,\/])/i.test(String(common.cia||"").trim());
@@ -2782,9 +3024,12 @@ const servicesRow = (calc.servicesBRL && calc.servicesBRL > 0)
         </tr>
       `);
 
-      const linkLine = (fp === "Link de pagamento" && link)
-        ? `<p style="margin:8px 0 0">Para pagamento via cartão, preencha os dados no link e nos responda com a quantidade de parcelas caso seja parcelado: <b><a href="${escapeHtml((/^https?:\/\//i.test(link)?link:`https://${link}`))}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>`
-        : `<p style="margin:8px 0 0">Forma de pagamento: <b>${escapeHtml(fp)}</b></p>`;
+      const payLabel = "Faturado ou Cartão de Crédito";
+      const linkHref = link ? ( /^https?:\/\//i.test(link) ? link : `https://${link}` ) : "";
+      const linkLine = `
+        <p style="margin:8px 0 0">Forma de pagamento: <b>${payLabel}</b></p>
+        ${link ? `<p style="margin:6px 0 0">Link de pagamento: <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
+      `.trim();
 
       const azulRuleLi = isAzul ? `<li>${escapeHtml(AZUL_RULE_TEXT)}</li>` : "";
       const latamGolRuleLi = (isLatamGol && !isAzul) ? `<li>${escapeHtml(LATAM_GOL_RULE_TEXT)}</li>` : "";
@@ -2812,7 +3057,8 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
             <tr><td><b>Passageiro(s) / Bilhete(s)</b></td><td>${buildPaxTicketPairsHtml(common)}</td></tr>${common.oac ? `<tr><td><b>OAC</b></td><td>${escapeHtml(common.oac)}</td></tr>` : ``}
             <tr><td><b>Família Tarifária</b></td><td>${escapeHtml(common.familia)}</td></tr>
             <tr><td><b>Bagagem</b></td><td>${escapeHtml(common.bag)}</td></tr>
-            <tr><td><b>Permite parcelamento?</b></td><td>${escapeHtml(common.parcelamento)}</td></tr>
+<tr><td><b>Permite parcelamento?</b></td><td>${escapeHtml(common.parcelamento)}</td></tr>
+          ${folioRow}
           </table>
 
           <p style="margin:12px 0 6px"><b>Descritivo de valores (por pax)</b></p>
@@ -2840,11 +3086,8 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
           <p style="margin:6px 0 0"><i>*Após o preenchimento, responda o e-mail para darmos continuidade ao processo</i></p>
           <p style="margin:6px 0 0">Em respeito a LGPD, não é permitido trafegar informações que envolvam dados de cartão de crédito.</p>
 
-          <p style="margin:12px 0 0"><b>✈️ Voos simulados:</b><br/>${voos ? brToHtml(voos) : `<span style="color:#999">-</span>`}</p>
-
-          <p style="margin:12px 0 0"><b>📌 Regras:</b></p>
-          ${regrasPadrao}
-          ${regrasExtra}
+          ${buildEmailSectionBlock("VOOS SIMULADOS", voos, { strong:true })}
+          ${buildEmailSectionBlock("REGRAS", `${regrasPadrao}${regrasExtra}`, { html:true, mono:false, bodyStyle:'padding:14px 16px;' })}
           <p style="margin:6px 0 0; font-size:9px; color:#999">${crrEmailHtml}</p>
         </div>
       `.trim();
@@ -2853,7 +3096,7 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
     function buildEmailHtmlInter(){
       const common = getCommon();
       const calc = calcInter();
-      const crr = getAgencyCRRCode();
+      const crr = getCRRCodeForEmail();
       const crrEmailHtml = escapeHtml(crr) + (common.rentab ? "<br/>@#" : "");
       const incentivo = document.getElementById("inter_incentivo").value;
       const tipo = document.getElementById("inter_tipo").value;
@@ -2863,6 +3106,12 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
       const original = document.getElementById("inter_original").value.trim();
       const voos = document.getElementById("inter_voos").value.trim();
       const interno = document.getElementById("inter_interno").value.trim();
+
+      const endossoOn = !!(document.getElementById("inter_endosso_on") && document.getElementById("inter_endosso_on").checked);
+      const endossoAgencyOn = !!(document.getElementById("inter_endosso_agencia") && document.getElementById("inter_endosso_agencia").checked);
+      const endosso = (document.getElementById("inter_endosso_text") ? document.getElementById("inter_endosso_text").value.trim() : "");
+      const endossoRow = (endossoOn && endosso && endossoAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>Endosso</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(endosso)}</td></tr>` : "";
+
       const isAzul = /(^|[\s,\/])(?:AD|AZUL)($|[\s,\/])/i.test(String(common.cia||"").trim());
       const azulMsg = "";
 
@@ -2889,9 +3138,12 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
         </tr>
       `);
 
-      const linkLine = (fp === "Link de pagamento" && link)
-        ? `<p style="margin:8px 0 0">Para pagamento via cartão, preencha os dados no link e nos responda com a quantidade de parcelas caso seja parcelado: <b><a href="${escapeHtml((/^https?:\/\//i.test(link)?link:`https://${link}`))}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>`
-        : `<p style="margin:8px 0 0">Forma de pagamento: <b>${escapeHtml(fp)}</b></p>`;
+      const payLabel = "Faturado ou Cartão de Crédito";
+      const linkHref = link ? ( /^https?:\/\//i.test(link) ? link : `https://${link}` ) : "";
+      const linkLine = `
+        <p style="margin:8px 0 0">Forma de pagamento: <b>${payLabel}</b></p>
+        ${link ? `<p style="margin:6px 0 0">Link de pagamento: <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
+      `.trim();
 
       const fxLine = calc.fx > 0
         ? `<p style="margin:6px 0 0"><b>Câmbio informado:</b> 1 ${escapeHtml(calc.cur)} = ${calc.fx.toFixed(4).replace(".",",")} BRL • <b>Total (BRL):</b> ${fmtBRL(calc.totalBRL)}</p>`
@@ -2915,6 +3167,7 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
             <tr><td><b>Permite parcelamento?</b></td><td>${escapeHtml(common.parcelamento)}</td></tr>
             <tr><td><b>Moeda</b></td><td>${escapeHtml(calc.cur)}</td></tr>
             <tr><td><b>Recuperação de incentivo?</b></td><td>${escapeHtml(incentivo)}</td></tr>
+          ${endossoRow}
           </table>
 
           <p style="margin:12px 0 6px"><b>Descritivo de valores (por pax) — ${escapeHtml(calc.cur)} <span style="font-weight:700; color:#475569">(RC em USD)</span></b></p>
@@ -2943,9 +3196,9 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
           <p style="margin:6px 0 0"><i>*Após o preenchimento, responda o e-mail para darmos continuidade ao processo</i></p>
           <p style="margin:6px 0 0">Em respeito a LGPD, não é permitido trafegar informações que envolvam dados de cartão de crédito.</p>
 
-          <p style="margin:12px 0 0"><b>✈︎ VOOS SIMULADOS:</b><br/>${voos ? brToHtml(voos) : `<span style="color:#999">-</span>`}</p>
-          <p style="margin:12px 0 0"><b>📌 CÁLCULO - USO INTERNO:</b><br/>${interno ? brToHtml(interno) : `<span style="color:#999">-</span>`}</p>
-          <p style="margin:12px 0 0"><b>✈ BILHETE ORIGINAL:</b><br/>${original ? brToHtml(original) : `<span style="color:#999">-</span>`}</p>
+          ${buildEmailSectionBlock("VOOS SIMULADOS", voos, { strong:true })}
+          ${buildEmailSectionBlock("CÁLCULO - USO INTERNO", interno)}
+          ${buildEmailSectionBlock("BILHETE ORIGINAL", original)}
           <p style="margin:6px 0 0; font-size:9px; color:#999">${crrEmailHtml}</p>
         </div>
       `.trim();
@@ -2971,6 +3224,11 @@ function rfHeader(mode){
 
       const fp = document.getElementById("nac_fp").value;
       const pay = (fp === "Link de pagamento") ? "Link de pagamento (enviado à agência)" : "Faturado";
+
+      const folioOn = !!(document.getElementById("nac_folio_on") && document.getElementById("nac_folio_on").checked);
+      const folio = (document.getElementById("nac_folio_text") ? document.getElementById("nac_folio_text").value.trim() : "");
+      const folioRow = (folioOn && folio) ? `<tr><td style="padding:6px; background-color:#efe9f8;"><strong>Fólio:</strong></td><td style="padding:6px;">${escAttr(folio)}</td></tr>` : "";
+
 
       let valueRows = "";
       for(const r of calc.rows){
@@ -3126,6 +3384,7 @@ ${c.novo_loc ? `<tr><td style="padding:6px;"><strong>Novo LOC:</strong></td><td 
           ${c.oac ? `<tr><td style="padding:6px;"><strong>OAC:</strong></td><td style="padding:6px;">${escAttr(c.oac)}</td></tr>` : ""}
           <tr><td style="padding:6px;"><strong>Família Tarifária:</strong></td><td style="padding:6px;">${escAttr(c.familia)}</td></tr>
           <tr><td style="padding:6px;"><strong>Bagagem:</strong></td><td style="padding:6px;">${escAttr(c.bag)}</td></tr>
+${folioRow}
 <tr><th style="background-color:#a99ac5; color:white; text-align:left; padding:6px;">Descritivo</th><th style="background-color:#a99ac5; color:white; text-align:left; padding:6px;">Valores</th></tr>
           ${valueRows}
           ${rentBlock}
@@ -3142,6 +3401,11 @@ ${c.novo_loc ? `<tr><td style="padding:6px;"><strong>Novo LOC:</strong></td><td 
 
       const internoRF = (document.getElementById("inter_interno") ? document.getElementById("inter_interno").value.trim() : "");
       const internoHtml = internoRF ? escAttr(maskRFText(internoRF)).split("\n").join("<br>") : "";
+
+      const endossoOn = !!(document.getElementById("inter_endosso_on") && document.getElementById("inter_endosso_on").checked);
+      const endossoText = (document.getElementById("inter_endosso_text") ? document.getElementById("inter_endosso_text").value.trim() : "");
+      const endossoRow = (endossoOn && endossoText) ? `<tr><td style="padding:6px; background-color:#efe9f8;"><strong>Endosso:</strong></td><td style="padding:6px;">${escAttr(endossoText)}</td></tr>` : "";
+
 
       const fp = document.getElementById("inter_fp").value;
       const pay = (fp === "Link de pagamento") ? "Link de pagamento (enviado à agência)" : "Faturado";
@@ -3303,6 +3567,7 @@ ${c.novo_loc ? `<tr><td style="padding:6px;"><strong>Novo LOC:</strong></td><td 
           ${c.oac ? `<tr><td style="padding:6px;"><strong>OAC:</strong></td><td style="padding:6px;">${escAttr(c.oac)}</td></tr>` : ""}
           <tr><td style="padding:6px;"><strong>Família Tarifária:</strong></td><td style="padding:6px;">${escAttr(c.familia)}</td></tr>
           <tr><td style="padding:6px;"><strong>Bagagem:</strong></td><td style="padding:6px;">${escAttr(c.bag)}</td></tr>
+${endossoRow}
 <tr><td style="padding:6px;"><strong>Moeda:</strong></td><td style="padding:6px;">${escAttr(calc.cur)} • <strong>Câmbio:</strong> ${escAttr(fxText)}</td></tr>
           ${(calc.cur !== "USD") ? `<tr><td style="padding:6px;"><strong>Câmbio USD→BRL (RC):</strong></td><td style="padding:6px;">${escAttr(rcFxText)}</td></tr>` : ""}
           <tr><td style="padding:6px;"><strong>Incentivo:</strong></td><td style="padding:6px;">${escAttr(incentivo)} • <strong>Tipo cálculo:</strong> ${escAttr(tipo)}</td></tr>
@@ -3544,12 +3809,39 @@ ${c.novo_loc ? `<tr><td style="padding:6px;"><strong>Novo LOC:</strong></td><td 
       placeRentPanel();
       updateAll({silent:true});
       renderPaxFields();
+      try{ localStorage.setItem("ra_calc_last_mode", nacOn ? "NAC" : "INTER"); }catch(e){}
     }
 
     function rentCurrencyCode(){ return (getActiveMode()==="INTER") ? getInterCurrency() : "BRL"; }
     function setRentCurrencyLabels(){
       const cur = rentCurrencyCode();
       for(const s of document.querySelectorAll(".rentCur")){ s.textContent = cur; }
+    }
+
+    function switchOutputTab(name){
+      const target = String(name || "agency").toLowerCase();
+      const allowed = new Set(["agency","cco","rent","crr"]);
+      const next = allowed.has(target) ? target : "agency";
+      for(const btn of document.querySelectorAll(".outputTabBtn")){
+        const on = btn.getAttribute("data-output-tab") === next;
+        btn.setAttribute("aria-selected", on ? "true" : "false");
+      }
+      for(const panel of document.querySelectorAll(".outputPanel")){
+        panel.classList.toggle("is-active", panel.getAttribute("data-output-panel") === next);
+      }
+      try{ localStorage.setItem("ra_output_last_tab", next); }catch(e){}
+    }
+
+    function syncOutputTabs(){
+      const rentSection = document.getElementById("outRentSicaSection");
+      const rentBtn = document.getElementById("outTabBtnRent");
+      const rentVisible = !!(rentSection && rentSection.style.display !== "none");
+      if(rentBtn) rentBtn.style.display = rentVisible ? "inline-flex" : "none";
+      const active = document.querySelector('.outputTabBtn[aria-selected="true"]');
+      const activeName = active ? active.getAttribute("data-output-tab") : "agency";
+      if(activeName === "rent" && !rentVisible){
+        switchOutputTab("agency");
+      }
     }
 
     const AZUL_RULE_TEXT = "Em reemissões Azul, o serviço pago previamente será utilizado como crédito no recalculo de reemissão e é necessário a nova compra do mesmo.";
@@ -3589,38 +3881,8 @@ function isLatamOrGolCia(v){
 
 let __lastCiaForAutoRules = "";
 function maybeInjectAutoRuleFromCia(){
-  // Injeta regra padrão (Azul ou LATAM/GOL) no campo Regras (NAC) apenas quando a CIA muda
-  const ciaEl = document.getElementById("cia");
-  const regrasEl = document.getElementById("nac_regras");
-  if(!ciaEl || !regrasEl) return;
-  if(getActiveMode() !== "NAC") return;
-
-  const ciaVal = normalizeCia(ciaEl.value);
-  if(ciaVal === __lastCiaForAutoRules) return;
-  __lastCiaForAutoRules = ciaVal;
-
-  const t = (regrasEl.value || "").trim();
-  const lines = t ? t.split(/\r?\n/).map(s => s.trim()).filter(Boolean) : [];
-
-  // Remove as regras automáticas antigas (pra não acumular ao trocar de cia)
-  const cleaned = lines.filter(l => {
-    const n = l.toLowerCase();
-    const isAz = n.includes("reemiss") && n.includes("azul") && (n.includes("crédito") || n.includes("credito"));
-    const isLG = n.includes("novo loc") && n.includes("localizador original") && n.includes("cancel");
-    return !(isAz || isLG);
-  });
-
-  // Define qual regra automática aplicar
-  let autoRule = "";
-  if(isAzulCia(ciaVal)) autoRule = AZUL_RULE_TEXT;
-  else if(isLatamOrGolCia(ciaVal)) autoRule = LATAM_GOL_RULE_TEXT;
-
-  if(autoRule){
-    // Coloca a regra automática no topo, pra aparecer antes do no-show no e-mail
-    cleaned.unshift(autoRule);
-  }
-
-  regrasEl.value = cleaned.join("\n").trim();
+  // DESATIVADO: não preencher automaticamente o campo "Regras / observações".
+  // As regras padrão por cia (AZUL / LATAM / GOL) aparecem somente no e-mail.
 }
 
 function updateAll(arg){
@@ -3628,8 +3890,7 @@ function updateAll(arg){
       const silent = (arg === true) || (arg && arg.silent === true);
 
       syncCiaNacSelector();
-      maybeInjectAutoRuleFromCia();
-
+      // regras automáticas por cia aparecem apenas no e-mail (não preencher textarea)
       toggleRentUI();
       setRentCurrencyLabels();
 
@@ -3642,6 +3903,11 @@ function updateAll(arg){
       const _folOn = document.getElementById("nac_folio_on");
       const _folWrap = document.getElementById("nac_folio_wrap");
       if(_folOn && _folWrap){ _folWrap.style.display = _folOn.checked ? "block" : "none"; }
+
+      // INTER: Endosso (texto livre)
+      const _endOn = document.getElementById("inter_endosso_on");
+      const _endWrap = document.getElementById("inter_endosso_wrap");
+      if(_endOn && _endWrap){ _endWrap.style.display = _endOn.checked ? "block" : "none"; }
 
       const mode = getActiveMode();
       if(mode === "NAC"){
@@ -3672,13 +3938,6 @@ function updateAll(arg){
         usdWrap.classList.toggle("hidden", cur === "USD");
       }
 
-
-      // FXQ (Amadeus): caixa do modo Automático (INTER)
-      const fxqWrap = document.getElementById("inter_auto_wrap");
-      if(fxqWrap){
-        const tipoCalc = (document.getElementById("inter_tipo")?.value || "Manual");
-        fxqWrap.style.display = (/autom/i.test(String(tipoCalc))) ? "block" : "none";
-      }
       // keep OBS code updated live (se existir)
       const obs = document.getElementById("obsCode");
       if(obs){
@@ -3700,6 +3959,7 @@ function updateAll(arg){
       if(rfp && document.activeElement !== rfp){
         rfp.innerHTML = buildSicaFormHtml();
       }
+      syncOutputTabs();
 
       // sem toast aqui (senão spamma a cada digitação)
       return;
@@ -3738,8 +3998,6 @@ function updateAll(arg){
     }
 
 function clearAll(silent){
-      
-      invalidateAgencyCRR5();
       const ids = Array.from(document.querySelectorAll("input, textarea")).map(e=>e.id);
       for(const id of ids){
         const el = document.getElementById(id);
@@ -3757,17 +4015,20 @@ function clearAll(silent){
       document.getElementById("inter_cur").value = "USD";
       document.getElementById("inter_cur_other").value = "";
       document.getElementById("preview").innerHTML = "";
-      document.getElementById("paxq_adt").value = "1";
+            const raTA0 = document.getElementById("raCode");
+      if(raTA0){ raTA0.dataset.manual = "0"; raTA0.dataset.sig = ""; }
+document.getElementById("paxq_adt").value = "1";
       document.getElementById("paxq_chd").value = "0";
       document.getElementById("paxq_inf").value = "0";
       document.getElementById("pax_json").value = "";
       const _fol = document.getElementById("nac_folio_on"); if(_fol) _fol.checked = false;
+      const _folAg = document.getElementById("nac_folio_agencia"); if(_folAg) _folAg.checked = false;
+      const _end = document.getElementById("inter_endosso_on"); if(_end) _end.checked = false;
+      const _endAg = document.getElementById("inter_endosso_agencia"); if(_endAg) _endAg.checked = false;
+      const _endT = document.getElementById("inter_endosso_text"); if(_endT) _endT.value = "";
       updateAll();
-    renderPaxFields();
-    try{ renderCRR5Status(); }catch(e){}
-      
-    try{ initFxqUI(); }catch(e){}
-if(!silent) showToast("Limpo!");
+      renderPaxFields();
+      if(!silent) showToast("Limpo!");
     }
 
     function saveLocal(){
@@ -3807,6 +4068,20 @@ if(!silent) showToast("Limpo!");
     // wire tabs
     document.getElementById("tabNac").addEventListener("click", ()=>switchTab("tabNac"));
     document.getElementById("tabInter").addEventListener("click", ()=>switchTab("tabInter"));
+    for(const btn of document.querySelectorAll(".outputTabBtn")){
+      btn.addEventListener("click", ()=>switchOutputTab(btn.getAttribute("data-output-tab") || "agency"));
+    }
+    // restaura última aba usada (NAC / INTER)
+    try{
+      const last = localStorage.getItem("ra_calc_last_mode");
+      if(last === "INTER") switchTab("tabInter");
+      else if(last === "NAC") switchTab("tabNac");
+    }catch(e){}
+    try{
+      const lastOut = localStorage.getItem("ra_output_last_tab") || "agency";
+      switchOutputTab(lastOut);
+    }catch(e){ switchOutputTab("agency"); }
+
     // NAC: seletor de cia (GOL/LATAM/AZUL)
     for(const btn of document.querySelectorAll("#ciaNacSelector .airBtn")){
       btn.addEventListener("click", ()=>{
@@ -3820,627 +4095,631 @@ if(!silent) showToast("Limpo!");
     syncCiaNacSelector();
 
     
-// ---------- FXQ (Amadeus) — extração automática (experimental; não mexe no CRR5) ----------
-function fxqSetStatus(msg, ok){
-  const el = document.getElementById("fxq_status");
-  if(!el) return;
-  el.textContent = msg || "";
-  el.style.color = ok ? "rgba(61,220,151,1)" : "";
-}
 
-function setInterCurrencyFromCode(code){
-  const c = safeCurrency(code);
-  const sel = document.getElementById("inter_cur");
-  const other = document.getElementById("inter_cur_other");
-  if(!sel) return;
-  const known = ["USD","EUR","CNY","GBP"];
-  if(known.includes(c)){
-    sel.value = c;
-    if(other) other.value = "";
-  }else{
-    sel.value = "OTHER";
-    if(other) other.value = c;
-  }
-}
+    
+    // ----- FXQ/FXO Wizard (INTER Automático) -----
+    (function initFxqWizard(){
+      const $ = (id)=>document.getElementById(id);
+      const show = (el, on)=>{ if(el) el.classList.toggle("hidden", !on); };
 
-function fxqFindCurrencyAmountPairs(line){
-  const pairs = [];
-  const re = /([A-Z]{3})\s*(-?\d+(?:[.,]\d+)?)/g;
-  let m;
-  while((m = re.exec(line))){
-    const cur = String(m[1]||"").toUpperCase();
-    const amt = parseBRNumber(m[2]);
-    if(cur && Number.isFinite(amt)) pairs.push({cur, amt});
-  }
-  return pairs;
-}
+      const state = window.__FXQ_WIZ = {
+        paxList: [],
+        pIndexToTypePos: {},
+        requiredTypes: [],
+        fxoOk: {ADT:false, CHD:false, INF:false},
+        bagByType: {ADT:null, CHD:null, INF:null},
+        familyByType: {ADT:null, CHD:null, INF:null},
+        bagAuto: false,
+        parseMeta: {warnings:[], segments:[], confidence:0, loc:""}
+      };
 
-function fxqGetAmount(text, label, preferCur){
-  const lines = String(text||"").split(/\r?\n/);
-  const upLabel = String(label||"").toUpperCase();
-  const found = [];
-  for(let i=0;i<lines.length;i++){
-    const ln = String(lines[i]||"");
-    if(ln.toUpperCase().includes(upLabel)){
-      found.push(...fxqFindCurrencyAmountPairs(ln));
-      // às vezes a linha quebra e o valor fica nas próximas
-      for(let j=1;j<=2;j++){
-        if(i+j < lines.length) found.push(...fxqFindCurrencyAmountPairs(String(lines[i+j]||"")));
+      function isInterAuto(){
+        const sel = $("inter_tipo");
+        return sel && String(sel.value||"").toLowerCase().includes("autom");
       }
-    }
-  }
-  if(!found.length) return null;
-  if(preferCur){
-    const p = String(preferCur).toUpperCase();
-    const hit = found.find(x => x.cur === p);
-    if(hit) return hit;
-  }
-  return found[0];
-}
 
-function fxqNormalizeTicket(t){
-  const dig = String(t||"").replace(/\D+/g,"");
-  if(dig.length < 6) return "";
-  if(dig.length === 13) return dig.slice(0,3) + "-" + dig.slice(3);
-  if(dig.length > 3) return dig.slice(0,3) + "-" + dig.slice(3);
-  return dig;
-}
-
-function fxqExtractTicketMap(text){
-  const s = String(text||"");
-  const map = {}; // paxNo -> ticket
-  // suporta FHE/FA: "044-6056075415/P1" ou "0446056075415/P1"
-  const re = /\b(\d{3})-?(\d{10})\b[\s\S]{0,80}?\/P(\d+)\b/ig;
-  let m;
-  while((m = re.exec(s))){
-    const t = fxqNormalizeTicket(m[1] + m[2]);
-    const p = parseInt(m[3],10);
-    if(Number.isFinite(p) && p > 0){
-      if(!map[p]) map[p] = t;
-    }
-  }
-  return map;
-}
-
-function fxqExtractTicketsFlat(text){
-  const tmap = fxqExtractTicketMap(text);
-  const out = [];
-  const keys = Object.keys(tmap).map(n=>parseInt(n,10)).filter(Number.isFinite).sort((a,b)=>a-b);
-  for(const k of keys){
-    out.push(tmap[k]);
-  }
-  // unique
-  const seen = new Set();
-  return out.filter(x => x && !seen.has(x) && seen.add(x));
-}
-
-function fxqExtractLocator
-(text){
-  const s = String(text||"");
-  let m = s.match(/\bLOC\s+([A-Z0-9]{6})\b/i);
-  if(m) return m[1].toUpperCase();
-  // fallback: última palavra do cabeçalho RP/... (ex.: CYVWZ2)
-  m = s.match(/RP\/[^\n]+?\s+([A-Z0-9]{6})\s*$/im);
-  if(m) return m[1].toUpperCase();
-  return "";
-}
-
-function fxqExtractCia(text){
-  const s = String(text||"");
-  const m = s.match(/\b([A-Z0-9]{2})\/RM\b/i);
-  if(m) return m[1].toUpperCase();
-  return "";
-}
-
-function fxqExtractPaxStore(text){
-  const out = {ADT:[], CHD:[], INF:[]};
-  const lines = String(text||"").split(/\r?\n/);
-
-  const paxTmp = []; // {paxNo, name, type, ticket}
-  for(const line of lines){
-    let m = String(line||"").match(/^\s*(\d+)\.\s*([A-Z0-9'\/\-\s]+?)\s*\(\s*(ADT|CHD|INF)\b/i);
-    let paxNo = null;
-    if(!m){
-      m = String(line||"").match(/\bPAX:\s*([A-Z0-9'\/\-\s]+?)\s*\(\s*(ADT|CHD|INF)\b/i);
-      if(m) paxNo = paxTmp.length + 1;
-    }else{
-      paxNo = parseInt(m[1],10);
-      m = [m[0], m[2], m[3]];
-    }
-    if(m){
-      const name = normalizePaxName(m[1]);
-      const typ = String(m[2]||"").toUpperCase();
-      if(out[typ] && name){
-        paxTmp.push({ paxNo: (Number.isFinite(paxNo)?paxNo:null), name, type: typ, ticket: "" });
+      function setStatus(msg){
+        const el = $("fxqStatus");
+        if(el) el.textContent = msg || "";
       }
-    }
-  }
 
-  // tickets por P1/P2...
-  const tmap = fxqExtractTicketMap(text);
-  for(const p of paxTmp){
-    if(p.paxNo && tmap[p.paxNo]) p.ticket = tmap[p.paxNo];
-  }
-
-  // dedupe por paxNo (preferir com ticket), senão por nome
-  const seenP = new Set();
-  const seenN = new Set();
-  for(const p of paxTmp){
-    const pn = p.paxNo ? String(p.paxNo) : "";
-    const nm = String(p.name||"").trim();
-    if(pn){
-      if(seenP.has(pn)) continue;
-      seenP.add(pn);
-    }else{
-      if(!nm || seenN.has(nm)) continue;
-      seenN.add(nm);
-    }
-    out[p.type].push({ name: p.name, ticket: p.ticket || "" });
-  }
-
-  return out;
-}
-
-function fxqExtractItinerary
-(text){
-  const lines = String(text||"").split(/\r?\n/);
-  const segs = [];
-  const re = /^\s*(?:\d+\s+)?([A-Z0-9]{2})\s*([0-9]{1,4})\s+([A-Z])\s+(\d{2}[A-Z]{3})\s+(?:\d+\s+)?([A-Z]{6})\s+\w+\s+(\d{4})\s+(\d{4})\s+(\d{2}[A-Z]{3})/i;
-  for(const line of lines){
-    const m = String(line||"").match(re);
-    if(m){
-      const air = String(m[1]||"").toUpperCase();
-      const flt = String(m[2]||"").trim();
-      const bk  = String(m[3]||"").toUpperCase();
-      const d1  = String(m[4]||"").toUpperCase();
-      const citypair = String(m[5]||"").toUpperCase();
-      const dep = String(m[6]||"");
-      const arr = String(m[7]||"");
-      const d2  = String(m[8]||"").toUpperCase();
-      segs.push(`${air}${flt} ${bk} ${d1} ${citypair} ${dep} ${arr} ${d2}`);
-    }
-  }
-  // fallback: bloco já "ITINERÁRIO:"
-  if(!segs.length){
-    let capture = false;
-    for(const line of lines){
-      if(/ITINER[ÁA]RIO/i.test(line)){ capture = true; continue; }
-      if(capture){
-        if(!String(line||"").trim()) break;
-        const clean = String(line||"").trim().replace(/\s+/g," ");
-        if(clean) segs.push(clean);
+      function normalizeGdsText(raw){
+        let text = String(raw || "").replace(/\r/g, "\n");
+        text = text.replace(/\n{2,}/g, "\n");
+        text = text.replace(/[‐‑‒–—−]/g, "-");
+        text = text.replace(/^\s*(?:\)>|>+)\s*$/gmi, "");
+        text = text.replace(/^\s*md\s*$/gmi, "");
+        text = text.replace(/^\s*see\s+rtsvc\s*$/gmi, "");
+        text = splitInlinePassengerLines(text);
+        const lines = text.split(/\n/).map(x=>x.replace(/[\t ]+$/g,"")).filter((line,idx,arr)=>!(line==="" && arr[idx-1]===""));
+        return { raw:String(raw||""), text: lines.join("\n"), lines };
       }
-    }
-  }
-  // unique
-  const seen = new Set();
-  return segs.filter(s => (s && !seen.has(s) && seen.add(s)));
-}
 
-function fxqNormalizeBag(code){
-  const c = String(code||"").toUpperCase().trim();
-  if(!c) return "";
-  if(c === "NIL" || c === "0P") return "Sem Bag";
-  const m = c.match(/^(\d)P$/);
-  if(m){
-    const n = parseInt(m[1],10);
-    return n > 0 ? `${n}PC` : "Sem Bag";
-  }
-  return c;
-}
-
-function fxqExtractSegmentsFromPNR(text){
-  const lines = String(text||"").split(/\r?\n/);
-  const segs = [];
-  // Ex.: "  2  LA3283 A 11APR 6 CWBGRU DK1  0710 0825  11APR ..."
-  const re = /^\s*(\d+)\s+([A-Z0-9]{2})\s*([0-9]{1,4})\s+([A-Z])\s+(\d{2}[A-Z]{3})\s+\d+\s+([A-Z]{6})\s+\S+\s+(\d{4})\s+(\d{4})\s+(\d{2}[A-Z]{3})/i;
-  for(const line of lines){
-    const m = String(line||"").match(re);
-    if(m){
-      segs.push({
-        segNo: parseInt(m[1],10),
-        air: String(m[2]||"").toUpperCase(),
-        flt: String(m[3]||"").replace(/^0+/,""),
-        bk:  String(m[4]||"").toUpperCase(),
-        date: String(m[5]||"").toUpperCase(),
-        citypair: String(m[6]||"").toUpperCase(),
-        dep: String(m[7]||""),
-        arr: String(m[8]||""),
-        arrDate: String(m[9]||"").toUpperCase(),
-      });
-    }
-  }
-  return segs;
-}
-
-function fxqExtractFareBagByFlight(text){
-  const lines = String(text||"").split(/\r?\n/);
-  const out = [];
-  // Ex.: " SAO LA  3283 A    11APR 0710  MDL0NNM7        11APR11APR 1P"
-  const re = /^\s*[A-Z]{3}\s+([A-Z0-9]{2})\s+0*([0-9]{1,4})\s+[A-Z]\s+(?:\*\s+)?(\d{2}[A-Z]{3})\s+\d{4}.*?\s+(NIL|\dP)\s*$/i;
-  for(const line of lines){
-    const m = String(line||"").match(re);
-    if(m){
-      out.push({
-        air: String(m[1]||"").toUpperCase(),
-        flt: String(m[2]||"").replace(/^0+/,""),
-        date: String(m[3]||"").toUpperCase(),
-        bag: fxqNormalizeBag(m[4]||""),
-      });
-    }
-  }
-  return out;
-}
-
-function fxqBuildSegBagMap(text){
-  const pnrSegs = fxqExtractSegmentsFromPNR(text);
-  const fareSegs = fxqExtractFareBagByFlight(text);
-  const map = {}; // segNo -> bag
-
-  // match por (cia+voo+data) quando PNR existe
-  const used = new Set();
-  for(const fs of fareSegs){
-    const cand = pnrSegs.find(s => !used.has(s.segNo) && s.air === fs.air && s.flt === fs.flt && s.date === fs.date);
-    if(cand){
-      map[cand.segNo] = fs.bag;
-      used.add(cand.segNo);
-      continue;
-    }
-    // fallback: ignora data
-    const cand2 = pnrSegs.find(s => !used.has(s.segNo) && s.air === fs.air && s.flt === fs.flt);
-    if(cand2){
-      map[cand2.segNo] = fs.bag;
-      used.add(cand2.segNo);
-    }
-  }
-
-  // bag geral: se não tem PNR, usa direto o BG do quadro FXQ
-  const bagsFromMap = Object.values(map).filter(Boolean);
-  const bagsFromFxq = fareSegs.map(x=>x.bag).filter(Boolean);
-  const bags = bagsFromMap.length ? bagsFromMap : bagsFromFxq;
-  const uniq = Array.from(new Set(bags));
-  const bagOverall = (uniq.length === 1) ? uniq[0] : (uniq.length > 1 ? "Conforme família" : "");
-  return { map, bagOverall, uniqCount: uniq.length };
-}
-
-function fxqParseFamilies
-(text){
-  const s = String(text||"");
-  const ms = [...s.matchAll(/FARE\s+FAMILY:.*?:\s*([0-9]+(?:-[0-9]+)?)\s*:\s*([A-Z0-9]+)/ig)];
-  if(!ms.length) return [];
-  const fam2segs = new Map(); // fam -> Set(segNo)
-  for(const m of ms){
-    const segSpec = String(m[1]||"").trim(); // "2-3" ou "4"
-    const fam = String(m[2]||"").toUpperCase().trim();
-    if(!fam) continue;
-    const set = fam2segs.get(fam) || new Set();
-    if(segSpec.includes("-")){
-      const [a,b] = segSpec.split("-").map(x=>parseInt(x,10));
-      if(Number.isFinite(a) && Number.isFinite(b)){
-        const lo = Math.min(a,b), hi = Math.max(a,b);
-        for(let i=lo;i<=hi;i++) set.add(i);
+      function splitInlinePassengerLines(text){
+        return String(text||"")
+          .replace(/([^\n])\s+(?=(\d{1,2})\.)/g, "$1\n")
+          .replace(/(\b(?:MR|MRS|MISS|MSTR|MS)\b(?:\([^\n]*?\))*)\s+(?=(\d{1,2})\.)/gi, "$1\n");
       }
-    }else{
-      const n = parseInt(segSpec,10);
-      if(Number.isFinite(n)) set.add(n);
-    }
-    fam2segs.set(fam, set);
-  }
-  const groups = [];
-  for(const [fam,set] of fam2segs.entries()){
-    groups.push({ fam, segs: Array.from(set).sort((a,b)=>a-b) });
-  }
-  // manter ordem por menor segNo
-  groups.sort((g1,g2)=> (g1.segs[0]||999) - (g2.segs[0]||999));
-  return groups;
-}
 
-function fxqFormatSegRanges(segs){
-  const xs = (segs||[]).slice().sort((a,b)=>a-b);
-  if(!xs.length) return "";
-  const ranges = [];
-  let start = xs[0], prev = xs[0];
-  for(let i=1;i<xs.length;i++){
-    const cur = xs[i];
-    if(cur === prev+1){
-      prev = cur; continue;
-    }
-    ranges.push(start===prev ? `${start}` : `${start}-${prev}`);
-    start = prev = cur;
-  }
-  ranges.push(start===prev ? `${start}` : `${start}-${prev}`);
-  return ranges.join(",");
-}
+      function parseLoc(text){
+        const s = String(text || "");
+        let m = s.match(/^\s*RP\/.*?\s+([A-Z0-9]{5,7})\s*$/mi);
+        if(m) return m[1].trim().toUpperCase();
+        m = s.match(/\bLOC\s+([A-Z0-9]{5,7})\b/i);
+        if(m) return m[1].trim().toUpperCase();
+        return "";
+      }
 
-function fxqExtractFamiliesSmart(text, segBagMap){
-  const groups = fxqParseFamilies(text);
-  if(!groups.length) return "";
-  const uniqFam = Array.from(new Set(groups.map(g=>g.fam)));
-  if(uniqFam.length === 1){
-    return uniqFam[0]; // tudo igual: só a família
-  }
+      function normalizePersonName(s){
+        return normalizePaxName(String(s||"").replace(/\s+/g," ").trim());
+      }
 
-  // se famílias diferentes: mencionar segmentos; bag só se diferir entre famílias
-  const bagByFam = [];
-  for(const g of groups){
-    const bags = (g.segs||[]).map(n => segBagMap?.[n]).filter(Boolean);
-    const uniq = Array.from(new Set(bags));
-    bagByFam.push({ fam: g.fam, segs: g.segs, bag: (uniq.length===1?uniq[0]:"") });
-  }
-  const uniqBags = Array.from(new Set(bagByFam.map(x=>x.bag).filter(Boolean)));
-  const showBag = uniqBags.length > 1;
+      function splitNameTitle(namePart){
+        const m = String(namePart||"").trim().match(/^(.*?)(?:\s+(MR|MRS|MS|MISS|MSTR|INF))?$/i);
+        return {
+          base: normalizePersonName(m ? m[1] : namePart),
+          title: (m && m[2]) ? String(m[2]).toUpperCase() : ""
+        };
+      }
 
-  const parts = bagByFam.map(x=>{
-    const segTxt = fxqFormatSegRanges(x.segs);
-    const segPart = segTxt ? ` (SEG ${segTxt})` : "";
-    const bagPart = (showBag && x.bag) ? ` ${x.bag}` : "";
-    return `${x.fam}${segPart}${bagPart}`;
-  });
+      function parseInfName(rawInf, adultName){
+        const adultSurname = normalizePersonName(String(adultName||"").split("/")[0] || "");
+        let s = String(rawInf||"").trim();
+        s = s.replace(/^\s*INF(?:ANT)?/i, "").replace(/^\//, "").trim();
+        const parts = s.split("/").map(x=>x.trim()).filter(Boolean);
+        const isDob = (v)=>/^\d{2}[A-Z]{3}\d{2}$/i.test(String(v||"").replace(/\s/g,""));
+        while(parts.length && isDob(parts[parts.length-1])) parts.pop();
+        if(parts.length >= 2){
+          const sn = normalizePersonName(parts[0] || adultSurname);
+          const tail = splitNameTitle(parts[1]);
+          return `${sn}/${tail.base} ${tail.title||"INF"}`.trim();
+        }
+        const tail = splitNameTitle(parts[0] || "INFANT");
+        const sn = adultSurname || "";
+        return `${sn ? sn + "/" : ""}${tail.base} ${tail.title||"INF"}`.trim();
+      }
 
-  const seen = new Set();
-  const uniqParts = [];
-  for(const p of parts){
-    if(seen.has(p)) continue;
-    seen.add(p); uniqParts.push(p);
-  }
-  return uniqParts.join(" • ");
-}
+      function parsePassengersData(text){
+        const norm = normalizeGdsText(text);
+        const pax = [];
+        const warnings = [];
+        let confidence = 0;
+        const loc = parseLoc(norm.text);
+        const seen = new Set();
+        let nextInfIdx = 9000;
 
-function fxqParse(text){
-  const raw = String(text||"").trim();
-  const out = {
-    loc: fxqExtractLocator(raw),
-    cia: fxqExtractCia(raw),
-    paxStore: fxqExtractPaxStore(raw),
-    itinerary: fxqExtractItinerary(raw),
-    bag: "",
-    familia: "",
-    cur: "",
-    fareBal: null,
-    penalty: null,
-    totalAdd: null,
-    diftar: null,
-    diftax: null,
-  };
+        function addPax(idx, type, name, extra){
+          const t = String(type||"").toUpperCase();
+          if(!["ADT","CHD","INF"].includes(t)) return;
+          const nm = normalizePersonName(name);
+          if(!nm) return;
+          const key = `${idx}|${t}|${nm}`;
+          if(seen.has(key)) return;
+          seen.add(key);
+          pax.push(Object.assign({idx:Number(idx)||0, type:t, name:nm}, extra||{}));
+        }
 
-  // bagagem (por segmento, quando disponível) + família tarifária
-  const bagInfo = fxqBuildSegBagMap(raw);
-  out.bag = bagInfo.bagOverall || "";
-  out.familia = fxqExtractFamiliesSmart(raw, bagInfo.map) || "";
+        for(const line of norm.lines){
+          const pm = line.match(/^\s*(\d+)\.\s*(.+)$/);
+          if(!pm) continue;
+          const idx = parseInt(pm[1],10);
+          const rest = pm[2] || "";
+          const namePart = (rest.split("(")[0] || rest).trim();
+          if(!/\//.test(namePart)) continue;
+          const groups = Array.from(rest.matchAll(/\(([^)]*)\)/g)).map(m=>String(m[1]||"").trim());
+          let type = "ADT";
+          if(groups.some(g=>/^\s*CHD\b/i.test(g))) type = "CHD";
+          else if(groups.some(g=>/^\s*ADT\b/i.test(g))) type = "ADT";
+          else if(groups.some(g=>/^\s*INF\s*$/i.test(g))) type = "INF";
+          addPax(idx, type, namePart, {source:"PNR"});
+          confidence += 12;
 
+          for(const g of groups){
+            if(!/^\s*INF/i.test(g) || /^\s*INF\s*$/i.test(g)) continue;
+            addPax(nextInfIdx++, "INF", parseInfName(g, namePart), {source:"INF_INLINE", linkedTo:idx});
+            confidence += 8;
+          }
+        }
 
-  const totalAddAny = fxqGetAmount(raw, "TOTAL ADD COLL");
-  const ticketAny   = fxqGetAmount(raw, "TICKET DIFFERENCE");
-  const penAny      = fxqGetAmount(raw, "PENALTY");
-  const fareAny     = fxqGetAmount(raw, "FARE BALANCE");
+        // SSR INFT fallback
+        for(const line of norm.lines){
+          const m = line.match(/SSR\s+INFT\b.*?([A-Z][A-Z '\-]+)\/(.+?)(?:\s+|\/)(\d{2}[A-Z]{3}\d{2}).*?\/P(\d+)/i);
+          if(!m) continue;
+          const sn = normalizePersonName(m[1]);
+          const tail = splitNameTitle(m[2]);
+          const full = `${sn}/${tail.base} ${tail.title||"INF"}`.trim();
+          addPax(nextInfIdx++, "INF", full, {source:"SSR_INFT", linkedTo:parseInt(m[4],10), dob:m[3]});
+          confidence += 10;
+        }
 
-  const cur = (totalAddAny?.cur || ticketAny?.cur || penAny?.cur || fareAny?.cur || "USD");
-  out.cur = cur;
-
-  const totalAdd = fxqGetAmount(raw, "TOTAL ADD COLL", cur) || totalAddAny;
-  const penalty  = fxqGetAmount(raw, "PENALTY", cur) || penAny;
-  const fareBal  = fxqGetAmount(raw, "FARE BALANCE", cur) || fareAny;
-
-  out.totalAdd = totalAdd;
-  out.penalty = penalty;
-  out.fareBal = fareBal;
-
-  if(fareBal) out.diftar = fareBal.amt;
-  if(totalAdd && penalty && fareBal){
-    out.diftax = (totalAdd.amt - fareBal.amt - penalty.amt);
-  }else{
-    // fallback: ticket difference - fare balance (quando TOTAL ADD COLL não aparece)
-    const td = fxqGetAmount(raw, "TICKET DIFFERENCE", cur) || ticketAny;
-    if(td && fareBal) out.diftax = (td.amt - fareBal.amt);
-  }
-
-  return out;
-}
-
-function fxqApply(parsed){
-  const p = parsed || {};
-  let changed = [];
-
-  if(p.cur){
-    setInterCurrencyFromCode(p.cur);
-    changed.push(`Moeda ${p.cur}`);
-  }
-
-  if(p.loc){
-    const el = document.getElementById("loc");
-    if(el){ el.value = p.loc; changed.push("LOC"); }
-  }
-
-  if(p.cia){
-    const el = document.getElementById("cia");
-    if(el && !String(el.value||"").trim()){ el.value = p.cia; changed.push("CIA"); }
-  }
-
-  if(p.familia){
-    const el = document.getElementById("familia");
-    if(el && !String(el.value||"").trim()){ el.value = p.familia.toUpperCase(); changed.push("Família"); }
-  }
-
-  if(p.bag){
-    const el = document.getElementById("bag");
-    if(el && !String(el.value||"").trim()){ el.value = p.bag; changed.push("Bag"); }
-  }
-
-  // Itinerário -> Voos simulados (para ir no e-mail)
-  if(p.itinerary && p.itinerary.length){
-    const el = document.getElementById("inter_voos");
-    if(el && !String(el.value||"").trim()){
-      el.value = p.itinerary.join("\n");
-      changed.push("Itinerário");
-    }
-  }
-
-  // PAX store / quantidades
-  const ps = p.paxStore || {ADT:[],CHD:[],INF:[]};
-  const qADT = (ps.ADT||[]).length;
-  const qCHD = (ps.CHD||[]).length;
-  const qINF = (ps.INF||[]).length;
-  const hasPax = (qADT+qCHD+qINF) > 0;
-
-  if(hasPax){
-    document.getElementById("paxq_adt").value = String(qADT);
-    document.getElementById("paxq_chd").value = String(qCHD);
-    document.getElementById("paxq_inf").value = String(qINF);
-
-    // default do "dividir por QTD" quando tem mais de 1 pax
-    const divEl = document.getElementById("fxq_dividir_qtd");
-    if(divEl && (qADT+qCHD+qINF) > 1 && divEl.checked === false){
-      divEl.checked = true;
-    }
-
-    // merge com store atual pra não apagar bilhete já digitado (e preencher tickets do FA/FHE)
-    const cur = getPaxStore();
-    const merged = {ADT:[], CHD:[], INF:[]};
-    for(const k of ["ADT","CHD","INF"]){
-      const a = (ps[k]||[]);
-      const b = (cur?.[k]||[]);
-      for(let i=0;i<a.length;i++){
-        const pa = a[i] || {name:"", ticket:""};
-        const pb = b[i] || {name:"", ticket:""};
-        merged[k].push({
-          name: pa.name || pb.name || "",
-          ticket: pa.ticket || pb.ticket || "",
+        pax.sort((a,b)=>{
+          const av = a.linkedTo ? a.linkedTo + 0.5 : a.idx;
+          const bv = b.linkedTo ? b.linkedTo + 0.5 : b.idx;
+          return av-bv;
         });
-      }
-    }
 
-    setPaxStore(merged);
-    renderPaxFields();
-    changed.push("PAX");
-  }else{
-    // sem PAX no texto, mas pode ter bilhetes (FA/FHE) — preenche o agregado
-    const tickets = fxqExtractTicketsFlat(document.getElementById("fxq_text")?.value || "");
-    const tksEl = document.getElementById("tks");
-    if(tksEl && tickets.length && !String(tksEl.value||"").trim()){
-      tksEl.value = tickets.join(" / ");
-      changed.push("Bilhetes");
-    }
-  }
+        const qty = {ADT:0, CHD:0, INF:0};
+        pax.forEach(p=>qty[p.type] = (qty[p.type]||0)+1);
+        if(!pax.length) warnings.push("Nenhum passageiro identificado na máscara.");
+        if(pax.length && !loc) warnings.push("LOC não identificado na máscara.");
 
-  // valores -> por tipo (preferir o único tipo presente; senão ADT)
-  const chooseType = ()=>{
-    const types = [];
-    if(qADT>0) types.push("ADT");
-    if(qCHD>0) types.push("CHD");
-    if(qINF>0) types.push("INF");
-    if(types.length === 1) return types[0];
-    return "ADT";
-  };
-  const t = chooseType();
-
-  // dividir por QTD total (se FXQ veio totalizado)
-  const div = !!document.getElementById("fxq_dividir_qtd")?.checked;
-  const curADT = Math.max(0, toIntSafe(document.getElementById("paxq_adt")?.value));
-  const curCHD = Math.max(0, toIntSafe(document.getElementById("paxq_chd")?.value));
-  const curINF = Math.max(0, toIntSafe(document.getElementById("paxq_inf")?.value));
-  const totalQty = (hasPax ? (qADT+qCHD+qINF) : (curADT+curCHD+curINF)) || 1;
-
-  const per = (v)=> div ? (v/totalQty) : v;
-
-  const setIf = (id, v)=>{
-    const el = document.getElementById(id);
-    if(!el) return false;
-    el.value = fmtNumPT(v);
-    return true;
-  };
-
-  let setCount = 0;
-  if(Number.isFinite(p.diftar)){
-    if(setIf(`inter_fare_${t}`, per(p.diftar))){ setCount++; }
-  }
-  if(Number.isFinite(p.penalty?.amt)){
-    if(setIf(`inter_pen_${t}`, per(p.penalty.amt))){ setCount++; }
-  }
-  if(Number.isFinite(p.diftax)){
-    if(setIf(`inter_tax_${t}`, per(p.diftax))){ setCount++; }
-  }
-  if(setCount) changed.push(`Valores (${t})`);
-
-  invalidateAgencyCRR5();
-  updateAll();
-
-  return changed;
-}
-
-function initFxqUI
-(){
-  const btn = document.getElementById("btnParseFxq");
-  const ta = document.getElementById("fxq_text");
-  if(!btn || !ta) return;
-
-  const store = document.getElementById("inter_fxq_raw");
-
-  // mantém o texto colado salvo no CRR4/CRR5 (sem recalcular a cada tecla)
-  const syncStore = ()=>{
-    if(store) store.value = String(ta.value||"");
-  };
-  ta.addEventListener("input", ()=>{ syncStore(); });
-
-
-  btn.addEventListener("click", ()=>{
-    try{
-      syncStore();
-      const raw = String(ta.value||"").trim();
-      if(!raw){ fxqSetStatus("Cole o texto do PNR/FXQ primeiro.", false); return; }
-      const p = fxqParse(raw);
-
-      const hasAny = !!(p.loc || (p.paxStore && (p.paxStore.ADT.length+p.paxStore.CHD.length+p.paxStore.INF.length)) || (p.itinerary && p.itinerary.length) || p.diftar || p.diftax || p.penalty);
-      if(!hasAny){
-        fxqSetStatus("Não consegui identificar nada (talvez colou só uma parte).", false);
-        return;
+        return { loc, pax, qty, warnings, confidence: Math.max(0, Math.min(100, confidence)) };
       }
 
-      const changed = fxqApply(p);
-      fxqSetStatus(`OK — preenchido: ${changed.join(", ") || "parcial"}.`, true);
-    }catch(e){
-      console.error(e);
-      fxqSetStatus("Erro ao extrair. Cole o PNR + FXQ completo.", false);
-    }
-  });
-}
+      function parseSegments(text){
+        const norm = normalizeGdsText(text);
+        const segs = [];
+        const seen = new Set();
+        function add(seg){
+          const key = `${seg.carrier}|${seg.flight}|${seg.date}|${seg.origin}|${seg.destination}|${seg.dep}`;
+          if(seen.has(key)) return;
+          seen.add(key);
+          segs.push(seg);
+        }
+        for(const line of norm.lines){
+          let m = line.match(/^\s*(\d+)\s+([A-Z0-9]{1,3})\s*(\d{1,4})\s+([A-Z])\s+(\d{2}[A-Z]{3})\s+\d\*?([A-Z]{6})\s+[A-Z]{2}\d+\s+(\d{4})\s+(\d{4})\s+(\d{2}[A-Z]{3}).*?(\b\d{1,2}P\b|\bNIL\b|\b0P\b)?/i);
+          if(m){
+            add({ segNo:parseInt(m[1],10), carrier:m[2].toUpperCase(), flight:m[3], bookingClass:m[4].toUpperCase(), date:m[5].toUpperCase(), origin:m[6].slice(0,3).toUpperCase(), destination:m[6].slice(3,6).toUpperCase(), dep:m[7], arr:m[8], arrDate:m[9].toUpperCase(), bag:(m[10]||"").toUpperCase(), source:"PNR" });
+            continue;
+          }
+          m = line.match(/^\s*([A-Z]{3})\s+([A-Z]{3})\s+([A-Z0-9]{1,3})\s+0*(\d{1,4})\s+([A-Z])\s+\*?\s*(\d{2}[A-Z]{3})\s+(\d{4})\s+.+?(\b\d{1,2}P\b|\bNIL\b|\b0P\b)\s*$/i);
+          if(m){
+            add({ segNo:0, carrier:m[3].toUpperCase(), flight:m[4], bookingClass:m[5].toUpperCase(), date:m[6].toUpperCase(), origin:m[1].toUpperCase(), destination:m[2].toUpperCase(), dep:m[7], arr:"", arrDate:"", bag:(m[8]||"").toUpperCase(), source:"FXO" });
+          }
+        }
+        return segs;
+      }
 
-try{ initFxqUI(); }catch(e){}
+      function renderFormattedVoosFromSegments(segs){
+        if(!Array.isArray(segs) || !segs.length) return "";
+        return segs.map(seg=>`${seg.carrier}${String(seg.flight).padStart(0,"0")} ${seg.bookingClass} ${seg.date} ${seg.origin}${seg.destination} ${seg.dep}${seg.arr?` ${seg.arr}`:""}${seg.arrDate?` ${seg.arrDate}`:""}`.trim()).join("\n");
+      }
+
+      function applyPassengerData(parsed){
+        const pax = parsed && Array.isArray(parsed.pax) ? parsed.pax : [];
+        if(!pax.length){
+          setStatus("Cole a máscara do PNR (RP/...) contendo passageiros.");
+          show($("fxoWrap"), false);
+          show($("ticketsWrap"), false);
+          return false;
+        }
+
+        const counts = parsed.qty || {ADT:0, CHD:0, INF:0};
+        const store = {ADT:[], CHD:[], INF:[]};
+        const map = {};
+        const perTypeIdx = {ADT:0, CHD:0, INF:0};
+        let pOrder = 1;
+        for(const p of pax){
+          const idxWithin = perTypeIdx[p.type]++;
+          store[p.type].push({name:p.name, ticket:""});
+          map[pOrder++] = {type:p.type, idx:idxWithin, name:p.name, sourceIdx:p.idx};
+        }
+
+        if($("paxq_adt")) $("paxq_adt").value = String(counts.ADT||0);
+        if($("paxq_chd")) $("paxq_chd").value = String(counts.CHD||0);
+        if($("paxq_inf")) $("paxq_inf").value = String(counts.INF||0);
+        setPaxStore(store);
+        renderPaxFields();
+
+        state.paxList = pax;
+        state.pIndexToTypePos = map;
+        state.requiredTypes = ["ADT","CHD","INF"].filter(t => (counts[t]||0)>0);
+        state.fxoOk = {ADT:false, CHD:false, INF:false};
+        state.bagByType = {ADT:null, CHD:null, INF:null};
+        state.familyByType = {ADT:null, CHD:null, INF:null};
+        state.parseMeta.loc = parsed.loc || "";
+        state.parseMeta.warnings = parsed.warnings || [];
+        state.parseMeta.confidence = parsed.confidence || 0;
+
+        const bagEl = $("bag"); if(bagEl){ bagEl.value = ""; delete bagEl.dataset.auto; }
+        const famEl = $("familia"); if(famEl && famEl.dataset.auto === "1"){ famEl.value = ""; delete famEl.dataset.auto; }
+
+        show($("fxoWrap"), true);
+        for(const t of ["ADT","CHD","INF"]){
+          show($(`fxoBox_${t}_wrap`), state.requiredTypes.includes(t));
+          const st = $(`fxoBox_${t}_status`); if(st) st.textContent = "";
+        }
+        show($("ticketsWrap"), false);
+        if($("ticketsStatus")) $("ticketsStatus").textContent = "";
+
+        if(parsed.loc && $("loc") && !$("loc").value.trim()) $("loc").value = parsed.loc;
+
+        const segs = parseSegments($("inter_voos")?.value || "");
+        state.parseMeta.segments = segs;
+        const segInfo = segs.length ? ` • ${segs.length} trecho(s)` : "";
+        const warnTxt = (parsed.warnings||[]).length ? ` • aviso: ${(parsed.warnings||[]).join(" | ")}` : "";
+        setStatus(`Detectado: ${counts.ADT||0} ADT • ${counts.CHD||0} CHD • ${counts.INF||0} INF${parsed.loc?` • LOC ${parsed.loc}`:""}${segInfo} • confiança ${parsed.confidence||0}%${warnTxt}. Agora cole o FXO por tipo.`);
+        return true;
+      }
+
+      function parseCurrencyPairs(chunk){
+        const pairs = [];
+        for(const m of String(chunk||"").matchAll(/\b([A-Z]{3})\s+(-?\d+(?:\.\d{1,2})?)/g)){
+          const cur = String(m[1]).toUpperCase();
+          const amt = parseFloat(m[2]);
+          if(cur && Number.isFinite(amt)) pairs.push({cur, amt});
+        }
+        return pairs;
+      }
+
+      function findLabelValue(text, label, preferCur){
+        const lines = normalizeGdsText(text).lines;
+        const re = new RegExp(label, 'i');
+        for(let i=0;i<lines.length;i++){
+          if(!re.test(lines[i])) continue;
+          const ownPairs = parseCurrencyPairs(lines[i]);
+          if(ownPairs.length){
+            const exactOwn = preferCur ? ownPairs.find(p=>p.cur===preferCur) : null;
+            return exactOwn || ownPairs[ownPairs.length-1] || null;
+          }
+          for(let j=1;j<=2;j++){
+            const nextLine = lines[i+j] || "";
+            const nextPairs = parseCurrencyPairs(nextLine);
+            if(!nextPairs.length) continue;
+            const exactNext = preferCur ? nextPairs.find(p=>p.cur===preferCur) : null;
+            return exactNext || nextPairs[nextPairs.length-1] || null;
+          }
+          const chunk = [lines[i], lines[i+1]||"", lines[i+2]||""].join(" ");
+          const pairs = parseCurrencyPairs(chunk);
+          if(!pairs.length) return null;
+          const exact = preferCur ? pairs.find(p=>p.cur===preferCur) : null;
+          return exact || pairs[pairs.length-1] || null;
+        }
+        return null;
+      }
+
+      function parseFxoBlock(text){
+        const s = String(text||"");
+        const paxType = /\bCHD\b|\/CH\b/i.test(s) ? "CHD" : (/\bINF\b|\bIN\b/i.test(s) && /FARE\s+BALANCE/i.test(s) ? "INF" : "ADT");
+        const oldBase = findLabelValue(s, 'OLD\\s+BASE\\s+FARE');
+        const newBase = findLabelValue(s, 'NEW\\s+BASE\\s+FARE');
+        const fare = findLabelValue(s, 'FARE\\s+BALANCE');
+        const taxBal = findLabelValue(s, 'TAX\\s+BALANCE');
+        const tktDiff = findLabelValue(s, 'TICKET\\s+DIFFERENCE');
+        const pen = findLabelValue(s, 'PENALTY');
+        const grand = findLabelValue(s, 'GRAND\\s+TOTAL');
+        const add = findLabelValue(s, 'TOTAL\\s+ADD\\s+COLL') || grand || tktDiff;
+        const residual = findLabelValue(s, 'RESIDUAL\\s+VALUE');
+        const bagInfo = parseBagFromText(s);
+        const familyInfo = parseFareFamilies(s);
+        const warnings = [];
+        if(!fare) warnings.push('FARE BALANCE não encontrado');
+        if(!pen) warnings.push('PENALTY não encontrado');
+        if(!add) warnings.push('TOTAL ADD COLL não encontrado');
+        let confidence = 0;
+        if(fare) confidence += 35;
+        if(pen) confidence += 20;
+        if(add) confidence += 25;
+        if(familyInfo.text) confidence += 10;
+        if(bagInfo.text) confidence += 10;
+        return { paxType, oldBase, newBase, fare, taxBal, tktDiff, pen, grand, add, residual, bag:bagInfo.text, family:familyInfo.text, familyItems:familyInfo.items, warnings, confidence:Math.min(100,confidence) };
+      }
+
+      function parseBagFromText(text){
+        const nums = Array.from(String(text||"").matchAll(/\b(\d{1,2})P\b/gi)).map(m=>parseInt(m[1],10)).filter(Number.isFinite);
+        if(!nums.length){
+          if(/\bNIL\b|\b0P\b/i.test(text)) return {pieces:[0], text:'Sem bag'};
+          return {pieces:[], text:''};
+        }
+        const uniq = Array.from(new Set(nums)).sort((a,b)=>a-b);
+        if(uniq.length===1) return {pieces:uniq, text: uniq[0] > 0 ? `${uniq[0]}PC` : 'Sem bag'};
+        return {pieces:uniq, text: uniq.map(n=> n>0 ? `${n}PC` : 'Sem bag').join('/')};
+      }
+
+      function parseFareFamilies(text){
+        const items = Array.from(String(text||"").matchAll(/FARE\s+FAMILY:FC\d+:(\d+(?:-\d+)?):([A-Z0-9]+)/gi)).map(m=>({seg:m[1], fam:String(m[2]).toUpperCase()}));
+        if(!items.length) return {items:[], text:''};
+        const uniq = Array.from(new Set(items.map(x=>x.fam)));
+        if(uniq.length===1) return {items, text:uniq[0]};
+        const parts = [];
+        items.forEach(x=>{ const p = `${x.fam} (SEG ${x.seg})`; if(!parts.includes(p)) parts.push(p); });
+        return {items, text:parts.join(' • ')};
+      }
+
+      function resolveFxoCurrency(parsed, wantCur){
+        const hasAny = (o)=>o && Number.isFinite(o.amt) && o.cur;
+        const fareRaw = parsed.fare, penRaw = parsed.pen, addRaw = parsed.add;
+        const anyBRL = [fareRaw, penRaw, addRaw].some(x=>hasAny(x) && x.cur === 'BRL') && wantCur !== 'BRL';
+        let fx = parseBRNumber($("inter_fx")?.value);
+        let inferred = false;
+
+        if(anyBRL && !(fx > 0)){
+          const pairs = [parsed.fare, parsed.taxBal, parsed.residual, parsed.tktDiff, parsed.add].filter(hasAny);
+          const usdPair = pairs.find(x=>x.cur===wantCur && x.amt !== 0);
+          const brlPair = pairs.find(x=>x.cur==='BRL' && x.amt !== 0);
+          if(usdPair && brlPair){
+            fx = Math.abs(brlPair.amt / usdPair.amt);
+            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT(fx); }
+          }
+        }
+        if(anyBRL && !(fx > 0) && parsed.oldBase && parsed.newBase && parsed.fare && parsed.oldBase.cur===wantCur && parsed.newBase.cur===wantCur && parsed.fare.cur==='BRL'){
+          const diff = parsed.newBase.amt - parsed.oldBase.amt;
+          if(diff > 0){
+            fx = parsed.fare.amt / diff;
+            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT(fx); }
+          }
+        }
+
+        if(anyBRL && !(fx > 0)) return {canApply:false, needsFx:true, fx:0, inferred:false};
+
+        function toWant(obj){
+          if(!hasAny(obj)) return null;
+          if(obj.cur === 'BRL' && wantCur !== 'BRL') return {cur:wantCur, amt:obj.amt / fx, srcCur:'BRL'};
+          return {cur:obj.cur, amt:obj.amt, srcCur:obj.cur};
+        }
+        return { canApply:true, needsFx:false, fx:fx||0, inferred, fare:toWant(parsed.fare), pen:toWant(parsed.pen), add:toWant(parsed.add) };
+      }
+
+      function updateBagSummary(){
+        const bagEl = $("bag");
+        if(!bagEl) return;
+        const canOverwrite = !bagEl.value.trim() || bagEl.dataset.auto === '1';
+        if(!canOverwrite) return;
+        const vals = state.requiredTypes.filter(t=>state.bagByType[t]).map(t=>`${t}: ${state.bagByType[t]}`);
+        if(!vals.length) return;
+        const uniqVals = Array.from(new Set(vals.map(v=>v.split(': ')[1])));
+        bagEl.value = uniqVals.length === 1 ? uniqVals[0] : vals.join(' | ');
+        bagEl.dataset.auto = '1';
+      }
+
+      function updateFamilySummary(){
+        const famEl = $("familia");
+        if(!famEl) return;
+        const canOverwrite = !famEl.value.trim() || famEl.dataset.auto === '1';
+        if(!canOverwrite) return;
+        const vals = state.requiredTypes.filter(t=>state.familyByType[t]).map(t=>`${t}: ${state.familyByType[t]}`);
+        if(!vals.length) return;
+        const uniq = Array.from(new Set(vals.map(v=>v.split(': ')[1])));
+        famEl.value = uniq.length === 1 ? uniq[0] : vals.join(' | ');
+        famEl.dataset.auto = '1';
+      }
+
+      function syncInternoFromBoxes(){
+        const blocks = [];
+        for(const t of ['ADT','CHD','INF']){
+          const ta = $(`fxoBox_${t}`);
+          const txt = ta ? ta.value.trim() : '';
+          if(txt) blocks.push(`[${t}]\n${txt}`);
+        }
+        const interno = $("inter_interno");
+        if(interno) interno.value = blocks.join("\n\n");
+      }
+
+      function applyFxForType(type){
+        const ta = $(`fxoBox_${type}`);
+        const st = $(`fxoBox_${type}_status`);
+        if(!ta) return;
+        const parsed = parseFxoBlock(ta.value || '');
+        syncInternoFromBoxes();
+        const wantCur = (typeof getInterCurrency === 'function') ? getInterCurrency() : 'USD';
+        const resolved = resolveFxoCurrency(parsed, wantCur);
+
+        if(!resolved.canApply){
+          state.fxoOk[type] = false;
+          if(st) st.textContent = `Este FXO veio em BRL (equivalente). Informe o câmbio ${wantCur}→BRL no campo “Câmbio”.`;
+          return;
+        }
+
+        let ok = false;
+        if(resolved.fare){ const el = $(`inter_fare_${type}`); if(el){ el.value = fmtNumPT(resolved.fare.amt); ok = true; } }
+        if(resolved.pen){ const el = $(`inter_pen_${type}`); if(el){ el.value = fmtNumPT(resolved.pen.amt); ok = true; } }
+        if(resolved.add){
+          const fareAmt = resolved.fare ? resolved.fare.amt : 0;
+          const penAmt = resolved.pen ? resolved.pen.amt : 0;
+          const diftax = resolved.add.amt - fareAmt - penAmt;
+          const el = $(`inter_tax_${type}`); if(el){ el.value = fmtNumPT(diftax); ok = true; }
+        }
+        if(parsed.bag){ state.bagByType[type] = parsed.bag; updateBagSummary(); }
+        if(parsed.family){ state.familyByType[type] = parsed.family; updateFamilySummary(); }
+        state.fxoOk[type] = ok;
+
+        if(st){
+          if(ok){
+            const msg = [`OK — ${wantCur}`];
+            if(resolved.fx>0 && (resolved.inferred || parseBRNumber($("inter_fx")?.value)>0)) msg.push(`câmbio ${fmtNumPT(resolved.fx)}${resolved.inferred?' (inferido)':''}`);
+            if(parsed.confidence) msg.push(`confiança ${parsed.confidence}%`);
+            if(parsed.warnings.length) msg.push(parsed.warnings.join(' | '));
+            st.textContent = msg.join(' • ');
+          }else{
+            st.textContent = 'Não encontrei FARE BALANCE / PENALTY / TOTAL ADD COLL suficientes neste bloco.';
+          }
+        }
+        try{ updateAll(); }catch(e){}
+        try{ applyPaxTypeVisibility(); }catch(e){}
+        const allOk = state.requiredTypes.every(t=>state.fxoOk[t]);
+        show($("ticketsWrap"), allOk);
+        if(allOk && $("ticketsStatus")) $("ticketsStatus").textContent = 'Agora cole FA/FHE com /P1, /P2... que eu distribuo nos passageiros.';
+      }
+
+      function getAirlineInfoByTicketPrefix(ticket){
+        const raw = ensureTicketHyphen(String(ticket||''));
+        const prefix = raw.slice(0,3);
+        const map = {
+          '001':{code:'AA', name:'American Airlines'},
+          '006':{code:'DL', name:'Delta Air Lines'},
+          '014':{code:'AC', name:'Air Canada'},
+          '016':{code:'UA', name:'United Airlines'},
+          '027':{code:'AS', name:'Alaska Airlines'},
+          '037':{code:'US', name:'US Airways'},
+          '044':{code:'LA', name:'LATAM'},
+          '045':{code:'AV', name:'Avianca'},
+          '047':{code:'TP', name:'TAP Air Portugal'},
+          '055':{code:'AZ', name:'Alitalia / ITA legado'},
+          '057':{code:'AF', name:'Air France'},
+          '074':{code:'KL', name:'KLM'},
+          '075':{code:'IB', name:'Iberia'},
+          '081':{code:'QF', name:'Qantas'},
+          '125':{code:'BA', name:'British Airways'},
+          '139':{code:'AM', name:'Aeromexico'},
+          '157':{code:'QR', name:'Qatar Airways'},
+          '176':{code:'EK', name:'Emirates'},
+          '220':{code:'LH', name:'Lufthansa'},
+          '235':{code:'TK', name:'Turkish Airlines'},
+          '257':{code:'OS', name:'Austrian Airlines'},
+          '390':{code:'A3', name:'Aegean'},
+          '724':{code:'LX', name:'Swiss'},
+          '957':{code:'LA', name:'TAM legado / LATAM'}
+        };
+        return map[prefix] || null;
+      }
+      function getAirlineByTicketPrefix(ticket){
+        const info = getAirlineInfoByTicketPrefix(ticket);
+        return info ? info.name : '';
+      }
+
+      function parseTickets(text){
+        const lines = normalizeGdsText(text).lines;
+        const out = {};
+        let pendingTicket = null;
+        const orphanTickets = [];
+        const grabP = (line)=>{
+          const s = String(line||'');
+          const m = s.match(/\/P(\d+)(?:\D|$)/i);
+          return m ? parseInt(m[1],10) : null;
+        };
+        const grabTicket = (line)=>{
+          const s = String(line||'');
+          // Aceita 047-2681639174 e também 047-2681639174-75 / 0472681639174-75.
+          // O sufixo final (-75, -77 etc.) é bilhete auxiliar/cupom e deve ser ignorado.
+          let m = s.match(/(?:^|[^\d])(\d{3})-(\d{10})(?:-(\d{2}))?(?=[^\d]|$)/);
+          if(m) return ensureTicketHyphen(`${m[1]}-${m[2]}`);
+          m = s.match(/(?:^|[^\d])(\d{13})(?:-(\d{2}))?(?=[^\d]|$)/);
+          if(m) return ensureTicketHyphen(m[1]);
+          return null;
+        };
+        const isFaFheLine = (line)=>/(?:^|\s)(?:FA|FHE)\s+PAX(?:\s|$)/i.test(String(line||''));
+        for(const line of lines){
+          const isFaFhe = isFaFheLine(line);
+          const tk = grabTicket(line);
+          const p = grabP(line);
+          if(isFaFhe && tk && p){ out[p] = tk; pendingTicket = null; continue; }
+          if(isFaFhe && tk){
+            pendingTicket = tk;
+            if(!orphanTickets.includes(pendingTicket)) orphanTickets.push(pendingTicket);
+            continue;
+          }
+          if(pendingTicket && p){ out[p] = pendingTicket; pendingTicket = null; continue; }
+          if(tk && p && !out[p]){ out[p] = tk; continue; }
+        }
+        if(orphanTickets.length === 1 && Object.keys(out).length === 0){
+          out[1] = orphanTickets[0];
+        }
+        return out;
+      }
+      function applyTickets(){
+        const ta = $("inter_original");
+        if(!ta) return;
+        const mapping = parseTickets(ta.value || '');
+        const ts = $("ticketsStatus");
+        const keys = Object.keys(mapping);
+        if(!keys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE no texto colado.'; return; }
+        const map = state.pIndexToTypePos || {};
+        const store = getPaxStore();
+        let applied = 0;
+        keys.forEach(k=>{
+          const info = map[parseInt(k,10)];
+          if(info && store[info.type] && store[info.type][info.idx]){ store[info.type][info.idx].ticket = ensureTicketHyphen(mapping[k]); applied++; }
+        });
+        setPaxStore(store); renderPaxFields();
+        const airlineInfos = [...new Map(keys.map(k=>{
+          const info = getAirlineInfoByTicketPrefix(mapping[k]);
+          return info ? [info.code, info] : null;
+        }).filter(Boolean)).values()];
+        const ciaInput = $('cia');
+        if(ciaInput && airlineInfos.length === 1){
+          ciaInput.value = airlineInfos[0].code;
+          try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
+          try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
+        }
+        if(ts){ const airlines=airlineInfos.map(a=>a.name); ts.textContent = applied ? `OK — distribuí ${applied} bilhete(s) pelo P1/P2...${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}` : 'Encontrei bilhetes, mas não consegui mapear P1/P2.'; }
+        if(applied) showToast('Bilhetes preenchidos no PAX');
+      }
+
+      function applyInterTipoUI(){
+        const auto = isInterAuto();
+        const manualWrap = $("manualInternoWrap");
+        const lblVoos = $("lbl_inter_voos"); const voosTA = $("inter_voos");
+        const lblTk = $("lbl_inter_original"); const tkTA = $("inter_original");
+        if(auto){
+          if(lblVoos) lblVoos.textContent = '1) Itinerário / Máscara (cole o PNR)';
+          if(voosTA) voosTA.placeholder = 'Cole aqui RP/... com PAX + segmentos (Amadeus).';
+          if(lblTk) lblTk.textContent = '3) Bilhetes (FA/FHE)';
+          if(tkTA) tkTA.placeholder = 'Cole aqui FA/FHE (com /P1, /P2...)';
+          if(manualWrap) manualWrap.classList.add('hidden');
+          const parsed = parsePassengersData(voosTA?.value || '');
+          if(parsed.pax.length) show($("fxoWrap"), true);
+          show($("ticketsWrap"), false);
+        } else {
+          if(lblVoos) lblVoos.textContent = 'Voos simulados (opcional)';
+          if(voosTA) voosTA.placeholder = 'Cole aqui os voos simulados (um por linha)';
+          if(lblTk) lblTk.textContent = 'Bilhete original (opcional)';
+          if(tkTA) tkTA.placeholder = 'Cole aqui dados do bilhete original';
+          if(manualWrap) manualWrap.classList.remove('hidden');
+          show($("fxoWrap"), false);
+          show($("ticketsWrap"), true);
+          setStatus('');
+        }
+      }
+
+      function maybeAutoFromPnr(val){
+        if(isInterAuto()) return;
+        if(/(^|\n)\s*RP\//i.test(String(val||''))){
+          const sel = $("inter_tipo");
+          if(sel){ sel.value = 'Automático'; applyInterTipoUI(); }
+        }
+      }
+
+      const interTipo = $("inter_tipo");
+      if(interTipo) interTipo.addEventListener('change', applyInterTipoUI);
+
+      const it = $("inter_voos");
+      if(it){
+        const runPnr = ()=>{
+          maybeAutoFromPnr(it.value);
+          if(!isInterAuto()) return;
+          const parsed = parsePassengersData(it.value);
+          applyPassengerData(parsed);
+        };
+        it.addEventListener('paste', ()=> setTimeout(runPnr, 0));
+        it.addEventListener('input', ()=>{ clearTimeout(it.__fxq_t); it.__fxq_t = setTimeout(runPnr, 250); });
+      }
+
+      ['ADT','CHD','INF'].forEach(t=>{
+        const ta = $(`fxoBox_${t}`);
+        if(!ta) return;
+        const run = ()=>{ if(isInterAuto()) applyFxForType(t); };
+        ta.addEventListener('paste', ()=> setTimeout(run, 0));
+        ta.addEventListener('input', ()=>{ clearTimeout(ta.__fxq_t); ta.__fxq_t = setTimeout(run, 250); });
+      });
+
+      const tk = $("inter_original");
+      if(tk){
+        const run = ()=>{ if(isInterAuto()) applyTickets(); };
+        tk.addEventListener('paste', ()=> setTimeout(run, 0));
+        tk.addEventListener('input', ()=>{ clearTimeout(tk.__fxq_t); tk.__fxq_t = setTimeout(run, 250); });
+      }
+
+      applyInterTipoUI();
+    })();
 
 // buttons
     let lastEmailHtml = "";
     document.getElementById("btnGerar").addEventListener("click", async ()=>{
-      // Preview: gera/garante CRR5 (1x por estado) e REUSA se já existir.
-      // Se falhar (sem internet), ainda mostra o preview, mas não deixa "Copiar E-mail" enviar sem CRR5.
-      try{
-        await ensureAgencyCRR5();
-        renderCRR5Status();
-      }catch(e){
-        console.error(e);
-        showToast("Não consegui gerar CRR5 para o preview — verifique conexão.");
-        try{ renderCRR5Status(); }catch(_e){}
-      }
+      try{ await ensureCRR5Current(); }
+      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
       lastEmailHtml = generateEmail();
     });
 
-document.getElementById("btnCopiarHtml").addEventListener("click", async ()=>{
-      // Para envio: sempre usar CRR5. Se não existir, gera agora (1x por estado).
-      try{
-        await ensureAgencyCRR5();
-        renderCRR5Status();
-      }catch(e){
-        console.error(e);
-        showToast("Não consegui gerar CRR5 — verifique conexão.");
-        return; // não envia com CRR4 por engano
-      }
-
-      // sempre regen para refletir o CRR5
+    document.getElementById("btnCopiarHtml").addEventListener("click", async ()=>{
+      try{ await ensureCRR5Current(); }
+      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
       lastEmailHtml = generateEmail();
       if(!lastEmailHtml){ return; }
       const ok = await copyHtmlToClipboard(lastEmailHtml);
       if(!ok) showToast("Não deu pra copiar automático. Copie pelo preview.");
     });
 
-document.getElementById("btnCopiarObs").addEventListener("click", async ()=>{
+    document.getElementById("btnCopiarObs").addEventListener("click", async ()=>{
       const errs = validateBeforeGenerate();
       if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs[0]); return; }
       const code = buildRfObsCode();
@@ -4467,53 +4746,37 @@ document.getElementById("btnCopiarObs").addEventListener("click", async ()=>{
 // CRR
     // (botão "Copiar CRR" removido)
 
-    document.getElementById("btnGerarCRR5").addEventListener("click", async ()=>{
+document.getElementById("btnGerarCRR5") && document.getElementById("btnGerarCRR5").addEventListener("click", async ()=>{
       try{
-        const c5 = await ensureAgencyCRR5();
-        renderCRR5Status();
-        try{ await navigator.clipboard.writeText(c5); showToast("CRR5 gerado e copiado!"); }
-        catch(e){ showToast("CRR5 gerado!"); }
-        // atualiza preview também
-        lastEmailHtml = generateEmail();
-      }catch(e){
-        console.error(e);
-        showToast("Falha ao gerar CRR5.");
-      }
+        const crr5 = await ensureCRR5Current();
+        try{ await navigator.clipboard.writeText(crr5); showToast("CRR5 copiado!"); }
+        catch(e){ showToast("CRR5 gerado. Copie do campo."); }
+      }catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); }
     });
 
 document.getElementById("btnCarregarRACode").addEventListener("click", async ()=>{
-      // Lê primeiro o campo, para não perder CRR5 colado (invalidação pode sobrescrever)
-      const raw = (document.getElementById("raCode").value || "").trim();
+      const code = (document.getElementById("raCode").value || "").trim();
       try{
-        const maybe5 = extractCRR5(raw);
-
-        if(maybe5){
-          // CRR5 -> busca no servidor -> aplica como CRR4
-          const crr4 = await loadCRR5ToCRR4(maybe5);
-          invalidateAgencyCRR5(); // limpa estado/cache anterior
+        const c5 = extractCRR5(code);
+        if(c5){
+          const crr4 = await loadCRR5ToCRR4(c5);
           loadCRRCode(crr4);
-
-          // Mantém o mesmo CRR5 no campo e no cache (não gera um novo)
+          // mantém o CRR5 visível e marca assinatura para reuso
+          const rc = document.getElementById("raCode");
           const sig = buildCRRCode();
-          __agencyCRR5 = maybe5;
-          __agencyCRR4Sig = sig;
-          __agencyCRR5Promise = null;
-          setCRRFieldToCRR5(maybe5);
+          __CRR5_CACHE.set(sig, c5);
+          if(rc){ rc.dataset.manual = "1"; rc.dataset.sig = sig; rc.value = c5; }
         }else{
-          // CRR4/CRR3/CRR2/CRR1/RA1 -> carrega. CRR5 é gerado sob demanda (botão / copiar e-mail)
-          invalidateAgencyCRR5();
-          loadCRRCode(raw);
-          renderCRR5Status();
-          showToast("Carregado. Clique em ‘Gerar CRR curto (CRR5)’ para criar o código curto.");
+          loadCRRCode(code);
+          const rc = document.getElementById("raCode");
+          if(rc){ rc.dataset.manual = "0"; rc.dataset.sig = ""; rc.value = buildCRRCode(); }
         }
-
-        // refresh preview as well
         lastEmailHtml = generateEmail();
       }catch(e){
         showToast((e && e.message) ? e.message : "Código inválido.");
       }
     });
-document.getElementById("btnLimpar").addEventListener("click", clearAll);
+    document.getElementById("btnLimpar").addEventListener("click", clearAll);
     function forceUpperKeepCursor(el){
       if(!el || typeof el.value !== "string") return;
       const start = el.selectionStart;
@@ -4527,8 +4790,8 @@ document.getElementById("btnLimpar").addEventListener("click", clearAll);
 // reactive calc
     for(const el of document.querySelectorAll("input, select, textarea")){
       if(el.id === "obsCode" || el.id === "raCode") continue;
-      el.addEventListener("input", ()=>{ invalidateAgencyCRR5(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateAgencyCRR5(); updateAll(); });
+      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
     }
 
     // uppercase automático em campos-chave
@@ -4560,13 +4823,13 @@ document.getElementById("btnLimpar").addEventListener("click", clearAll);
     for(const id of ["rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia","rent_cobrar_ag"]){
       const el = document.getElementById(id);
       if(!el) continue;
-      el.addEventListener("input", ()=>{ invalidateAgencyCRR5(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateAgencyCRR5(); updateAll(); });
+      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
     }
 
     updateAll();
+    syncOutputTabs();
     renderPaxFields();
-    try{ renderCRR5Status(); }catch(e){}
 
     // PAX listeners
     for(const id of ["paxq_adt","paxq_chd","paxq_inf"]){
@@ -4604,14 +4867,24 @@ document.getElementById("btnLimpar").addEventListener("click", clearAll);
     (function initTheme(){
       const key = "ra_calc_theme";
       const sel = document.getElementById("themeSel");
+      const icon = document.getElementById("themeIcon");
+
+      const apply = (v)=>{
+        const theme = (v === "light") ? "light" : "dark";
+        document.documentElement.dataset.theme = theme;
+        localStorage.setItem(key, theme);
+        if(sel) sel.value = theme;
+        if(icon) icon.textContent = (theme === "light") ? "☀️" : "🌙";
+      };
+
+      // inicia com preferencia salva
       const saved = localStorage.getItem(key) || "dark";
-      document.documentElement.dataset.theme = saved;
-      if(sel){ sel.value = saved; sel.addEventListener("change", () => {
-        const v = sel.value || "dark";
-        document.documentElement.dataset.theme = v;
-        localStorage.setItem(key, v);
-      });}
+      apply(saved);
+
+      if(sel){
+        sel.addEventListener("change", () => apply(sel.value || "dark"));
+      }
     })();
-    </script>
+</script>
 </body>
 </html>
