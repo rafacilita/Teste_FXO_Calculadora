@@ -1286,8 +1286,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
           <div class="hr"></div>
 
           <div id="ticketsWrap" class="hidden">
-            <label id="lbl_inter_original">3) Bilhetes (FA/FHE)</label>
-            <textarea id="inter_original" placeholder="Cole aqui FA/FHE (com /P1, /P2...)"></textarea>
+            <label id="lbl_inter_original">3) Bilhetes (FA/FHE/TKT)</label>
+            <textarea id="inter_original" placeholder="Cole aqui FA/FHE ou máscara TKT (com /P1, /P2... quando houver)"></textarea>
             <div class="muted small" id="ticketsStatus" style="margin-top:6px"></div>
           </div>
         </div>
@@ -1902,6 +1902,11 @@ function fmtNumPT(n){
       const x = Number(n);
       const v = Number.isFinite(x) ? x : 0;
       return new Intl.NumberFormat("pt-BR", {minimumFractionDigits:2, maximumFractionDigits:2}).format(v);
+    }
+function fmtNumPT4(n){
+      const x = Number(n);
+      const v = Number.isFinite(x) ? x : 0;
+      return new Intl.NumberFormat("pt-BR", {minimumFractionDigits:4, maximumFractionDigits:4}).format(v);
     }
 
     function intVal(id){
@@ -2563,7 +2568,7 @@ const store = getPaxStore();
 
     // ----- CRR4: mesmo conteúdo do CRR3, mas com chaves compactadas (reduz bem o tamanho) -----
     // Mapeia ids de campos -> índice base36 (ex.: "cia" -> "a") antes de compactar.
-    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_folio_agencia","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_endosso_on","inter_endosso_text","inter_endosso_agencia","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
+    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
     const CRR4_ID2K = {};
     const CRR4_K2ID = {};
     for(let i=0;i<CRR4_KEYS.length;i++){ 
@@ -4344,7 +4349,7 @@ document.getElementById("paxq_adt").value = "1";
 
       function findLabelValue(text, label, preferCur){
         const lines = normalizeGdsText(text).lines;
-        const re = new RegExp(label, 'i');
+        const re = new RegExp('^\\s*' + label + '\\b', 'i');
         for(let i=0;i<lines.length;i++){
           if(!re.test(lines[i])) continue;
           const ownPairs = parseCurrencyPairs(lines[i]);
@@ -4354,16 +4359,13 @@ document.getElementById("paxq_adt").value = "1";
           }
           for(let j=1;j<=2;j++){
             const nextLine = lines[i+j] || "";
+            if(/^\s*(?:OLD\s+BASE\s+FARE|NEW\s+BASE\s+FARE|FARE\s+BALANCE|OLD\s+TAX|NEW\s+TAX|TAX\s+BALANCE|TICKET\s+DIFFERENCE|PENALTY|GRAND\s+TOTAL|TOTAL\s+ADD\s+COLL|RESIDUAL\s+VALUE)\b/i.test(nextLine)) break;
             const nextPairs = parseCurrencyPairs(nextLine);
             if(!nextPairs.length) continue;
             const exactNext = preferCur ? nextPairs.find(p=>p.cur===preferCur) : null;
             return exactNext || nextPairs[nextPairs.length-1] || null;
           }
-          const chunk = [lines[i], lines[i+1]||"", lines[i+2]||""].join(" ");
-          const pairs = parseCurrencyPairs(chunk);
-          if(!pairs.length) return null;
-          const exact = preferCur ? pairs.find(p=>p.cur===preferCur) : null;
-          return exact || pairs[pairs.length-1] || null;
+          return null;
         }
         return null;
       }
@@ -4396,14 +4398,48 @@ document.getElementById("paxq_adt").value = "1";
       }
 
       function parseBagFromText(text){
-        const nums = Array.from(String(text||"").matchAll(/\b(\d{1,2})P\b/gi)).map(m=>parseInt(m[1],10)).filter(Number.isFinite);
-        if(!nums.length){
-          if(/\bNIL\b|\b0P\b/i.test(text)) return {pieces:[0], text:'Sem bag'};
-          return {pieces:[], text:''};
+        const s = String(text||"");
+        const lines = normalizeGdsText(s).lines;
+        const rows = [];
+        let inTable = false;
+        for(const line of lines){
+          if(/AL\s+FLGT\s+BK\s+DATE\s+TIME.*\bBG\b/i.test(line)){ inTable = true; continue; }
+          if(!inTable) continue;
+          if(/ORIGIN\s+TRVL\s+CURRENCY|OLD\s+BASE\s+FARE/i.test(line)) break;
+          if(/S\s+U\s+R\s+F\s+A\s+C\s+E/i.test(line)) continue;
+          const m = line.match(/\b(NIL|0P|\d{1,2}P)\s*$/i);
+          if(!m) continue;
+          const raw = String(m[1]).toUpperCase();
+          const pieces = /NIL|0P/i.test(raw) ? 0 : parseInt(raw,10);
+          rows.push({pieces, raw});
         }
-        const uniq = Array.from(new Set(nums)).sort((a,b)=>a-b);
-        if(uniq.length===1) return {pieces:uniq, text: uniq[0] > 0 ? `${uniq[0]}PC` : 'Sem bag'};
-        return {pieces:uniq, text: uniq.map(n=> n>0 ? `${n}PC` : 'Sem bag').join('/')};
+        if(!rows.length){
+          if(/\bNIL\b|\b0P\b/i.test(s)) return {pieces:[0], text:'Sem bag', groups:[]};
+          return {pieces:[], text:'', groups:[]};
+        }
+        const segs = Array.isArray(state?.parseMeta?.segments) ? state.parseMeta.segments.filter(x=>x && (x.source === 'PNR' || x.segNo)) : [];
+        const mapped = rows.map((r, idx)=>({ pieces:r.pieces, segNo: segs[idx] && segs[idx].segNo ? segs[idx].segNo : null }));
+        const uniq = Array.from(new Set(mapped.map(x=>x.pieces))).sort((a,b)=>a-b);
+        function bagLabel(n){ return n > 0 ? `${n}PC` : 'Sem bag'; }
+        if(uniq.length===1) return {pieces:uniq, text:bagLabel(uniq[0]), groups:[{pieces:uniq[0], segFrom:mapped[0].segNo, segTo:mapped[mapped.length-1].segNo}]};
+        const groups = [];
+        for(const item of mapped){
+          const last = groups[groups.length-1];
+          const contiguous = last && Number.isFinite(last.segTo) && Number.isFinite(item.segNo) && item.segNo === last.segTo + 1;
+          if(last && last.pieces === item.pieces && contiguous){
+            last.segTo = item.segNo;
+          } else {
+            groups.push({pieces:item.pieces, segFrom:item.segNo, segTo:item.segNo});
+          }
+        }
+        const textOut = groups.map(g=>{
+          const label = bagLabel(g.pieces);
+          if(Number.isFinite(g.segFrom) && g.segFrom>0){
+            return `${label} (SEG ${g.segFrom}${g.segTo && g.segTo !== g.segFrom ? `-${g.segTo}` : ''})`;
+          }
+          return label;
+        }).join(' • ');
+        return {pieces:uniq, text:textOut, groups};
       }
 
       function parseFareFamilies(text){
@@ -4429,14 +4465,14 @@ document.getElementById("paxq_adt").value = "1";
           const brlPair = pairs.find(x=>x.cur==='BRL' && x.amt !== 0);
           if(usdPair && brlPair){
             fx = Math.abs(brlPair.amt / usdPair.amt);
-            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT(fx); }
+            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT4(fx); }
           }
         }
         if(anyBRL && !(fx > 0) && parsed.oldBase && parsed.newBase && parsed.fare && parsed.oldBase.cur===wantCur && parsed.newBase.cur===wantCur && parsed.fare.cur==='BRL'){
           const diff = parsed.newBase.amt - parsed.oldBase.amt;
           if(diff > 0){
             fx = parsed.fare.amt / diff;
-            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT(fx); }
+            if(fx > 0){ inferred = true; if($("inter_fx") && !$("inter_fx").value.trim()) $("inter_fx").value = fmtNumPT4(fx); }
           }
         }
 
@@ -4447,7 +4483,7 @@ document.getElementById("paxq_adt").value = "1";
           if(obj.cur === 'BRL' && wantCur !== 'BRL') return {cur:wantCur, amt:obj.amt / fx, srcCur:'BRL'};
           return {cur:obj.cur, amt:obj.amt, srcCur:obj.cur};
         }
-        return { canApply:true, needsFx:false, fx:fx||0, inferred, fare:toWant(parsed.fare), pen:toWant(parsed.pen), add:toWant(parsed.add) };
+        return { canApply:true, needsFx:false, fx:fx||0, inferred, fare:toWant(parsed.fare), pen:toWant(parsed.pen), add:toWant(parsed.add), taxBal:toWant(parsed.taxBal), tktDiff:toWant(parsed.tktDiff) };
       }
 
       function updateBagSummary(){
@@ -4568,8 +4604,10 @@ document.getElementById("paxq_adt").value = "1";
       }
 
       function parseTickets(text){
-        const lines = normalizeGdsText(text).lines;
+        const src = String(text||'');
+        const lines = normalizeGdsText(src).lines;
         const out = {};
+        const meta = { loc:'', source:'', airlineInfos:[] };
         let pendingTicket = null;
         const orphanTickets = [];
         const grabP = (line)=>{
@@ -4580,14 +4618,36 @@ document.getElementById("paxq_adt").value = "1";
         const grabTicket = (line)=>{
           const s = String(line||'');
           // Aceita 047-2681639174 e também 047-2681639174-75 / 0472681639174-75.
-          // O sufixo final (-75, -77 etc.) é bilhete auxiliar/cupom e deve ser ignorado.
-          let m = s.match(/(?:^|[^\d])(\d{3})-(\d{10})(?:-(\d{2}))?(?=[^\d]|$)/);
+          // O sufixo final (-75, -77, -891 etc.) é auxiliar/cupom e deve ser ignorado.
+          let m = s.match(/(?:^|[^\d])(\d{3})-(\d{10})(?:-(\d{2,3}))?(?=[^\d]|$)/);
           if(m) return ensureTicketHyphen(`${m[1]}-${m[2]}`);
-          m = s.match(/(?:^|[^\d])(\d{13})(?:-(\d{2}))?(?=[^\d]|$)/);
+          m = s.match(/(?:^|[^\d])(\d{13})(?:-(\d{2,3}))?(?=[^\d]|$)/);
           if(m) return ensureTicketHyphen(m[1]);
           return null;
         };
         const isFaFheLine = (line)=>/(?:^|\s)(?:FA|FHE)\s+PAX(?:\s|$)/i.test(String(line||''));
+        const isTktMask = /(?:^|\n)\s*TKT-(\d{13})(?:-\d{2,3})?/i.test(src);
+
+        if(isTktMask){
+          meta.source = 'TKT';
+          const tkm = src.match(/(?:^|\n)\s*TKT-(\d{13})(?:-\d{2,3})?/i);
+          const baseTicket = tkm ? ensureTicketHyphen(tkm[1]) : '';
+          const locm = src.match(/\bLOC-([A-Z0-9]{5,6})\b/i);
+          if(locm) meta.loc = (locm[1] || '').toUpperCase();
+          const paxLines = [];
+          for(const line of lines){
+            const pm = String(line||'').match(/^\s*(\d+)\.\s*([A-Z][A-Z\s'\/\-]+?)\s{2,}(ADT|CHD|INF)\b/i);
+            if(pm){ paxLines.push({p: parseInt(pm[1],10), name: pm[2].trim(), type: pm[3].toUpperCase()}); }
+          }
+          if(baseTicket){
+            if(paxLines.length){
+              paxLines.forEach(row=>{ if(row.p && !out[row.p]) out[row.p] = baseTicket; });
+            }else{
+              out[1] = baseTicket;
+            }
+          }
+        }
+
         for(const line of lines){
           const isFaFhe = isFaFheLine(line);
           const tk = grabTicket(line);
@@ -4604,15 +4664,21 @@ document.getElementById("paxq_adt").value = "1";
         if(orphanTickets.length === 1 && Object.keys(out).length === 0){
           out[1] = orphanTickets[0];
         }
-        return out;
+        const airlineInfos = [...new Map(Object.keys(out).map(k=>{
+          const info = getAirlineInfoByTicketPrefix(out[k]);
+          return info ? [info.code, info] : null;
+        }).filter(Boolean)).values()];
+        meta.airlineInfos = airlineInfos;
+        return { mapping: out, meta };
       }
       function applyTickets(){
         const ta = $("inter_original");
         if(!ta) return;
-        const mapping = parseTickets(ta.value || '');
+        const parsed = parseTickets(ta.value || '');
+        const mapping = parsed.mapping || {};
         const ts = $("ticketsStatus");
         const keys = Object.keys(mapping);
-        if(!keys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE no texto colado.'; return; }
+        if(!keys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE/TKT no texto colado.'; return; }
         const map = state.pIndexToTypePos || {};
         const store = getPaxStore();
         let applied = 0;
@@ -4621,17 +4687,24 @@ document.getElementById("paxq_adt").value = "1";
           if(info && store[info.type] && store[info.type][info.idx]){ store[info.type][info.idx].ticket = ensureTicketHyphen(mapping[k]); applied++; }
         });
         setPaxStore(store); renderPaxFields();
-        const airlineInfos = [...new Map(keys.map(k=>{
-          const info = getAirlineInfoByTicketPrefix(mapping[k]);
-          return info ? [info.code, info] : null;
-        }).filter(Boolean)).values()];
+        const airlineInfos = parsed.meta?.airlineInfos || [];
         const ciaInput = $('cia');
         if(ciaInput && airlineInfos.length === 1){
           ciaInput.value = airlineInfos[0].code;
           try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
           try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
         }
-        if(ts){ const airlines=airlineInfos.map(a=>a.name); ts.textContent = applied ? `OK — distribuí ${applied} bilhete(s) pelo P1/P2...${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}` : 'Encontrei bilhetes, mas não consegui mapear P1/P2.'; }
+        const locInput = $('loc');
+        if(locInput && parsed.meta?.loc && !String(locInput.value||'').trim()){
+          locInput.value = parsed.meta.loc;
+          try{ locInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
+          try{ locInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
+        }
+        if(ts){
+          const airlines=airlineInfos.map(a=>a.name);
+          const viaTkt = parsed.meta?.source === 'TKT' ? ' via máscara TKT' : '';
+          ts.textContent = applied ? `OK — distribuí ${applied} bilhete(s) pelo P1/P2...${viaTkt}${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}` : 'Encontrei bilhetes, mas não consegui mapear P1/P2.';
+        }
         if(applied) showToast('Bilhetes preenchidos no PAX');
       }
 
@@ -4643,8 +4716,8 @@ document.getElementById("paxq_adt").value = "1";
         if(auto){
           if(lblVoos) lblVoos.textContent = '1) Itinerário / Máscara (cole o PNR)';
           if(voosTA) voosTA.placeholder = 'Cole aqui RP/... com PAX + segmentos (Amadeus).';
-          if(lblTk) lblTk.textContent = '3) Bilhetes (FA/FHE)';
-          if(tkTA) tkTA.placeholder = 'Cole aqui FA/FHE (com /P1, /P2...)';
+          if(lblTk) lblTk.textContent = '3) Bilhetes (FA/FHE/TKT)';
+          if(tkTA) tkTA.placeholder = 'Cole aqui FA/FHE ou máscara TKT (com /P1, /P2... quando houver)';
           if(manualWrap) manualWrap.classList.add('hidden');
           const parsed = parsePassengersData(voosTA?.value || '');
           if(parsed.pax.length) show($("fxoWrap"), true);
