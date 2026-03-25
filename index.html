@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculadora de Reemissão • Gerador de cálculo de reemissão</title>
   <style>
+    .app-version-footer{position:fixed;right:12px;bottom:10px;z-index:9999;padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.82);color:#fff;font:700 12px/1.2 var(--sans);letter-spacing:.02em;box-shadow:0 8px 22px rgba(0,0,0,.18);backdrop-filter:blur(8px);opacity:.92} 
+    :root[data-theme="light"] .app-version-footer{background:rgba(15,23,42,.78);color:#fff;border:1px solid rgba(255,255,255,.14)}
+    @media (max-width: 700px){.app-version-footer{right:8px;bottom:8px;font-size:11px;padding:5px 9px}}
+
     :root{
       --bg:#0b0f17;
       --card:#121a27;
@@ -1365,6 +1369,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
   <div class="toast" id="toast">Copiado!</div>
 
   <script>
+
     const PAX_TYPES = ["ADT","CHD","INF"];
 
     // ---------- helpers ----------
@@ -4609,8 +4614,19 @@ document.getElementById("paxq_adt").value = "1";
         try{ updateAll(); }catch(e){}
         try{ applyPaxTypeVisibility(); }catch(e){}
         const allOk = state.requiredTypes.every(t=>state.fxoOk[t]);
-        show($("ticketsWrap"), allOk);
-        if(allOk && $("ticketsStatus")) $("ticketsStatus").textContent = 'Agora cole FA/FHE com /P1, /P2... que eu distribuo nos passageiros.';
+        const allFilled = state.requiredTypes.every(t=>{
+          const box = $(`fxoBox_${t}`);
+          return box && String(box.value||'').trim();
+        });
+        const canOpenTickets = allOk || allFilled;
+        show($("ticketsWrap"), canOpenTickets);
+        if($("ticketsStatus")){
+          if(allOk){
+            $("ticketsStatus").textContent = 'Agora cole FA/FHE/TKT que eu distribuo nos passageiros.';
+          }else if(allFilled){
+            $("ticketsStatus").textContent = 'Os FXO foram colados. Você já pode inserir os bilhetes; se algum valor não bater, revise o bloco correspondente.';
+          }
+        }
       }
 
       function getAirlineInfoByTicketPrefix(ticket){
@@ -4649,12 +4665,29 @@ document.getElementById("paxq_adt").value = "1";
         return info ? info.name : '';
       }
 
+      function canonicalPaxNameForMatch(name){
+        let s = normalizePaxName(String(name||'')).toUpperCase();
+        s = s.replace(/^\s*\d+\.\s*/, '');
+        s = s.replace(/\b(ADT|CHD|INF|CNN|INS|ST)\b/gi, ' ');
+        s = s.replace(/\b(MR|MRS|MISS|MSTR|MST|MS)\b/gi, ' ');
+        s = s.replace(/\s+/g, ' ').trim();
+        const parts = s.split('/');
+        if(parts.length >= 2){
+          const sur = parts[0].trim();
+          const giv = parts.slice(1).join('/').replace(/\//g,' ').replace(/\s+/g,' ').trim();
+          return (sur + '/' + giv).trim();
+        }
+        return s;
+      }
+      function paxNameLooseKey(name){
+        return canonicalPaxNameForMatch(name).replace(/[^A-Z0-9]+/g,'');
+      }
       function parseTickets(text){
         const src = String(text||'');
         const lines = normalizeGdsText(src).lines;
         const out = {};
         const infOut = {};
-        const meta = { loc:'', source:'', airlineInfos:[] };
+        const meta = { loc:'', source:'', airlineInfos:[], tktMasks:[] };
         let pendingTicket = null;
         const orphanTickets = [];
         const grabP = (line)=>{
@@ -4664,8 +4697,6 @@ document.getElementById("paxq_adt").value = "1";
         };
         const grabTicket = (line)=>{
           const s = String(line||'');
-          // Aceita 047-2681639174 e também 047-2681639174-75 / 0472681639174-75.
-          // O sufixo final (-75, -77, -891 etc.) é auxiliar/cupom e deve ser ignorado.
           let m = s.match(/(?:^|[^\d])(\d{3})-(\d{10})(?:-(\d{2,3}))?(?=[^\d]|$)/);
           if(m) return ensureTicketHyphen(`${m[1]}-${m[2]}`);
           m = s.match(/(?:^|[^\d])(\d{13})(?:-(\d{2,3}))?(?=[^\d]|$)/);
@@ -4677,20 +4708,30 @@ document.getElementById("paxq_adt").value = "1";
 
         if(isTktMask){
           meta.source = 'TKT';
-          const tkm = src.match(/(?:^|\n)\s*TKT-(\d{13})(?:-\d{2,3})?/i);
-          const baseTicket = tkm ? ensureTicketHyphen(tkm[1]) : '';
-          const locm = src.match(/\bLOC-([A-Z0-9]{5,6})\b/i);
-          if(locm) meta.loc = (locm[1] || '').toUpperCase();
-          const paxLines = [];
-          for(const line of lines){
-            const pm = String(line||'').match(/^\s*(\d+)\.\s*([A-Z][A-Z\s'\/\-]+?)\s{2,}(ADT|CHD|INF)\b/i);
-            if(pm){ paxLines.push({p: parseInt(pm[1],10), name: pm[2].trim(), type: pm[3].toUpperCase()}); }
-          }
-          if(baseTicket){
-            if(paxLines.length){
-              paxLines.forEach(row=>{ if(row.p && !out[row.p]) out[row.p] = baseTicket; });
-            }else{
-              out[1] = baseTicket;
+          const blocks = String(src).split(/(?=^\s*TKT-\d{13}(?:-\d{2,3})?)/m).filter(s=>/TKT-\d{13}/i.test(s));
+          for(const block of blocks){
+            const tkm = block.match(/(?:^|\n)\s*TKT-(\d{13})(?:-\d{2,3})?/i);
+            const baseTicket = tkm ? ensureTicketHyphen(tkm[1]) : '';
+            const locm = block.match(/\bLOC-([A-Z0-9]{5,6})\b/i);
+            if(!meta.loc && locm) meta.loc = (locm[1] || '').toUpperCase();
+            let paxName = '';
+            let paxType = '';
+            for(const line of normalizeGdsText(block).lines){
+              const pm = String(line||'').match(/^\s*\d+\.\s*([A-Z][A-Z\s'\/\-]+?)\s{2,}(ADT|CHD|INF)\b/i);
+              if(pm){
+                paxName = normalizePaxName(pm[1]);
+                paxType = (pm[2]||'').toUpperCase();
+                break;
+              }
+            }
+            if(baseTicket){
+              meta.tktMasks.push({
+                ticket: baseTicket,
+                loc: locm ? (locm[1]||'').toUpperCase() : '',
+                name: paxName,
+                type: paxType,
+                canonicalName: canonicalPaxNameForMatch(paxName)
+              });
             }
           }
         }
@@ -4723,11 +4764,12 @@ document.getElementById("paxq_adt").value = "1";
             continue;
           }
         }
-        if(orphanTickets.length === 1 && Object.keys(out).length === 0){
+        if(orphanTickets.length === 1 && Object.keys(out).length === 0 && meta.tktMasks.length === 0){
           out[1] = orphanTickets[0];
         }
-        const airlineInfos = [...new Map(Object.keys(out).map(k=>{
-          const info = getAirlineInfoByTicketPrefix(out[k]);
+        const allTickets = [...Object.values(out), ...Object.values(infOut), ...meta.tktMasks.map(x=>x.ticket)].filter(Boolean);
+        const airlineInfos = [...new Map(allTickets.map(tk=>{
+          const info = getAirlineInfoByTicketPrefix(tk);
           return info ? [info.code, info] : null;
         }).filter(Boolean)).values()];
         meta.airlineInfos = airlineInfos;
@@ -4742,7 +4784,8 @@ document.getElementById("paxq_adt").value = "1";
         const ts = $("ticketsStatus");
         const keys = Object.keys(mapping);
         const infKeys = Object.keys(infMapping);
-        if(!keys.length && !infKeys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE/TKT no texto colado.'; return; }
+        const tktMasks = Array.isArray(parsed.meta?.tktMasks) ? parsed.meta.tktMasks : [];
+        if(!keys.length && !infKeys.length && !tktMasks.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE/TKT no texto colado.'; return; }
         const map = state.pIndexToTypePos || {};
         const infMap = state.infLinkToTypePos || {};
         const store = getPaxStore();
@@ -4756,6 +4799,39 @@ document.getElementById("paxq_adt").value = "1";
           const info = Array.isArray(linked) ? linked[0] : null;
           if(info && store[info.type] && store[info.type][info.idx]){ store[info.type][info.idx].ticket = ensureTicketHyphen(infMapping[k]); applied++; }
         });
+        if(tktMasks.length){
+          const candidates = [];
+          ['ADT','CHD','INF'].forEach(tp=>{
+            (store[tp]||[]).forEach((p,idx)=>{
+              candidates.push({ type:tp, idx, canonicalName: canonicalPaxNameForMatch(p.name||'') });
+            });
+          });
+          const used = new Set();
+          for(const row of tktMasks){
+            const wantType = row.type || '';
+            const canon = row.canonicalName || canonicalPaxNameForMatch(row.name||'');
+            let found = null;
+            if(canon){
+              const wantLoose = paxNameLooseKey(canon);
+              found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType) && c.canonicalName===canon);
+              if(!found) found = candidates.find(c=>!used.has(c.type+':'+c.idx) && c.canonicalName===canon);
+              if(!found && wantLoose){
+                found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType) && paxNameLooseKey(c.canonicalName)===wantLoose);
+              }
+              if(!found && wantLoose){
+                found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType) && (paxNameLooseKey(c.canonicalName).includes(wantLoose) || wantLoose.includes(paxNameLooseKey(c.canonicalName))));
+              }
+              if(!found && wantLoose){
+                found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (paxNameLooseKey(c.canonicalName)===wantLoose || paxNameLooseKey(c.canonicalName).includes(wantLoose) || wantLoose.includes(paxNameLooseKey(c.canonicalName))));
+              }
+            }
+            if(found && store[found.type] && store[found.type][found.idx]){
+              store[found.type][found.idx].ticket = ensureTicketHyphen(row.ticket);
+              used.add(found.type+':'+found.idx);
+              applied++;
+            }
+          }
+        }
         setPaxStore(store); renderPaxFields();
         const airlineInfos = parsed.meta?.airlineInfos || [];
         const ciaInput = $('cia');
@@ -4771,9 +4847,13 @@ document.getElementById("paxq_adt").value = "1";
           try{ locInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
         }
         if(ts){
-          const airlines=airlineInfos.map(a=>a.name);
-          const viaTkt = parsed.meta?.source === 'TKT' ? ' via máscara TKT' : '';
-          ts.textContent = applied ? `OK — distribuí ${applied} bilhete(s) pelo P1/P2...${viaTkt}${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}` : 'Encontrei bilhetes, mas não consegui mapear P1/P2.';
+          const airlines = airlineInfos.map(a=>a.name);
+          if(applied){
+            const mode = tktMasks.length && !(keys.length || infKeys.length) ? 'pela máscara TKT/nome' : 'pelo P1/P2';
+            ts.textContent = `OK — distribuí ${applied} bilhete(s) ${mode}.${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}`;
+          } else {
+            ts.textContent = 'Encontrei bilhetes, mas não consegui mapear P1/P2/nome.';
+          }
         }
         if(applied) showToast('Bilhetes preenchidos no PAX');
       }
@@ -5028,6 +5108,17 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
         sel.addEventListener("change", () => apply(sel.value || "dark"));
       }
     })();
+
+    // ----- Versão exibida no rodapé -----
+    (function initVersionFooter(){
+      const APP_VERSION = "1.0.13-test";
+      const footer = document.getElementById("appVersionFooter");
+      if(footer) footer.textContent = `Versão: ${APP_VERSION}`;
+    })();
+
+
 </script>
+
+<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.13-test</div>
 </body>
 </html>
