@@ -4292,12 +4292,19 @@ document.getElementById("paxq_adt").value = "1";
         const counts = parsed.qty || {ADT:0, CHD:0, INF:0};
         const store = {ADT:[], CHD:[], INF:[]};
         const map = {};
+        const infLinkedMap = {};
         const perTypeIdx = {ADT:0, CHD:0, INF:0};
         let pOrder = 1;
         for(const p of pax){
           const idxWithin = perTypeIdx[p.type]++;
           store[p.type].push({name:p.name, ticket:""});
-          map[pOrder++] = {type:p.type, idx:idxWithin, name:p.name, sourceIdx:p.idx};
+          if(p.type === 'INF' && Number.isFinite(p.linkedTo)){
+            const arr = infLinkedMap[p.linkedTo] || [];
+            arr.push({type:p.type, idx:idxWithin, name:p.name, sourceIdx:p.idx, linkedTo:p.linkedTo});
+            infLinkedMap[p.linkedTo] = arr;
+          } else {
+            map[pOrder++] = {type:p.type, idx:idxWithin, name:p.name, sourceIdx:p.idx};
+          }
         }
 
         if($("paxq_adt")) $("paxq_adt").value = String(counts.ADT||0);
@@ -4308,6 +4315,7 @@ document.getElementById("paxq_adt").value = "1";
 
         state.paxList = pax;
         state.pIndexToTypePos = map;
+        state.infLinkToTypePos = infLinkedMap;
         state.requiredTypes = ["ADT","CHD","INF"].filter(t => (counts[t]||0)>0);
         state.fxoOk = {ADT:false, CHD:false, INF:false};
         state.bagByType = {ADT:null, CHD:null, INF:null};
@@ -4348,31 +4356,52 @@ document.getElementById("paxq_adt").value = "1";
       }
 
       function findLabelValue(text, label, preferCur){
-        const lines = normalizeGdsText(text).lines;
-        const re = new RegExp('^\\s*' + label + '\\b', 'i');
-        for(let i=0;i<lines.length;i++){
-          if(!re.test(lines[i])) continue;
-          const ownPairs = parseCurrencyPairs(lines[i]);
+        const src = normalizeGdsText(text).text;
+        const labelsAnchor = '(?:OLD\\s+BASE\\s+FARE|NEW\\s+BASE\\s+FARE|FARE\\s+BALANCE|OLD\\s+TAX|NEW\\s+TAX|TAX\\s+BALANCE|TICKET\\s+DIFFERENCE|PENALTY|GRAND\\s+TOTAL|TOTAL\\s+ADD\\s+COLL|RESIDUAL\\s+VALUE)';
+        const lineRe = new RegExp('^\\s*' + label + '\\b.*$', 'im');
+        const mLine = src.match(lineRe);
+        if(mLine){
+          const ownPairs = parseCurrencyPairs(mLine[0]);
           if(ownPairs.length){
             const exactOwn = preferCur ? ownPairs.find(p=>p.cur===preferCur) : null;
             return exactOwn || ownPairs[ownPairs.length-1] || null;
           }
-          for(let j=1;j<=2;j++){
-            const nextLine = lines[i+j] || "";
-            if(/^\s*(?:OLD\s+BASE\s+FARE|NEW\s+BASE\s+FARE|FARE\s+BALANCE|OLD\s+TAX|NEW\s+TAX|TAX\s+BALANCE|TICKET\s+DIFFERENCE|PENALTY|GRAND\s+TOTAL|TOTAL\s+ADD\s+COLL|RESIDUAL\s+VALUE)\b/i.test(nextLine)) break;
-            const nextPairs = parseCurrencyPairs(nextLine);
-            if(!nextPairs.length) continue;
-            const exactNext = preferCur ? nextPairs.find(p=>p.cur===preferCur) : null;
-            return exactNext || nextPairs[nextPairs.length-1] || null;
-          }
-          return null;
         }
-        return null;
+        const blockRe = new RegExp('(?:^|\\n)\\s*' + label + '\\b([\\s\\S]*?)(?=\\n\\s*' + labelsAnchor + '\\b|$)', 'i');
+        const mBlock = src.match(blockRe);
+        if(!mBlock) return null;
+        const chunk = String(mBlock[0] || '') + '\\n' + String(mBlock[1] || '');
+        const pairs = parseCurrencyPairs(chunk);
+        if(!pairs.length) return null;
+        const exact = preferCur ? pairs.find(p=>p.cur===preferCur) : null;
+        return exact || pairs[pairs.length-1] || null;
       }
 
-      function parseFxoBlock(text){
-        const s = String(text||"");
-        const paxType = /\bCHD\b|\/CH\b/i.test(s) ? "CHD" : (/\bINF\b|\bIN\b/i.test(s) && /FARE\s+BALANCE/i.test(s) ? "INF" : "ADT");
+      function extractFxoSubBlock(text, wantType){
+        const src = String(text||'');
+        if(!src.trim()) return src;
+        const type = String(wantType||'').toUpperCase();
+        const hasTagged = /(^|\n)\s*\[(ADT|CHD|INF)\]\s*$/im.test(src);
+        if(hasTagged){
+          const lines = src.replace(/\r\n?/g,'\n').split('\n');
+          let cur = '';
+          let buf = [];
+          const blocks = {};
+          const flush = ()=>{ if(cur && !blocks[cur]) blocks[cur] = buf.join('\n').trim(); buf = []; };
+          for(const line of lines){
+            const m = line.match(/^\s*\[(ADT|CHD|INF)\]\s*$/i);
+            if(m){ flush(); cur = String(m[1]).toUpperCase(); continue; }
+            if(cur) buf.push(line);
+          }
+          flush();
+          if(blocks[type]) return blocks[type];
+        }
+        return src;
+      }
+
+      function parseFxoBlock(text, wantType){
+        const s = extractFxoSubBlock(text, wantType);
+        const paxType = /\bCHD\b|\/CH\b/i.test(s) ? "CHD" : ((/\(INF\)|\bINF\b|\/IN\b/i.test(s)) && /FARE\s+BALANCE/i.test(s) ? "INF" : "ADT");
         const oldBase = findLabelValue(s, 'OLD\\s+BASE\\s+FARE');
         const newBase = findLabelValue(s, 'NEW\\s+BASE\\s+FARE');
         const fare = findLabelValue(s, 'FARE\\s+BALANCE');
@@ -4525,25 +4554,42 @@ document.getElementById("paxq_adt").value = "1";
         const ta = $(`fxoBox_${type}`);
         const st = $(`fxoBox_${type}_status`);
         if(!ta) return;
-        const parsed = parseFxoBlock(ta.value || '');
+        const parsed = parseFxoBlock(ta.value || '', type);
         syncInternoFromBoxes();
         const wantCur = (typeof getInterCurrency === 'function') ? getInterCurrency() : 'USD';
         const resolved = resolveFxoCurrency(parsed, wantCur);
+        const fareEl = $(`inter_fare_${type}`), taxEl = $(`inter_tax_${type}`), penEl = $(`inter_pen_${type}`), duEl = $(`inter_du_${type}`), feeEl = $(`inter_fee_${type}`);
+        if(fareEl) fareEl.value = '';
+        if(taxEl) taxEl.value = '';
+        if(penEl) penEl.value = '';
+        if(duEl) duEl.value = '';
+        if(feeEl) feeEl.value = '';
 
         if(!resolved.canApply){
           state.fxoOk[type] = false;
           if(st) st.textContent = `Este FXO veio em BRL (equivalente). Informe o câmbio ${wantCur}→BRL no campo “Câmbio”.`;
+          try{ updateAll(); }catch(e){}
           return;
         }
 
         let ok = false;
-        if(resolved.fare){ const el = $(`inter_fare_${type}`); if(el){ el.value = fmtNumPT(resolved.fare.amt); ok = true; } }
-        if(resolved.pen){ const el = $(`inter_pen_${type}`); if(el){ el.value = fmtNumPT(resolved.pen.amt); ok = true; } }
-        if(resolved.add){
-          const fareAmt = resolved.fare ? resolved.fare.amt : 0;
-          const penAmt = resolved.pen ? resolved.pen.amt : 0;
-          const diftax = resolved.add.amt - fareAmt - penAmt;
-          const el = $(`inter_tax_${type}`); if(el){ el.value = fmtNumPT(diftax); ok = true; }
+        if(resolved.fare && fareEl){ fareEl.value = fmtNumPT(resolved.fare.amt); ok = true; }
+        if(penEl){
+          penEl.value = fmtNumPT(resolved.pen ? resolved.pen.amt : 0);
+          if(resolved.pen) ok = true;
+        }
+        if(taxEl){
+          let diftax = null;
+          if(resolved.add){
+            const fareAmt = resolved.fare ? resolved.fare.amt : 0;
+            const penAmt = resolved.pen ? resolved.pen.amt : 0;
+            diftax = resolved.add.amt - fareAmt - penAmt;
+          } else if(resolved.tktDiff && resolved.fare){
+            diftax = resolved.tktDiff.amt - resolved.fare.amt;
+          } else if(resolved.taxBal){
+            diftax = resolved.taxBal.amt;
+          }
+          if(diftax !== null && Number.isFinite(diftax)){ taxEl.value = fmtNumPT(diftax); ok = true; }
         }
         if(parsed.bag){ state.bagByType[type] = parsed.bag; updateBagSummary(); }
         if(parsed.family){ state.familyByType[type] = parsed.family; updateFamilySummary(); }
@@ -4607,6 +4653,7 @@ document.getElementById("paxq_adt").value = "1";
         const src = String(text||'');
         const lines = normalizeGdsText(src).lines;
         const out = {};
+        const infOut = {};
         const meta = { loc:'', source:'', airlineInfos:[] };
         let pendingTicket = null;
         const orphanTickets = [];
@@ -4625,7 +4672,7 @@ document.getElementById("paxq_adt").value = "1";
           if(m) return ensureTicketHyphen(m[1]);
           return null;
         };
-        const isFaFheLine = (line)=>/(?:^|\s)(?:FA|FHE)\s+PAX(?:\s|$)/i.test(String(line||''));
+        const isFaFheLine = (line)=>/(?:^|\s)(?:FA|FHE)\s+(?:PAX|INF)(?:\s|$)/i.test(String(line||''));
         const isTktMask = /(?:^|\n)\s*TKT-(\d{13})(?:-\d{2,3})?/i.test(src);
 
         if(isTktMask){
@@ -4650,16 +4697,31 @@ document.getElementById("paxq_adt").value = "1";
 
         for(const line of lines){
           const isFaFhe = isFaFheLine(line);
+          const isInfLine = /(?:^|\s)(?:FA|FHE)\s+INF(?:\s|$)/i.test(String(line||''));
           const tk = grabTicket(line);
           const p = grabP(line);
-          if(isFaFhe && tk && p){ out[p] = tk; pendingTicket = null; continue; }
-          if(isFaFhe && tk){
-            pendingTicket = tk;
-            if(!orphanTickets.includes(pendingTicket)) orphanTickets.push(pendingTicket);
+          if(isFaFhe && tk && p){
+            if(isInfLine){ infOut[p] = tk; }
+            else { out[p] = tk; }
+            pendingTicket = null;
             continue;
           }
-          if(pendingTicket && p){ out[p] = pendingTicket; pendingTicket = null; continue; }
-          if(tk && p && !out[p]){ out[p] = tk; continue; }
+          if(isFaFhe && tk){
+            pendingTicket = {ticket:tk, isInf:isInfLine};
+            if(!orphanTickets.includes(tk)) orphanTickets.push(tk);
+            continue;
+          }
+          if(pendingTicket && p){
+            if(pendingTicket.isInf) infOut[p] = pendingTicket.ticket;
+            else out[p] = pendingTicket.ticket;
+            pendingTicket = null;
+            continue;
+          }
+          if(tk && p && !out[p] && !infOut[p]){
+            if(isInfLine) infOut[p] = tk;
+            else out[p] = tk;
+            continue;
+          }
         }
         if(orphanTickets.length === 1 && Object.keys(out).length === 0){
           out[1] = orphanTickets[0];
@@ -4669,22 +4731,30 @@ document.getElementById("paxq_adt").value = "1";
           return info ? [info.code, info] : null;
         }).filter(Boolean)).values()];
         meta.airlineInfos = airlineInfos;
-        return { mapping: out, meta };
+        return { mapping: out, infMapping: infOut, meta };
       }
       function applyTickets(){
         const ta = $("inter_original");
         if(!ta) return;
         const parsed = parseTickets(ta.value || '');
         const mapping = parsed.mapping || {};
+        const infMapping = parsed.infMapping || {};
         const ts = $("ticketsStatus");
         const keys = Object.keys(mapping);
-        if(!keys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE/TKT no texto colado.'; return; }
+        const infKeys = Object.keys(infMapping);
+        if(!keys.length && !infKeys.length){ if(ts) ts.textContent = 'Não encontrei bilhetes FA/FHE/TKT no texto colado.'; return; }
         const map = state.pIndexToTypePos || {};
+        const infMap = state.infLinkToTypePos || {};
         const store = getPaxStore();
         let applied = 0;
         keys.forEach(k=>{
           const info = map[parseInt(k,10)];
           if(info && store[info.type] && store[info.type][info.idx]){ store[info.type][info.idx].ticket = ensureTicketHyphen(mapping[k]); applied++; }
+        });
+        infKeys.forEach(k=>{
+          const linked = infMap[parseInt(k,10)];
+          const info = Array.isArray(linked) ? linked[0] : null;
+          if(info && store[info.type] && store[info.type][info.idx]){ store[info.type][info.idx].ticket = ensureTicketHyphen(infMapping[k]); applied++; }
         });
         setPaxStore(store); renderPaxFields();
         const airlineInfos = parsed.meta?.airlineInfos || [];
