@@ -2573,7 +2573,7 @@ const store = getPaxStore();
 
     // ----- CRR4: mesmo conteúdo do CRR3, mas com chaves compactadas (reduz bem o tamanho) -----
     // Mapeia ids de campos -> índice base36 (ex.: "cia" -> "a") antes de compactar.
-    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
+    const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_folio_agencia","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_endosso_on","inter_endosso_text","inter_endosso_agencia","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
     const CRR4_ID2K = {};
     const CRR4_K2ID = {};
     for(let i=0;i<CRR4_KEYS.length;i++){ 
@@ -5111,7 +5111,7 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
     // ----- Versão exibida no rodapé -----
     (function initVersionFooter(){
-      const APP_VERSION = "1.0.13-test";
+      const APP_VERSION = "1.0.21-fxo-reader-compat";
       const footer = document.getElementById("appVersionFooter");
       if(footer) footer.textContent = `Versão: ${APP_VERSION}`;
     })();
@@ -5119,6 +5119,6 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
 </script>
 
-<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.13-test</div>
+<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.21-fxo-reader-compat</div>
 </body>
 </html>
