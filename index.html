@@ -948,7 +948,70 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             
             </div>
 
-            <input id="cia" placeholder="Ex.: LA / G3 / AD / TP..." />
+            <input id="cia" list="ciaList" placeholder="Ex.: LA / G3 / AD / TP..." />
+            <datalist id="ciaList">
+                <option value="AA">American Airlines</option>
+                <option value="AC">Air Canada</option>
+                <option value="AF">Air France</option>
+                <option value="AM">Aeromexico</option>
+                <option value="AR">Aerolineas Argentinas</option>
+                <option value="AV">Avianca</option>
+                <option value="AZ">ITA Airways</option>
+                <option value="BA">British Airways</option>
+                <option value="CA">Air China</option>
+                <option value="CM">Copa Airlines</option>
+                <option value="CX">Cathay Pacific</option>
+                <option value="DL">Delta Air Lines</option>
+                <option value="EK">Emirates</option>
+                <option value="ET">Ethiopian Airlines</option>
+                <option value="EY">Etihad Airways</option>
+                <option value="G3">GOL</option>
+                <option value="GP">APG Airlines</option>
+                <option value="H1">Hahn Air Systems</option>
+                <option value="HR">Hahn Air</option>
+                <option value="H2">Sky Airline</option>
+                <option value="IB">Iberia</option>
+                <option value="JA">JetSmart</option>
+                <option value="JL">Japan Airlines</option>
+                <option value="KL">KLM</option>
+                <option value="KQ">Kenya Airways</option>
+                <option value="LA">LATAM</option>
+                <option value="LH">Lufthansa</option>
+                <option value="LY">El Al</option>
+                <option value="MU">China Eastern</option>
+                <option value="NH">ANA</option>
+                <option value="NZ">Air New Zealand</option>
+                <option value="OU">Croatia Airlines</option>
+                <option value="OS">Austrian Airlines</option>
+                <option value="QF">Qantas</option>
+                <option value="QR">Qatar Airways</option>
+                <option value="RK">Ryanair UK</option>
+                <option value="S4">Azores Airlines / SATA</option>
+                <option value="SA">South African Airways</option>
+                <option value="SK">SAS</option>
+                <option value="SQ">Singapore Airlines</option>
+                <option value="SV">Saudia</option>
+                <option value="TA">TACA</option>
+                <option value="TC">Air Tanzania</option>
+                <option value="TK">Turkish Airlines</option>
+                <option value="TP">TAP Air Portugal</option>
+                <option value="UA">United Airlines</option>
+                <option value="UX">Air Europa</option>
+                <option value="VA">Virgin Australia</option>
+                <option value="VS">Virgin Atlantic</option>
+                <option value="VN">Vietnam Airlines</option>
+                <option value="VY">Vueling</option>
+                <option value="W2">FlexFlight</option>
+                <option value="WB">RwandAir</option>
+                <option value="WY">Oman Air</option>
+                <option value="XL">LATAM Ecuador / legado</option>
+                <option value="XLM">Universal Assistance</option>
+                <option value="XQ">SunExpress</option>
+                <option value="7M">MAP Linhas Aéreas</option>
+                <option value="DT">TAAG Angola Airlines</option>
+                <option value="AT">Royal Air Maroc</option>
+                <option value="AD">Azul</option>
+            </datalist>
 </div>
 <div class="grid3" style="grid-column: 1 / -1;">
             <div>
@@ -4120,7 +4183,7 @@ document.getElementById("paxq_adt").value = "1";
         bagByType: {ADT:null, CHD:null, INF:null},
         familyByType: {ADT:null, CHD:null, INF:null},
         bagAuto: false,
-        parseMeta: {warnings:[], segments:[], confidence:0, loc:""}
+        parseMeta: {warnings:[], segments:[], confidence:0, loc:"", flightCarriers:[], ticketCarriers:[]}
       };
 
       function isInterAuto(){
@@ -4285,6 +4348,36 @@ document.getElementById("paxq_adt").value = "1";
         return segs.map(seg=>`${seg.carrier}${String(seg.flight).padStart(0,"0")} ${seg.bookingClass} ${seg.date} ${seg.origin}${seg.destination} ${seg.dep}${seg.arr?` ${seg.arr}`:""}${seg.arrDate?` ${seg.arrDate}`:""}`.trim()).join("\n");
       }
 
+      function getUniqueFlightCarriers(segs){
+        return [...new Set((Array.isArray(segs) ? segs : []).map(seg=>String(seg && seg.carrier || '').trim().toUpperCase()).filter(Boolean))];
+      }
+
+      function formatCarrierList(codes){
+        return (Array.isArray(codes) ? codes : []).filter(Boolean).join(', ');
+      }
+
+      function setCarrierFieldFromTicketInfo(airlineInfos){
+        const ciaInput = $('cia');
+        if(!ciaInput) return { applied:false, code:'', note:'' };
+        const infos = Array.isArray(airlineInfos) ? airlineInfos.filter(Boolean) : [];
+        state.parseMeta.ticketCarriers = infos.map(info=>String(info.code||'').toUpperCase()).filter(Boolean);
+        if(infos.length !== 1){
+          delete ciaInput.dataset.ticketCarrierValidated;
+          return {
+            applied:false,
+            code:'',
+            note: infos.length > 1
+              ? 'Mais de uma dona de bilhete foi identificada; confirme a cia principal manualmente.'
+              : 'Bilhete ainda não identificou uma dona única.'
+          };
+        }
+        ciaInput.value = infos[0].code;
+        ciaInput.dataset.ticketCarrierValidated = '1';
+        try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
+        try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
+        return { applied:true, code:infos[0].code, note:`Cia final validada pelo bilhete: ${infos[0].code}` };
+      }
+
       function applyPassengerData(parsed){
         const pax = parsed && Array.isArray(parsed.pax) ? parsed.pax : [];
         if(!pax.length){
@@ -4344,9 +4437,11 @@ document.getElementById("paxq_adt").value = "1";
 
         const segs = parseSegments($("inter_voos")?.value || "");
         state.parseMeta.segments = segs;
+        state.parseMeta.flightCarriers = getUniqueFlightCarriers(segs);
         const segInfo = segs.length ? ` • ${segs.length} trecho(s)` : "";
+        const flightHint = state.parseMeta.flightCarriers.length ? ` • voos ${formatCarrierList(state.parseMeta.flightCarriers)}` : "";
         const warnTxt = (parsed.warnings||[]).length ? ` • aviso: ${(parsed.warnings||[]).join(" | ")}` : "";
-        setStatus(`Detectado: ${counts.ADT||0} ADT • ${counts.CHD||0} CHD • ${counts.INF||0} INF${parsed.loc?` • LOC ${parsed.loc}`:""}${segInfo} • confiança ${parsed.confidence||0}%${warnTxt}. Agora cole o FXO por tipo.`);
+        setStatus(`Detectado: ${counts.ADT||0} ADT • ${counts.CHD||0} CHD • ${counts.INF||0} INF${parsed.loc?` • LOC ${parsed.loc}`:""}${segInfo}${flightHint} • confiança ${parsed.confidence||0}%${warnTxt}. Agora cole o FXO por tipo.`);
         return true;
       }
 
@@ -4363,23 +4458,24 @@ document.getElementById("paxq_adt").value = "1";
       function findLabelValue(text, label, preferCur){
         const src = normalizeGdsText(text).text;
         const labelsAnchor = '(?:OLD\\s+BASE\\s+FARE|NEW\\s+BASE\\s+FARE|FARE\\s+BALANCE|OLD\\s+TAX|NEW\\s+TAX|TAX\\s+BALANCE|TICKET\\s+DIFFERENCE|PENALTY|GRAND\\s+TOTAL|TOTAL\\s+ADD\\s+COLL|RESIDUAL\\s+VALUE)';
-        const lineRe = new RegExp('^\\s*' + label + '\\b.*$', 'im');
-        const mLine = src.match(lineRe);
-        if(mLine){
+
+        const lineRe = new RegExp('^\\s*' + label + '\\b.*$', 'gim');
+        for(const mLine of src.matchAll(lineRe)){
           const ownPairs = parseCurrencyPairs(mLine[0]);
-          if(ownPairs.length){
-            const exactOwn = preferCur ? ownPairs.find(p=>p.cur===preferCur) : null;
-            return exactOwn || ownPairs[ownPairs.length-1] || null;
-          }
+          if(!ownPairs.length) continue;
+          const exactOwn = preferCur ? ownPairs.find(p=>p.cur===preferCur) : null;
+          return exactOwn || ownPairs[ownPairs.length-1] || null;
         }
-        const blockRe = new RegExp('(?:^|\\n)\\s*' + label + '\\b([\\s\\S]*?)(?=\\n\\s*' + labelsAnchor + '\\b|$)', 'i');
-        const mBlock = src.match(blockRe);
-        if(!mBlock) return null;
-        const chunk = String(mBlock[0] || '') + '\\n' + String(mBlock[1] || '');
-        const pairs = parseCurrencyPairs(chunk);
-        if(!pairs.length) return null;
-        const exact = preferCur ? pairs.find(p=>p.cur===preferCur) : null;
-        return exact || pairs[pairs.length-1] || null;
+
+        const blockRe = new RegExp('(?:^|\\n)\\s*' + label + '\\b([\\s\\S]*?)(?=\\n\\s*' + labelsAnchor + '\\b|$)', 'gi');
+        for(const mBlock of src.matchAll(blockRe)){
+          const chunk = String(mBlock[0] || '') + '\\n' + String(mBlock[1] || '');
+          const pairs = parseCurrencyPairs(chunk);
+          if(!pairs.length) continue;
+          const exact = preferCur ? pairs.find(p=>p.cur===preferCur) : null;
+          return exact || pairs[pairs.length-1] || null;
+        }
+        return null;
       }
 
       function extractFxoSubBlock(text, wantType){
@@ -4639,27 +4735,101 @@ document.getElementById("paxq_adt").value = "1";
           '016':{code:'UA', name:'United Airlines'},
           '027':{code:'AS', name:'Alaska Airlines'},
           '037':{code:'US', name:'US Airways'},
-          '044':{code:'LA', name:'LATAM'},
+          '044':{code:'AR', name:'Aerolineas Argentinas'},
           '045':{code:'AV', name:'Avianca'},
           '047':{code:'TP', name:'TAP Air Portugal'},
-          '055':{code:'AZ', name:'Alitalia / ITA legado'},
+          '055':{code:'AZ', name:'ITA Airways / Alitalia legado'},
           '057':{code:'AF', name:'Air France'},
+          '064':{code:'OK', name:'Czech Airlines'},
+          '071':{code:'ET', name:'Ethiopian Airlines'},
           '074':{code:'KL', name:'KLM'},
           '075':{code:'IB', name:'Iberia'},
           '081':{code:'QF', name:'Qantas'},
+          '083':{code:'SA', name:'South African Airways'},
           '125':{code:'BA', name:'British Airways'},
+          '134':{code:'AV', name:'Avianca'},
           '139':{code:'AM', name:'Aeromexico'},
+          '142':{code:'LX', name:'Swiss'},
+          '145':{code:'UX', name:'Air Europa'},
           '157':{code:'QR', name:'Qatar Airways'},
+          '160':{code:'CX', name:'Cathay Pacific'},
           '176':{code:'EK', name:'Emirates'},
+          '180':{code:'KE', name:'Korean Air'},
+          '183':{code:'LY', name:'El Al'},
+          '205':{code:'NH', name:'ANA'},
+          '217':{code:'TG', name:'Thai Airways'},
           '220':{code:'LH', name:'Lufthansa'},
+          '230':{code:'CM', name:'Copa Airlines'},
           '235':{code:'TK', name:'Turkish Airlines'},
           '257':{code:'OS', name:'Austrian Airlines'},
           '390':{code:'A3', name:'Aegean'},
+          '462':{code:'QY', name:'European Air Transport'},
+          '530':{code:'VX', name:'Virgin America legado'},
+          '577':{code:'AD', name:'Azul'},
           '724':{code:'LX', name:'Swiss'},
-          '957':{code:'LA', name:'TAM legado / LATAM'}
+          '724':{code:'LX', name:'Swiss'},
+          '724':{code:'LX', name:'Swiss'},
+          '932':{code:'VS', name:'Virgin Atlantic'},
+          '933':{code:'KQ', name:'Kenya Airways'},
+          '957':{code:'LA', name:'LATAM / TAM legado'},
+          '996':{code:'UX', name:'Air Europa'}
         };
         return map[prefix] || null;
       }
+      const applyAirlineInputAlias = (()=>{
+        const aliasMap = {
+          'AMERICAN AIRLINES':'AA','AA':'AA',
+          'AIR CANADA':'AC','AC':'AC',
+          'AIR FRANCE':'AF','AF':'AF',
+          'AEROMEXICO':'AM','AM':'AM',
+          'AEROLINEAS ARGENTINAS':'AR','AR':'AR',
+          'AVIANCA':'AV','AV':'AV',
+          'ITA AIRWAYS':'AZ','AZ':'AZ','ALITALIA':'AZ',
+          'BRITISH AIRWAYS':'BA','BA':'BA',
+          'AIR CHINA':'CA','CA':'CA',
+          'COPA AIRLINES':'CM','CM':'CM',
+          'CATHAY PACIFIC':'CX','CX':'CX',
+          'DELTA':'DL','DELTA AIR LINES':'DL','DL':'DL',
+          'EMIRATES':'EK','EK':'EK',
+          'ETHIOPIAN':'ET','ETHIOPIAN AIRLINES':'ET','ET':'ET',
+          'ETIHAD':'EY','ETIHAD AIRWAYS':'EY','EY':'EY',
+          'GOL':'G3','GOL LINHAS AEREAS':'G3','G3':'G3',
+          'APG AIRLINES':'GP','GP':'GP',
+          'HAHN AIR':'HR','HR':'HR','HAHN AIR SYSTEMS':'H1','H1':'H1',
+          'IBERIA':'IB','IB':'IB',
+          'JETSMART':'JA','JA':'JA',
+          'KLM':'KL','KL':'KL',
+          'LATAM':'LA','LA':'LA','TAM':'LA',
+          'LUFTHANSA':'LH','LH':'LH',
+          'QATAR':'QR','QATAR AIRWAYS':'QR','QR':'QR',
+          'QANTAS':'QF','QF':'QF',
+          'ROYAL AIR MAROC':'AT','AT':'AT',
+          'SINGAPORE':'SQ','SINGAPORE AIRLINES':'SQ','SQ':'SQ',
+          'SOUTH AFRICAN':'SA','SOUTH AFRICAN AIRWAYS':'SA','SA':'SA',
+          'SKY AIRLINE':'H2','H2':'H2',
+          'SWISS':'LX','LX':'LX',
+          'TAP':'TP','TAP AIR PORTUGAL':'TP','TP':'TP',
+          'TURKISH':'TK','TURKISH AIRLINES':'TK','TK':'TK',
+          'UNITED':'UA','UNITED AIRLINES':'UA','UA':'UA',
+          'AIR EUROPA':'UX','UX':'UX',
+          'VIRGIN ATLANTIC':'VS','VS':'VS',
+          'AZUL':'AD','AD':'AD',
+          'TAAG':'DT','TAAG ANGOLA AIRLINES':'DT','DT':'DT',
+          'ANA':'NH','NH':'NH',
+          'KOREAN AIR':'KE','KE':'KE'
+        };
+        const fn = function(){
+          const el = document.getElementById('cia');
+          if(!el) return;
+          const raw = String(el.value || '').trim();
+          if(!raw) return;
+          const upper = raw.toUpperCase();
+          if(aliasMap[upper]) el.value = aliasMap[upper];
+        };
+        if(typeof window !== 'undefined') window.applyAirlineInputAlias = fn;
+        return fn;
+      })();
+
       function getAirlineByTicketPrefix(ticket){
         const info = getAirlineInfoByTicketPrefix(ticket);
         return info ? info.name : '';
@@ -4681,6 +4851,40 @@ document.getElementById("paxq_adt").value = "1";
       }
       function paxNameLooseKey(name){
         return canonicalPaxNameForMatch(name).replace(/[^A-Z0-9]+/g,'');
+      }
+      function extractTktMaskPassenger(line){
+        const raw = String(line || '');
+        const stripped = raw.replace(/^\s*\d+\.\s*/, '').trim();
+        if(!stripped) return { name:'', type:'' };
+        const tail = stripped.match(/(MRS|MISS|MSTR|MST|MR|MS)\s*(ADT|CHD|INF)\b|(ADT|CHD|INF)\b/i);
+        if(tail){
+          const type = (tail[2] || tail[3] || '').toUpperCase();
+          const namePart = stripped.slice(0, tail.index).trim();
+          return { name: normalizePaxName(namePart), type };
+        }
+        return { name: normalizePaxName(stripped), type:'' };
+      }
+      function nameMatchScore(a, b){
+        const ca = canonicalPaxNameForMatch(a || '');
+        const cb = canonicalPaxNameForMatch(b || '');
+        if(!ca || !cb) return 0;
+        if(ca === cb) return 100;
+        const la = paxNameLooseKey(ca);
+        const lb = paxNameLooseKey(cb);
+        if(!la || !lb) return 0;
+        if(la === lb) return 95;
+        if(la.includes(lb) || lb.includes(la)) return 85;
+        const ta = ca.replace(/\//g,' ').split(/\s+/).filter(Boolean);
+        const tb = cb.replace(/\//g,' ').split(/\s+/).filter(Boolean);
+        const sb = new Set(tb);
+        const common = ta.filter(t=>sb.has(t));
+        if(!common.length) return 0;
+        let score = common.length * 20;
+        const surA = (ca.split('/')[0] || '').trim();
+        const surB = (cb.split('/')[0] || '').trim();
+        if(surA && surB && surA === surB) score += 25;
+        if(ta[0] && tb[0] && ta[0] === tb[0]) score += 10;
+        return score;
       }
       function parseTickets(text){
         const src = String(text||'');
@@ -4717,10 +4921,11 @@ document.getElementById("paxq_adt").value = "1";
             let paxName = '';
             let paxType = '';
             for(const line of normalizeGdsText(block).lines){
-              const pm = String(line||'').match(/^\s*\d+\.\s*([A-Z][A-Z\s'\/\-]+?)\s{2,}(ADT|CHD|INF)\b/i);
-              if(pm){
-                paxName = normalizePaxName(pm[1]);
-                paxType = (pm[2]||'').toUpperCase();
+              if(!/^\s*\d+\./.test(String(line||''))) continue;
+              const parsedPax = extractTktMaskPassenger(line);
+              if(parsedPax.name || parsedPax.type){
+                paxName = parsedPax.name || '';
+                paxType = parsedPax.type || '';
                 break;
               }
             }
@@ -4824,6 +5029,21 @@ document.getElementById("paxq_adt").value = "1";
               if(!found && wantLoose){
                 found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (paxNameLooseKey(c.canonicalName)===wantLoose || paxNameLooseKey(c.canonicalName).includes(wantLoose) || wantLoose.includes(paxNameLooseKey(c.canonicalName))));
               }
+              if(!found){
+                const scored = candidates
+                  .filter(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType))
+                  .map(c=>({ c, score: nameMatchScore(canon, c.canonicalName) }))
+                  .sort((a,b)=> b.score - a.score);
+                if(scored.length && scored[0].score >= 45 && (!scored[1] || scored[0].score > scored[1].score)){
+                  found = scored[0].c;
+                }
+              }
+            }
+            if(!found){
+              const eligible = candidates.filter(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType));
+              if(eligible.length === 1 && tktMasks.length === 1){
+                found = eligible[0];
+              }
             }
             if(found && store[found.type] && store[found.type][found.idx]){
               store[found.type][found.idx].ticket = ensureTicketHyphen(row.ticket);
@@ -4834,12 +5054,8 @@ document.getElementById("paxq_adt").value = "1";
         }
         setPaxStore(store); renderPaxFields();
         const airlineInfos = parsed.meta?.airlineInfos || [];
+        const carrierResult = setCarrierFieldFromTicketInfo(airlineInfos);
         const ciaInput = $('cia');
-        if(ciaInput && airlineInfos.length === 1){
-          ciaInput.value = airlineInfos[0].code;
-          try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
-          try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
-        }
         const locInput = $('loc');
         if(locInput && parsed.meta?.loc && !String(locInput.value||'').trim()){
           locInput.value = parsed.meta.loc;
@@ -4848,11 +5064,15 @@ document.getElementById("paxq_adt").value = "1";
         }
         if(ts){
           const airlines = airlineInfos.map(a=>a.name);
+          const flightCarriers = Array.isArray(state.parseMeta?.flightCarriers) ? state.parseMeta.flightCarriers : [];
+          const mode = tktMasks.length && !(keys.length || infKeys.length) ? 'pela máscara TKT/nome' : 'pelo P1/P2';
+          const flightTxt = flightCarriers.length ? ` • Voos identificados: ${formatCarrierList(flightCarriers)}` : '';
+          const ticketTxt = airlines.length ? ` • Dona do bilhete: ${airlines.join(', ')}` : '';
+          const carrierTxt = carrierResult.note ? ` • ${carrierResult.note}` : '';
           if(applied){
-            const mode = tktMasks.length && !(keys.length || infKeys.length) ? 'pela máscara TKT/nome' : 'pelo P1/P2';
-            ts.textContent = `OK — distribuí ${applied} bilhete(s) ${mode}.${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}`;
+            ts.textContent = `OK — distribuí ${applied} bilhete(s) ${mode}.${ticketTxt}${flightTxt}${carrierTxt}`;
           } else {
-            ts.textContent = 'Encontrei bilhetes, mas não consegui mapear P1/P2/nome.';
+            ts.textContent = `Encontrei bilhetes, mas não consegui mapear P1/P2/nome.${ticketTxt}${flightTxt}${carrierTxt}`;
           }
         }
         if(applied) showToast('Bilhetes preenchidos no PAX');
@@ -5050,7 +5270,13 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
       el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
     }
 
-    updateAll();
+    const _ciaInput = document.getElementById('cia');
+      if(_ciaInput){
+        const _airlineAliasHandler = ()=>{ try{ if(window.applyAirlineInputAlias) window.applyAirlineInputAlias(); }catch(_e){} };
+        _ciaInput.addEventListener('change', _airlineAliasHandler);
+        _ciaInput.addEventListener('blur', _airlineAliasHandler);
+      }
+      updateAll();
     syncOutputTabs();
     renderPaxFields();
 
@@ -5111,7 +5337,7 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
     // ----- Versão exibida no rodapé -----
     (function initVersionFooter(){
-      const APP_VERSION = "1.0.21-fxo-reader-compat";
+      const APP_VERSION = "1.0.24c-stable-fxo-hotfix";
       const footer = document.getElementById("appVersionFooter");
       if(footer) footer.textContent = `Versão: ${APP_VERSION}`;
     })();
@@ -5119,6 +5345,6 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
 </script>
 
-<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.21-fxo-reader-compat</div>
+<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.24c-stable-fxo-hotfix</div>
 </body>
 </html>
