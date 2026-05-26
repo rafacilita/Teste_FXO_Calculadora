@@ -4227,12 +4227,105 @@ document.getElementById("paxq_adt").value = "1";
         return normalizePaxName(String(s||"").replace(/\s+/g," ").trim());
       }
 
+      function isDobToken(v){
+        return /^\d{2}[A-Z]{3}\d{2}$/i.test(String(v||"").replace(/\s/g,""));
+      }
+
       function splitNameTitle(namePart){
-        const m = String(namePart||"").trim().match(/^(.*?)(?:\s+(MR|MRS|MS|MISS|MSTR|INF))?$/i);
+        const raw = String(namePart||"").replace(/\s+/g," ").trim();
+        const m = raw.match(/^(.*?)(?:\s*(MSTR|MISS|MRS|MR|MS|INF))$/i);
         return {
-          base: normalizePersonName(m ? m[1] : namePart),
+          base: normalizePersonName((m && m[1].trim()) ? m[1] : raw),
           title: (m && m[2]) ? String(m[2]).toUpperCase() : ""
         };
+      }
+
+      function normalizeFullPaxName(name, type){
+        let s = normalizePersonName(String(name||"").replace(/\([^)]*\)/g,"").replace(/\s*\/\s*/g,"/"));
+        if(!s.includes("/")) return s;
+        const parts = s.split("/");
+        const surname = normalizePersonName(parts.shift() || "");
+        const given = normalizePersonName(parts.join(" "));
+        const nt = splitNameTitle(given);
+        const title = nt.title || (String(type||"").toUpperCase() === "INF" ? "INF" : "");
+        return `${surname}/${nt.base}${title ? " " + title : ""}`.trim();
+      }
+
+      function inferPaxTypeFromQualifiers(groups, raw, fallback){
+        const joined = [...(Array.isArray(groups) ? groups : []), raw || ""].join(" ").toUpperCase();
+        if(/\b(?:CHD|CNN|CHLD|CHILD)\b|\bC\d{2}\b/.test(joined)) return "CHD";
+        const infStandalone = (Array.isArray(groups) ? groups : []).some(g=>/^\s*(?:INF|INFT|INFANT)\s*$/i.test(g));
+        const infRaw = /\b(?:INF|INFT|INFANT)\b/i.test(String(raw||"")) && !/\bINF\s*\//i.test(joined);
+        if(infStandalone || infRaw) return "INF";
+        return fallback || "ADT";
+      }
+
+      function splitTopLevelSlash(s){
+        const out = [];
+        let cur = "";
+        let depth = 0;
+        for(const ch of String(s||"")){
+          if(ch === "(") depth++;
+          if(ch === ")" && depth > 0) depth--;
+          if(ch === "/" && depth === 0){
+            out.push(cur);
+            cur = "";
+          }else{
+            cur += ch;
+          }
+        }
+        out.push(cur);
+        return out.map(x=>x.trim()).filter(Boolean);
+      }
+
+      function findCommandTailEnd(src, start, maxEnd){
+        let end = Math.min(maxEnd || src.length, src.length);
+        const nl = src.indexOf("\n", start);
+        if(nl >= 0) end = Math.min(end, nl);
+        const tail = src.slice(start, end);
+        const stop = tail.search(/\b(?:AP|RF|TK|TKTL|TKOK|SS|SR|OS|RM|RC|OP|ET|IG|ER)\b/i);
+        if(stop >= 0) end = start + stop;
+        return end;
+      }
+
+      function parseNameCommandPassengers(text){
+        const src = String(text||"")
+          .toUpperCase()
+          .replace(/\r/g,"\n")
+          .replace(/[ \t]*\/[ \t]*/g,"/")
+          .replace(/[ \t]*\([ \t]*/g,"(")
+          .replace(/[ \t]*\)[ \t]*/g,")");
+        const re = /(?:NM)?(\d{1,2})([A-Z][A-Z '\-]{1,35})\//g;
+        const matches = Array.from(src.matchAll(re));
+        const out = [];
+        let seatIdx = 1;
+        let infIdx = 9000;
+        for(let i=0;i<matches.length;i++){
+          const m = matches[i];
+          const count = parseInt(m[1], 10) || 1;
+          const surname = normalizePersonName(m[2]);
+          const start = m.index + m[0].length;
+          const next = matches[i+1] ? matches[i+1].index : src.length;
+          const end = findCommandTailEnd(src, start, next);
+          const tail = src.slice(start, end);
+          const parts = splitTopLevelSlash(tail);
+          let used = 0;
+          for(const part of parts){
+            if(used >= count) break;
+            const groups = Array.from(part.matchAll(/\(([^)]*)\)/g)).map(x=>String(x[1]||"").trim());
+            const clean = normalizePersonName(part.replace(/\([^)]*\)/g,""));
+            if(!clean || !/[A-Z]/.test(clean)) continue;
+            const type = inferPaxTypeFromQualifiers(groups, clean, "ADT");
+            const idx = seatIdx++;
+            out.push({idx, type, name: normalizeFullPaxName(`${surname}/${clean}`, type), source:"NM"});
+            used++;
+            for(const g of groups){
+              if(!/^\s*INF(?:T|ANT)?\s*\//i.test(g)) continue;
+              out.push({idx:infIdx++, type:"INF", name:parseInfName(g, `${surname}/${clean}`), source:"NM_INF_INLINE", linkedTo:idx});
+            }
+          }
+        }
+        return out;
       }
 
       function parseInfName(rawInf, adultName){
@@ -4240,8 +4333,7 @@ document.getElementById("paxq_adt").value = "1";
         let s = String(rawInf||"").trim();
         s = s.replace(/^\s*INF(?:ANT)?/i, "").replace(/^\//, "").trim();
         const parts = s.split("/").map(x=>x.trim()).filter(Boolean);
-        const isDob = (v)=>/^\d{2}[A-Z]{3}\d{2}$/i.test(String(v||"").replace(/\s/g,""));
-        while(parts.length && isDob(parts[parts.length-1])) parts.pop();
+        while(parts.length && isDobToken(parts[parts.length-1])) parts.pop();
         if(parts.length >= 2){
           const sn = normalizePersonName(parts[0] || adultSurname);
           const tail = splitNameTitle(parts[1]);
@@ -4264,12 +4356,19 @@ document.getElementById("paxq_adt").value = "1";
         function addPax(idx, type, name, extra){
           const t = String(type||"").toUpperCase();
           if(!["ADT","CHD","INF"].includes(t)) return;
-          const nm = normalizePersonName(name);
+          const nm = normalizeFullPaxName(name, t);
           if(!nm) return;
-          const key = `${idx}|${t}|${nm}`;
+          const linkKey = extra && Number.isFinite(extra.linkedTo) ? `L${extra.linkedTo}` : `I${Number(idx)||0}`;
+          const key = `${linkKey}|${t}|${nm}`;
           if(seen.has(key)) return;
           seen.add(key);
           pax.push(Object.assign({idx:Number(idx)||0, type:t, name:nm}, extra||{}));
+        }
+
+        const commandPax = parseNameCommandPassengers(norm.text);
+        for(const p of commandPax){
+          addPax(p.idx, p.type, p.name, {source:p.source, linkedTo:p.linkedTo});
+          confidence += p.type === "INF" ? 8 : 10;
         }
 
         for(const line of norm.lines){
@@ -4280,29 +4379,61 @@ document.getElementById("paxq_adt").value = "1";
           const namePart = (rest.split("(")[0] || rest).trim();
           if(!/\//.test(namePart)) continue;
           const groups = Array.from(rest.matchAll(/\(([^)]*)\)/g)).map(m=>String(m[1]||"").trim());
-          let type = "ADT";
-          if(groups.some(g=>/^\s*CHD\b/i.test(g))) type = "CHD";
-          else if(groups.some(g=>/^\s*ADT\b/i.test(g))) type = "ADT";
-          else if(groups.some(g=>/^\s*INF\s*$/i.test(g))) type = "INF";
+          let type = inferPaxTypeFromQualifiers(groups, rest, "ADT");
           addPax(idx, type, namePart, {source:"PNR"});
           confidence += 12;
 
           for(const g of groups){
-            if(!/^\s*INF/i.test(g) || /^\s*INF\s*$/i.test(g)) continue;
+            if(!/^\s*INF(?:T|ANT)?/i.test(g) || /^\s*(?:INF|INFT|INFANT)\s*$/i.test(g)) continue;
             addPax(nextInfIdx++, "INF", parseInfName(g, namePart), {source:"INF_INLINE", linkedTo:idx});
             confidence += 8;
           }
         }
 
+        const chdRefs = new Set();
+        for(const line of norm.lines){
+          for(const m of line.matchAll(/\bS(?:SR|R)\s+CHLD\b.*?\/P(\d+)/ig)){
+            chdRefs.add(parseInt(m[1],10));
+          }
+        }
+        if(chdRefs.size){
+          for(const p of pax){
+            if(chdRefs.has(Number(p.idx)) && p.type !== "INF"){
+              p.type = "CHD";
+              p.source = `${p.source || "PNR"}+SSR_CHLD`;
+              confidence += 6;
+            }
+          }
+        }
+
         // SSR INFT fallback
         for(const line of norm.lines){
-          const m = line.match(/SSR\s+INFT\b.*?([A-Z][A-Z '\-]+)\/(.+?)(?:\s+|\/)(\d{2}[A-Z]{3}\d{2}).*?\/P(\d+)/i);
-          if(!m) continue;
-          const sn = normalizePersonName(m[1]);
-          const tail = splitNameTitle(m[2]);
-          const full = `${sn}/${tail.base} ${tail.title||"INF"}`.trim();
-          addPax(nextInfIdx++, "INF", full, {source:"SSR_INFT", linkedTo:parseInt(m[4],10), dob:m[3]});
-          confidence += 10;
+          let m = line.match(/\bS(?:SR|R)\s+INFT\b\s*-?\s*([A-Z][A-Z '\-]+)\/(.+?)(?:\s+|\/)(\d{2}[A-Z]{3}\d{2}).*?\/P(\d+)/i);
+          if(m){
+            const sn = normalizePersonName(m[1]);
+            const tail = splitNameTitle(m[2]);
+            const full = `${sn}/${tail.base} ${tail.title||"INF"}`.trim();
+            addPax(nextInfIdx++, "INF", full, {source:"SSR_INFT", linkedTo:parseInt(m[4],10), dob:m[3]});
+            confidence += 10;
+            continue;
+          }
+          m = line.match(/\bS(?:SR|R)\s+INFT\b\s*-?\s*([A-Z][A-Z '\-]+)\/([^\/\s]+(?:\s+(?:MSTR|MISS|MRS|MR|MS))?).*?\/P(\d+)/i);
+          if(m){
+            const sn = normalizePersonName(m[1]);
+            const tail = splitNameTitle(m[2]);
+            const full = `${sn}/${tail.base} ${tail.title||"INF"}`.trim();
+            addPax(nextInfIdx++, "INF", full, {source:"SSR_INFT", linkedTo:parseInt(m[3],10)});
+            confidence += 8;
+          }
+        }
+
+        const finalSeen = new Set();
+        for(let i=pax.length-1;i>=0;i--){
+          const p = pax[i] || {};
+          const linkKey = Number.isFinite(p.linkedTo) ? `L${p.linkedTo}` : `I${Number(p.idx)||0}`;
+          const key = `${linkKey}|${p.type}|${p.name}`;
+          if(finalSeen.has(key)) pax.splice(i,1);
+          else finalSeen.add(key);
         }
 
         pax.sort((a,b)=>{
@@ -4323,6 +4454,7 @@ document.getElementById("paxq_adt").value = "1";
         const norm = normalizeGdsText(text);
         const segs = [];
         const seen = new Set();
+        const bagRe = "\\b(?:NO\\s*BAG|NIL|0P|0PC|\\d{1,2}P|\\d{1,2}PC|\\d{1,2}X\\d{2}K(?:G)?|\\d{2}K(?:G)?)\\b";
         function add(seg){
           const key = `${seg.carrier}|${seg.flight}|${seg.date}|${seg.origin}|${seg.destination}|${seg.dep}`;
           if(seen.has(key)) return;
@@ -4330,12 +4462,12 @@ document.getElementById("paxq_adt").value = "1";
           segs.push(seg);
         }
         for(const line of norm.lines){
-          let m = line.match(/^\s*(\d+)\s+([A-Z0-9]{1,3})\s*(\d{1,4})\s+([A-Z])\s+(\d{2}[A-Z]{3})\s+\d\*?([A-Z]{6})\s+[A-Z]{2}\d+\s+(\d{4})\s+(\d{4})\s+(\d{2}[A-Z]{3}).*?(\b\d{1,2}P\b|\bNIL\b|\b0P\b)?/i);
+          let m = line.match(new RegExp("^\\s*(\\d+)\\s+([A-Z0-9]{1,3})\\s*(\\d{1,4})\\s+([A-Z])\\s+(\\d{2}[A-Z]{3})\\s+\\d\\*?([A-Z]{6})\\s+[A-Z]{2}\\d+\\s+(\\d{4})\\s+(\\d{4})\\s+(\\d{2}[A-Z]{3}).*?(" + bagRe + ")?\\s*$", "i"));
           if(m){
             add({ segNo:parseInt(m[1],10), carrier:m[2].toUpperCase(), flight:m[3], bookingClass:m[4].toUpperCase(), date:m[5].toUpperCase(), origin:m[6].slice(0,3).toUpperCase(), destination:m[6].slice(3,6).toUpperCase(), dep:m[7], arr:m[8], arrDate:m[9].toUpperCase(), bag:(m[10]||"").toUpperCase(), source:"PNR" });
             continue;
           }
-          m = line.match(/^\s*([A-Z]{3})\s+([A-Z]{3})\s+([A-Z0-9]{1,3})\s+0*(\d{1,4})\s+([A-Z])\s+\*?\s*(\d{2}[A-Z]{3})\s+(\d{4})\s+.+?(\b\d{1,2}P\b|\bNIL\b|\b0P\b)\s*$/i);
+          m = line.match(new RegExp("^\\s*([A-Z]{3})\\s+([A-Z]{3})\\s+([A-Z0-9]{1,3})\\s+0*(\\d{1,4})\\s+([A-Z])\\s+\\*?\\s*(\\d{2}[A-Z]{3})\\s+(\\d{4})\\s+.+?(" + bagRe + ")\\s*$", "i"));
           if(m){
             add({ segNo:0, carrier:m[3].toUpperCase(), flight:m[4], bookingClass:m[5].toUpperCase(), date:m[6].toUpperCase(), origin:m[1].toUpperCase(), destination:m[2].toUpperCase(), dep:m[7], arr:"", arrDate:"", bag:(m[8]||"").toUpperCase(), source:"FXO" });
           }
@@ -4502,7 +4634,7 @@ document.getElementById("paxq_adt").value = "1";
 
       function parseFxoBlock(text, wantType){
         const s = extractFxoSubBlock(text, wantType);
-        const paxType = /\bCHD\b|\/CH\b/i.test(s) ? "CHD" : ((/\(INF\)|\bINF\b|\/IN\b/i.test(s)) && /FARE\s+BALANCE/i.test(s) ? "INF" : "ADT");
+        const paxType = /\b(?:CHD|CNN|CHLD|CHILD)\b|\bC\d{2}\b|\/CH\b/i.test(s) ? "CHD" : ((/\(INF\)|\bINF(?:T|ANT)?\b|\/IN\b/i.test(s)) && /FARE\s+BALANCE/i.test(s) ? "INF" : "ADT");
         const oldBase = findLabelValue(s, 'OLD\\s+BASE\\s+FARE');
         const newBase = findLabelValue(s, 'NEW\\s+BASE\\s+FARE');
         const fare = findLabelValue(s, 'FARE\\s+BALANCE');
@@ -4530,46 +4662,84 @@ document.getElementById("paxq_adt").value = "1";
       function parseBagFromText(text){
         const s = String(text||"");
         const lines = normalizeGdsText(s).lines;
+        const tokenPattern = "(?:NO\\s*BAG|NIL|0\\s*P(?:C)?|\\d{1,2}\\s*P(?:C)?|\\d{1,2}\\s*X\\s*\\d{2}\\s*K(?:G)?|\\d{2}\\s*K(?:G)?)";
+        function normalizeBagToken(raw){
+          const original = String(raw||"").trim();
+          const token = original.toUpperCase().replace(/\s+/g,"").replace(/KG$/,"K");
+          if(!token || /^(?:NOBAG|NIL|0P|0PC)$/.test(token)) return {pieces:0, raw:original, label:"Sem bag"};
+          let m = token.match(/^(\d{1,2})P(?:C)?$/);
+          if(m){
+            const pieces = parseInt(m[1],10) || 0;
+            return {pieces, raw:original, label:pieces > 0 ? `${pieces}PC` : "Sem bag"};
+          }
+          m = token.match(/^(\d{1,2})X(\d{2})K$/);
+          if(m){
+            const pieces = parseInt(m[1],10) || 0;
+            const kg = parseInt(m[2],10) || 0;
+            return {pieces, raw:original, label:`${pieces}x${kg}kg`};
+          }
+          m = token.match(/^(\d{2})K$/);
+          if(m) return {pieces:null, raw:original, label:`${parseInt(m[1],10)}kg`};
+          return null;
+        }
+        function extractBagToken(line){
+          const m = String(line||"").match(new RegExp("(?:^|\\s)(" + tokenPattern + ")\\s*$", "i"));
+          return m ? normalizeBagToken(m[1]) : null;
+        }
         const rows = [];
         let inTable = false;
         for(const line of lines){
-          if(/AL\s+FLGT\s+BK\s+DATE\s+TIME.*\bBG\b/i.test(line)){ inTable = true; continue; }
+          if(/AL\s+FLGT\s+BK\s+DATE\s+TIME.*\bBG\b|BAGG?AGE\s+ALLOWANCE|BAG\s+ALLOWANCE/i.test(line)){ inTable = true; continue; }
           if(!inTable) continue;
           if(/ORIGIN\s+TRVL\s+CURRENCY|OLD\s+BASE\s+FARE/i.test(line)) break;
           if(/S\s+U\s+R\s+F\s+A\s+C\s+E/i.test(line)) continue;
-          const m = line.match(/\b(NIL|0P|\d{1,2}P)\s*$/i);
-          if(!m) continue;
-          const raw = String(m[1]).toUpperCase();
-          const pieces = /NIL|0P/i.test(raw) ? 0 : parseInt(raw,10);
-          rows.push({pieces, raw});
+          const bag = extractBagToken(line);
+          if(bag) rows.push(bag);
         }
         if(!rows.length){
-          if(/\bNIL\b|\b0P\b/i.test(s)) return {pieces:[0], text:'Sem bag', groups:[]};
+          const segRows = Array.isArray(state?.parseMeta?.segments)
+            ? state.parseMeta.segments.map(seg=>seg && seg.bag ? normalizeBagToken(seg.bag) : null).filter(Boolean)
+            : [];
+          rows.push(...segRows);
+        }
+        if(!rows.length){
+          for(const line of lines){
+            if(!/(?:\bBG\b|\bBAG|ALLOW|NIL|NO\s*BAG|\d{1,2}\s*P(?:C)?|\d{1,2}\s*X\s*\d{2}\s*K|\d{2}\s*K)/i.test(line)) continue;
+            const bag = extractBagToken(line);
+            if(bag) rows.push(bag);
+          }
+        }
+        if(!rows.length){
+          const m = s.match(new RegExp("\\b(" + tokenPattern + ")\\b", "i"));
+          const bag = m ? normalizeBagToken(m[1]) : null;
+          if(bag) return {pieces:[bag.pieces].filter(x=>x !== null), text:bag.label, groups:[{pieces:bag.pieces, label:bag.label, segFrom:null, segTo:null}]};
           return {pieces:[], text:'', groups:[]};
         }
         const segs = Array.isArray(state?.parseMeta?.segments) ? state.parseMeta.segments.filter(x=>x && (x.source === 'PNR' || x.segNo)) : [];
-        const mapped = rows.map((r, idx)=>({ pieces:r.pieces, segNo: segs[idx] && segs[idx].segNo ? segs[idx].segNo : null }));
-        const uniq = Array.from(new Set(mapped.map(x=>x.pieces))).sort((a,b)=>a-b);
-        function bagLabel(n){ return n > 0 ? `${n}PC` : 'Sem bag'; }
-        if(uniq.length===1) return {pieces:uniq, text:bagLabel(uniq[0]), groups:[{pieces:uniq[0], segFrom:mapped[0].segNo, segTo:mapped[mapped.length-1].segNo}]};
+        const mapped = rows.map((r, idx)=>({ pieces:r.pieces, label:r.label, segNo: segs[idx] && segs[idx].segNo ? segs[idx].segNo : null }));
+        const uniqLabels = Array.from(new Set(mapped.map(x=>x.label))).filter(Boolean);
+        const uniqPieces = Array.from(new Set(mapped.map(x=>x.pieces).filter(x=>x !== null))).sort((a,b)=>a-b);
+        if(uniqLabels.length===1) return {pieces:uniqPieces, text:uniqLabels[0], groups:[{pieces:mapped[0].pieces, label:uniqLabels[0], segFrom:mapped[0].segNo, segTo:mapped[mapped.length-1].segNo}]};
         const groups = [];
         for(const item of mapped){
           const last = groups[groups.length-1];
-          const contiguous = last && Number.isFinite(last.segTo) && Number.isFinite(item.segNo) && item.segNo === last.segTo + 1;
-          if(last && last.pieces === item.pieces && contiguous){
-            last.segTo = item.segNo;
+          const hasSeg = Number.isFinite(item.segNo);
+          const lastHasSeg = last && Number.isFinite(last.segTo);
+          const contiguous = last && last.label === item.label && ((lastHasSeg && hasSeg && item.segNo === last.segTo + 1) || (!lastHasSeg && !hasSeg));
+          if(contiguous){
+            last.segTo = hasSeg ? item.segNo : last.segTo;
           } else {
-            groups.push({pieces:item.pieces, segFrom:item.segNo, segTo:item.segNo});
+            groups.push({pieces:item.pieces, label:item.label, segFrom:item.segNo, segTo:item.segNo});
           }
         }
         const textOut = groups.map(g=>{
-          const label = bagLabel(g.pieces);
+          const label = g.label || (g.pieces > 0 ? `${g.pieces}PC` : 'Sem bag');
           if(Number.isFinite(g.segFrom) && g.segFrom>0){
             return `${label} (SEG ${g.segFrom}${g.segTo && g.segTo !== g.segFrom ? `-${g.segTo}` : ''})`;
           }
           return label;
         }).join(' • ');
-        return {pieces:uniq, text:textOut, groups};
+        return {pieces:uniqPieces, text:textOut, groups};
       }
 
       function parseFareFamilies(text){
