@@ -4454,7 +4454,7 @@ document.getElementById("paxq_adt").value = "1";
         const norm = normalizeGdsText(text);
         const segs = [];
         const seen = new Set();
-        const bagRe = "\\b(?:NO\\s*BAG|NIL|0P|0PC|\\d{1,2}P|\\d{1,2}PC|\\d{1,2}X\\d{2}K(?:G)?|\\d{2}K(?:G)?)\\b";
+        const bagRe = "\\b(?:NO\\s*BAG(?:GAGE)?|NIL|0\\s*(?:P(?:C)?|K(?:G)?)|\\d{1,2}\\s*P(?:C)?(?:\\s*\\/?\\s*\\d{2}\\s*K(?:G)?)?|\\d{1,2}\\s*X\\s*\\d{2}\\s*K(?:G)?|\\d{2}\\s*K(?:G)?)\\b";
         function add(seg){
           const key = `${seg.carrier}|${seg.flight}|${seg.date}|${seg.origin}|${seg.destination}|${seg.dep}`;
           if(seen.has(key)) return;
@@ -4662,15 +4662,16 @@ document.getElementById("paxq_adt").value = "1";
       function parseBagFromText(text){
         const s = String(text||"");
         const lines = normalizeGdsText(s).lines;
-        const tokenPattern = "(?:NO\\s*BAG|NIL|0\\s*P(?:C)?|\\d{1,2}\\s*P(?:C)?|\\d{1,2}\\s*X\\s*\\d{2}\\s*K(?:G)?|\\d{2}\\s*K(?:G)?)";
+        const tokenPattern = "(?:NO\\s*BAG(?:GAGE)?|NIL|0\\s*(?:P(?:C)?|K(?:G)?)|\\d{1,2}\\s*P(?:C)?(?:\\s*\\/?\\s*\\d{2}\\s*K(?:G)?)?|\\d{1,2}\\s*X\\s*\\d{2}\\s*K(?:G)?|\\d{2}\\s*K(?:G)?)";
         function normalizeBagToken(raw){
           const original = String(raw||"").trim();
-          const token = original.toUpperCase().replace(/\s+/g,"").replace(/KG$/,"K");
-          if(!token || /^(?:NOBAG|NIL|0P|0PC)$/.test(token)) return {pieces:0, raw:original, label:"Sem bag"};
-          let m = token.match(/^(\d{1,2})P(?:C)?$/);
+          const token = original.toUpperCase().replace(/\s+/g,"").replace(/KG/g,"K");
+          if(!token || /^(?:NOBAG(?:GAGE)?|NIL|0P|0PC|0K)$/.test(token)) return {pieces:0, raw:original, label:"Sem bag"};
+          let m = token.match(/^(\d{1,2})P(?:C)?(?:\/?(\d{2})K)?$/);
           if(m){
             const pieces = parseInt(m[1],10) || 0;
-            return {pieces, raw:original, label:pieces > 0 ? `${pieces}PC` : "Sem bag"};
+            const kg = m[2] ? parseInt(m[2],10) : 0;
+            return {pieces, raw:original, label:pieces > 0 ? `${pieces}PC${kg ? "/" + kg + "kg" : ""}` : "Sem bag"};
           }
           m = token.match(/^(\d{1,2})X(\d{2})K$/);
           if(m){
@@ -4682,9 +4683,15 @@ document.getElementById("paxq_adt").value = "1";
           if(m) return {pieces:null, raw:original, label:`${parseInt(m[1],10)}kg`};
           return null;
         }
-        function extractBagToken(line){
-          const m = String(line||"").match(new RegExp("(?:^|\\s)(" + tokenPattern + ")\\s*$", "i"));
-          return m ? normalizeBagToken(m[1]) : null;
+        function extractBagToken(line, opts){
+          const src = String(line||"");
+          let m = src.match(new RegExp("(?:^|\\s)(" + tokenPattern + ")\\s*$", "i"));
+          if(m) return normalizeBagToken(m[1]);
+          if(opts && opts.loose && /\b(?:BG|BAG|BAGGAGE|ALLOW(?:ANCE)?)\b/i.test(src)){
+            const matches = Array.from(src.matchAll(new RegExp("(?:^|\\s)(" + tokenPattern + ")(?=\\s|$)", "ig")));
+            if(matches.length) return normalizeBagToken(matches[matches.length-1][1]);
+          }
+          return null;
         }
         const rows = [];
         let inTable = false;
@@ -4693,20 +4700,23 @@ document.getElementById("paxq_adt").value = "1";
           if(!inTable) continue;
           if(/ORIGIN\s+TRVL\s+CURRENCY|OLD\s+BASE\s+FARE/i.test(line)) break;
           if(/S\s+U\s+R\s+F\s+A\s+C\s+E/i.test(line)) continue;
-          const bag = extractBagToken(line);
-          if(bag) rows.push(bag);
+          const bag = extractBagToken(line, {loose:true});
+          if(bag) rows.push(Object.assign({source:"table"}, bag));
         }
         if(!rows.length){
           const segRows = Array.isArray(state?.parseMeta?.segments)
-            ? state.parseMeta.segments.map(seg=>seg && seg.bag ? normalizeBagToken(seg.bag) : null).filter(Boolean)
+            ? state.parseMeta.segments.map((seg, idx)=>{
+                const bag = seg && seg.bag ? normalizeBagToken(seg.bag) : null;
+                return bag ? Object.assign({source:"segment", segNo:Number(seg.segNo)||idx+1}, bag) : null;
+              }).filter(Boolean)
             : [];
           rows.push(...segRows);
         }
         if(!rows.length){
           for(const line of lines){
             if(!/(?:\bBG\b|\bBAG|ALLOW|NIL|NO\s*BAG|\d{1,2}\s*P(?:C)?|\d{1,2}\s*X\s*\d{2}\s*K|\d{2}\s*K)/i.test(line)) continue;
-            const bag = extractBagToken(line);
-            if(bag) rows.push(bag);
+            const bag = extractBagToken(line, {loose:true});
+            if(bag) rows.push(Object.assign({source:"line"}, bag));
           }
         }
         if(!rows.length){
@@ -4715,8 +4725,14 @@ document.getElementById("paxq_adt").value = "1";
           if(bag) return {pieces:[bag.pieces].filter(x=>x !== null), text:bag.label, groups:[{pieces:bag.pieces, label:bag.label, segFrom:null, segTo:null}]};
           return {pieces:[], text:'', groups:[]};
         }
-        const segs = Array.isArray(state?.parseMeta?.segments) ? state.parseMeta.segments.filter(x=>x && (x.source === 'PNR' || x.segNo)) : [];
-        const mapped = rows.map((r, idx)=>({ pieces:r.pieces, label:r.label, segNo: segs[idx] && segs[idx].segNo ? segs[idx].segNo : null }));
+        const segs = Array.isArray(state?.parseMeta?.segments) ? state.parseMeta.segments.filter(x=>x) : [];
+        const mapped = rows.map((r, idx)=>{
+          const rowSeg = Number(r.segNo);
+          const metaSeg = Number(segs[idx] && segs[idx].segNo);
+          let segNo = Number.isFinite(rowSeg) && rowSeg > 0 ? rowSeg : (Number.isFinite(metaSeg) && metaSeg > 0 ? metaSeg : null);
+          if((!Number.isFinite(segNo) || segNo <= 0) && (r.source === "table" || r.source === "segment")) segNo = idx + 1;
+          return { pieces:r.pieces, label:r.label, segNo:Number.isFinite(segNo) && segNo > 0 ? segNo : null };
+        });
         const uniqLabels = Array.from(new Set(mapped.map(x=>x.label))).filter(Boolean);
         const uniqPieces = Array.from(new Set(mapped.map(x=>x.pieces).filter(x=>x !== null))).sort((a,b)=>a-b);
         if(uniqLabels.length===1) return {pieces:uniqPieces, text:uniqLabels[0], groups:[{pieces:mapped[0].pieces, label:uniqLabels[0], segFrom:mapped[0].segNo, segTo:mapped[mapped.length-1].segNo}]};
@@ -5280,6 +5296,114 @@ document.getElementById("paxq_adt").value = "1";
           const sel = $("inter_tipo");
           if(sel){ sel.value = 'Automático'; applyInterTipoUI(); }
         }
+      }
+
+      function runParserSimulations(){
+        const sep = " \u2022 ";
+        const savedSegments = state.parseMeta.segments;
+        const results = [];
+        const sameQty = (actual, expected)=>["ADT","CHD","INF"].every(t=>(actual[t]||0)===(expected[t]||0));
+        const namesOf = (parsed)=>parsed.pax.map(p=>`${p.type}:${p.name}${p.linkedTo ? `->P${p.linkedTo}` : ""}`);
+
+        function addPaxCase(name, input, expectedQty, requiredNames){
+          const parsed = parsePassengersData(input);
+          const names = namesOf(parsed);
+          const missing = (requiredNames||[]).filter(n=>!names.includes(n));
+          const pass = sameQty(parsed.qty, expectedQty) && !missing.length;
+          results.push({type:"PAX", name, pass, expected:JSON.stringify(expectedQty), actual:JSON.stringify(parsed.qty), detail:missing.length ? `faltou ${missing.join(", ")}` : names.join(" | ")});
+        }
+
+        function addBagCase(name, fxoText, expectedBag){
+          state.parseMeta.segments = parseSegments(fxoText);
+          const parsed = parseFxoBlock(fxoText, "ADT");
+          results.push({type:"BAG", name, pass:parsed.bag === expectedBag, expected:expectedBag, actual:parsed.bag || "", detail:`segmentos ${state.parseMeta.segments.length}`});
+        }
+
+        const baseFxo = [
+          "FARE BALANCE        USD 10.00",
+          "PENALTY             USD 0.00",
+          "TOTAL ADD COLL      USD 10.00",
+          "AL FLGT BK DATE TIME FARE BASIS NVB NVA BG"
+        ].join("\n");
+
+        addPaxCase("PNR 1 ADT com datas de segmento", [
+          "RP/SAO2R2100/SAO2R2100 G3/RM 12APR26/0430Z BMQ84Q",
+          "1.VICENTE MENDES CARNEIRO/JOSE MR(ADT/09NOV90)",
+          "2 KL9299 T 31MAY 7*CWBGRU HK1 1105 1215 31MAY E KL/BMQ84Q",
+          "3 KL2416 T 31MAY 7*GRUCDG HK1 1440 0705 01JUN E KL/BMQ84Q",
+          "4 KL2014 T 01JUN 1*CDGNTE HK1 0835 0940 01JUN E KL/BMQ84Q"
+        ].join("\n"), {ADT:1, CHD:0, INF:0}, ["ADT:VICENTE MENDES CARNEIRO/JOSE MR"]);
+
+        addPaxCase("PNR ADT + CHD explicito", [
+          "RP/SAO2R2100/SAO2R2100 G3/RM 12APR26/0430Z ABC123",
+          "1.SILVA/JOAO MR(ADT/01JAN80)",
+          "2.SILVA/MARIA MISS(CHD/10OCT18)"
+        ].join("\n"), {ADT:1, CHD:1, INF:0}, ["CHD:SILVA/MARIA MISS"]);
+
+        addPaxCase("PNR ADT com INF inline", [
+          "RP/SAO2R2100/SAO2R2100 G3/RM 12APR26/0430Z INF123",
+          "1.COSTA/CARLOS MR(ADT/01JAN80)(INF/COSTA/BEBE MSTR/20JAN25)"
+        ].join("\n"), {ADT:1, CHD:0, INF:1}, ["INF:COSTA/BEBE MSTR->P1"]);
+
+        addPaxCase("Comandos NM com ADT/CHD/INF", [
+          "NM2SILVA/JOAO MR/MARIA MRS",
+          "NM1SOUZA/ANA MISS(CHD/12MAR18)",
+          "NM1COSTA/CARLOS MR(INF/COSTA/BEBE MSTR/20JAN25)"
+        ].join("\n"), {ADT:3, CHD:1, INF:1}, ["CHD:SOUZA/ANA MISS", "INF:COSTA/BEBE MSTR->P4"]);
+
+        addPaxCase("SSR CHLD/INFT fallback", [
+          "RP/SAO2R2100/SAO2R2100 G3/RM 12APR26/0430Z SSR123",
+          "1.SANTOS/CAMILA MISS",
+          "2.SANTOS/JOAO MR",
+          "SSR CHLD YY HK1-10OCT18/P1",
+          "SSR INFT-SANTOS/BEBE MSTR/15MAR25/P2"
+        ].join("\n"), {ADT:1, CHD:1, INF:1}, ["CHD:SANTOS/CAMILA MISS", "INF:SANTOS/BEBE MSTR->P2"]);
+
+        addBagCase("Bagagem igual em todos os trechos", [
+          baseFxo,
+          "CWB GRU LA 3201 Y *31MAY 1105 ABC 1PC",
+          "GRU CDG AF 0455 Y *31MAY 1440 ABC 1PC"
+        ].join("\n"), "1PC");
+
+        addBagCase("Bagagem mista por segmento", [
+          baseFxo,
+          "CWB GRU LA 3201 Y *31MAY 1105 ABC 1PC",
+          "GRU CDG AF 0455 Y *31MAY 1440 ABC 2PC",
+          "CDG NTE AF 2014 Y *01JUN 0835 ABC NO BAG"
+        ].join("\n"), `1PC (SEG 1)${sep}2PC (SEG 2)${sep}Sem bag (SEG 3)`);
+
+        addBagCase("Bagagem com peso por peca", [
+          baseFxo,
+          "CWB GRU LA 3201 Y *31MAY 1105 ABC 1PC/23KG",
+          "GRU CDG AF 0455 Y *31MAY 1440 ABC 1X23KG"
+        ].join("\n"), `1PC/23kg (SEG 1)${sep}1x23kg (SEG 2)`);
+
+        addBagCase("Bagagem por peso sem peca", [
+          baseFxo,
+          "CWB GRU LA 3201 Y *31MAY 1105 ABC 23K"
+        ].join("\n"), "23kg");
+
+        state.parseMeta.segments = savedSegments;
+        window.__FXQ_LAST_SIMULATIONS = results;
+        if(window.console && console.table) console.table(results);
+        if(String(location.hash||"").toLowerCase().includes("fxo-lab")){
+          let pre = document.getElementById("fxqParserSimulationResults");
+          if(!pre){
+            pre = document.createElement("pre");
+            pre.id = "fxqParserSimulationResults";
+            pre.hidden = true;
+            document.body.appendChild(pre);
+          }
+          pre.textContent = JSON.stringify(results, null, 2);
+          document.body.setAttribute("data-fxq-sim-pass", results.every(r=>r.pass) ? "1" : "0");
+        }
+        return results;
+      }
+
+      state.runSimulations = runParserSimulations;
+      window.runFXQParserSimulations = runParserSimulations;
+      if(String(location.hash||"").toLowerCase().includes("fxo-lab")){
+        setTimeout(runParserSimulations, 0);
       }
 
       const interTipo = $("inter_tipo");
