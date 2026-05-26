@@ -4295,7 +4295,7 @@ document.getElementById("paxq_adt").value = "1";
           .replace(/[ \t]*\/[ \t]*/g,"/")
           .replace(/[ \t]*\([ \t]*/g,"(")
           .replace(/[ \t]*\)[ \t]*/g,")");
-        const re = /(?:NM)?(\d{1,2})([A-Z][A-Z '\-]{1,35})\//g;
+        const re = /\bNM\s*(\d{1,2})([A-Z][A-Z '\-]{1,35})\//g;
         const matches = Array.from(src.matchAll(re));
         const out = [];
         let seatIdx = 1;
