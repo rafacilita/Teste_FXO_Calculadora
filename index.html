@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>FXO Calculadora v2 - Teste Git + VS Code</title>
+  <title>Calculadora de Reemissão • Gerador de cálculo de reemissão</title>
   <style>
     .app-version-footer{position:fixed;right:12px;bottom:10px;z-index:9999;padding:6px 10px;border-radius:999px;background:rgba(15,23,42,.82);color:#fff;font:700 12px/1.2 var(--sans);letter-spacing:.02em;box-shadow:0 8px 22px rgba(0,0,0,.18);backdrop-filter:blur(8px);opacity:.92} 
     :root[data-theme="light"] .app-version-footer{background:rgba(15,23,42,.78);color:#fff;border:1px solid rgba(255,255,255,.14)}
@@ -14,19 +14,15 @@
       --card:#121a27;
       --muted:#8ea0b7;
       --text:#e8eef7;
-      --accent:#9b5cff;
+      --accent:#4C7EFF;
+      --accent-rgb:76,126,255;
       --shadow: 0 14px 40px rgba(0,0,0,.38);
       --radius: 18px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
     }
 
-    :root[data-theme="light"]{--bg:#f6f7fb;
-      --card:#ffffff;
-      --muted:#334155;
-      --text:#0f172a;
-      --shadow: 0 14px 40px rgba(0,0,0,.14);
-
+    :root[data-theme="light"]{
   /* --- CONTRASTE MELHORADO (tema claro) --- */
   --bg: #f6f7fb;
   --card: #ffffff;
@@ -38,7 +34,9 @@
   --input-border: rgba(15, 23, 42, .20);
   --input-text: #0f172a;
   --chip-bg: #eef2ff;
-  --chip-border: rgba(124, 58, 237, .28);
+  --chip-border: rgba(20, 48, 92, .28);
+  --accent: #14305C;
+  --accent-rgb: 20,48,92;
 
 }
 
@@ -69,7 +67,7 @@
 
 
     :root[data-theme="light"] body{
-      background: radial-gradient(1000px 600px at 15% 0%, rgba(155,92,255,.18), transparent 55%),
+      background: radial-gradient(1000px 600px at 15% 0%, rgba(var(--accent-rgb),.10), transparent 55%),
                   radial-gradient(800px 400px at 85% 20%, rgba(61,220,151,.12), transparent 55%),
                   var(--bg);
       color: var(--text);
@@ -111,7 +109,7 @@
     body{
       margin:0;
       font-family:var(--sans);
-      background: radial-gradient(1000px 600px at 15% 0%, rgba(155,92,255,.25), transparent 55%),
+      background: radial-gradient(1000px 600px at 15% 0%, rgba(var(--accent-rgb),.20), transparent 55%),
                   radial-gradient(800px 400px at 85% 20%, rgba(61,220,151,.15), transparent 55%),
                   var(--bg);
       color:var(--text);
@@ -164,15 +162,15 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       background: rgba(0,0,0,.16);
       color: var(--text);
       padding: 8px 12px;
-      border-radius: 999px;
+      border-radius: 10px;
       cursor:pointer;
       font-weight:800;
       font-size: 13px;
     }
     .tab[aria-selected="true"]{
-      border-color: rgba(155,92,255,.55);
-      box-shadow: 0 0 0 3px rgba(155,92,255,.15) inset;
-      background: rgba(155,92,255,.14);
+      border-color: rgba(var(--accent-rgb),.55);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.15) inset;
+      background: rgba(var(--accent-rgb),.14);
     }
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media (max-width: 520px){ .grid{grid-template-columns:1fr} }
@@ -184,8 +182,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
     }
     textarea{ min-height: 84px; resize: vertical; }
     input:focus, select:focus, textarea:focus{
-      border-color: rgba(155,92,255,.55);
-      box-shadow: 0 0 0 3px rgba(155,92,255,.14);
+      border-color: rgba(var(--accent-rgb),.55);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.14);
     }
     .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
     .row > div{ flex: 1 1 140px; }
@@ -213,7 +211,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
     }
     .action:disabled{ opacity:.45; cursor:not-allowed; filter: grayscale(25%); }
     .action:disabled:hover{ transform:none; }
-    button.action.primary{ border-color: rgba(155,92,255,.55); background: rgba(155,92,255,.18); }
+    button.action.primary{ border-color: rgba(var(--accent-rgb),.55); background: rgba(var(--accent-rgb),.18); }
     button.action.good{ border-color: rgba(61,220,151,.40); background: rgba(61,220,151,.14); }
     button.action.warn{ border-color: rgba(255,204,102,.55); background: rgba(255,204,102,.12); }
     button.action:active{ transform: translateY(1px); }
@@ -221,7 +219,9 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       background: #ffffff; color:#0b0f17;
       border-radius: 14px; border: 1px solid rgba(0,0,0,.08);
       padding: 12px; min-height: 240px; overflow:auto;
+      text-align:center;
     }
+    .preview > div{ display:inline-block; text-align:left; }
     .codebox{
       width:100%;
       min-height: 240px;
@@ -367,8 +367,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       border-color: rgba(15,23,42,.16);
     }
     .themeCtl select:focus{
-      box-shadow: 0 0 0 3px rgba(155,92,255,.30);
-      border-color: rgba(155,92,255,.55);
+      box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.30);
+      border-color: rgba(var(--accent-rgb),.55);
     }
     /* setinha */
     .themeCtl{ position: relative; }
@@ -466,7 +466,6 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       border-left-color: rgba(21,128,61,.35);
     }
     .rentRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
-    .rentSection{ margin-top:10px; }
     .rentChk{ display:flex; gap:8px; align-items:center; margin:8px 0 8px; }
     .rentBlock{ border:1px dashed rgba(255,255,255,.18); border-radius:12px; padding:10px; margin-bottom:10px; }
     body.theme-light .rentBlock{ border-color: rgba(0,0,0,.18); }
@@ -558,11 +557,10 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 .airBtn{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;height:52px;border-radius:14px;border:2px solid rgba(17,24,39,.14);background:#fff;cursor:pointer;user-select:none;transition:transform .02s ease, box-shadow .12s ease, border-color .12s ease, background-color .12s ease}
 .airBtn:hover{box-shadow:0 6px 18px rgba(17,24,39,.08);border-color:rgba(17,24,39,.22)}
 .airBtn:active{transform:scale(.99)}
-.airBtn.active{border-color:#7c3aed;background:rgba(124,58,237,.06);box-shadow:0 0 0 4px rgba(124,58,237,.18), 0 10px 26px rgba(124,58,237,.22);transform:translateY(-1px) scale(1.01)}
-.airBtn.active .airCode{opacity:1;color:#4c1d95}
+.airBtn.active{border-color:var(--accent);background:rgba(var(--accent-rgb),.06);box-shadow:0 2px 8px rgba(var(--accent-rgb),.18)}
+.airBtn.active .airCode{opacity:1;color:var(--accent)}
 .airBtn.active .airLogo{filter:drop-shadow(0 2px 6px rgba(17,24,39,.18))}
-.airBtn.active:active{transform:translateY(-1px) scale(.99)}
-.airBtn:focus-visible{outline:3px solid rgba(124,58,237,.35);outline-offset:2px}
+.airBtn:focus-visible{outline:3px solid rgba(var(--accent-rgb),.35);outline-offset:2px}
 .airLogo{display:inline-flex;align-items:center;justify-content:center;height:30px;width:auto;max-width:86px;border-radius:10px;overflow:hidden;background:transparent}
 .airLogo img{display:block;height:30px;width:auto}
 .airCode{font-weight:900;font-size:12px;color:#111827;opacity:.8}
@@ -602,8 +600,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 }
 .themeCtl select:focus{
   outline: none !important;
-  box-shadow: 0 0 0 3px rgba(155,92,255,.25) !important;
-  border-color: rgba(155,92,255,.55) !important;
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.25) !important;
+  border-color: rgba(var(--accent-rgb),.55) !important;
 }
 :root[data-theme="light"] .themeCtl select{
   border-color: rgba(15,23,42,.20) !important;
@@ -630,10 +628,10 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
    - estilo tipo "segmented control"
    ========================= */
 :root[data-theme="light"] .card.calcCard .tabs{
-  background: rgba(124,58,237,.08);
-  border: 1px solid rgba(124,58,237,.18);
+  background: rgba(var(--accent-rgb),.06);
+  border: 1px solid rgba(var(--accent-rgb),.16);
   padding: 6px;
-  border-radius: 999px;
+  border-radius: 12px;
   gap: 6px;
 }
 :root[data-theme="light"] .card.calcCard .tabs .tab{
@@ -642,20 +640,20 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
   color: #0f172a;
   font-weight: 900;
   padding: 9px 15px;
-  border-radius: 999px;
+  border-radius: 10px;
 }
 :root[data-theme="light"] .card.calcCard .tabs .tab:hover{
-  background: rgba(124,58,237,.10);
+  background: rgba(var(--accent-rgb),.08);
 }
 :root[data-theme="light"] .card.calcCard .tabs .tab[aria-selected="true"]{
-  background: #7c3aed;
+  background: var(--accent);
   color: #ffffff;
-  border-color: rgba(109,40,217,.65);
-  box-shadow: 0 10px 22px rgba(124,58,237,.22);
+  border-color: var(--accent);
+  box-shadow: 0 2px 6px rgba(var(--accent-rgb),.18);
 }
 :root[data-theme="light"] .card.calcCard .tabs .tab:focus-visible{
   outline: none;
-  box-shadow: 0 0 0 4px rgba(124,58,237,.22);
+  box-shadow: 0 0 0 4px rgba(var(--accent-rgb),.20);
 }
 
 
@@ -672,14 +670,14 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 }
 .outputTabBtn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(2,6,23,.16)}
 .outputTabBtn[aria-selected="true"]{
-  border-color: rgba(155,92,255,.55);
-  box-shadow: 0 0 0 2px rgba(155,92,255,.15) inset, 0 10px 20px rgba(76,29,149,.14);
-  background: rgba(155,92,255,.14);
+  border-color: rgba(var(--accent-rgb),.55);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb),.15) inset;
+  background: rgba(var(--accent-rgb),.14);
 }
 .outputPanel{display:none}
 .outputPanel.is-active{display:block}
 .outputEmpty{border:1px dashed rgba(255,255,255,.14);border-radius:14px;padding:16px;background:rgba(0,0,0,.10);color:var(--muted)}
-.agencyOptBox{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed rgba(155,92,255,.28);background:rgba(155,92,255,.08)}
+.agencyOptBox{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px dashed rgba(var(--accent-rgb),.28);background:rgba(var(--accent-rgb),.08)}
 .agencyOpt{display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-size:13px;color:var(--text);font-weight:700}
 .agencyOpt input[type="checkbox"]{width:16px;height:16px}
 .outputsCard .hd{padding:14px 16px 8px}
@@ -706,11 +704,11 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 .outTitle{line-height:1.45;font-size:12.5px}
 :root[data-theme="light"] .outputTabBtn{border:1px solid rgba(15,23,42,.12);background:#fff;color:#0f172a;box-shadow:0 5px 14px rgba(15,23,42,.05)}
 :root[data-theme="light"] .outputTabBtn:hover{box-shadow:0 10px 20px rgba(15,23,42,.08)}
-:root[data-theme="light"] .outputTabBtn[aria-selected="true"]{border-color: rgba(124,58,237,.50);background: rgba(124,58,237,.10);color:#111827;box-shadow: 0 0 0 2px rgba(124,58,237,.16) inset, 0 10px 20px rgba(124,58,237,.10)}
+:root[data-theme="light"] .outputTabBtn[aria-selected="true"]{border-color: rgba(var(--accent-rgb),.50);background: rgba(var(--accent-rgb),.10);color:#111827;box-shadow: 0 0 0 2px rgba(var(--accent-rgb),.16) inset}
 :root[data-theme="light"] .outputsCard .btns .action{box-shadow:0 5px 14px rgba(15,23,42,.05)}
 :root[data-theme="light"] .outputsCard .btns .action:hover{box-shadow:0 10px 20px rgba(15,23,42,.08)}
 :root[data-theme="light"] .outputEmpty{border-color:rgba(15,23,42,.14);background:rgba(15,23,42,.03)}
-:root[data-theme="light"] .agencyOptBox{border-color:rgba(124,58,237,.24);background:rgba(124,58,237,.06)}
+:root[data-theme="light"] .agencyOptBox{border-color:rgba(var(--accent-rgb),.24);background:rgba(var(--accent-rgb),.06)}
 </style>
 </head>
 <body>
@@ -923,6 +921,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 <div class="hr"></div>
 
         <!-- COMMON -->
+        <div id="commonSection">
         <div class="grid">
           <div id="ciaWrap">
             <label>Cia aérea</label>
@@ -948,70 +947,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             
             </div>
 
-            <input id="cia" list="ciaList" placeholder="Ex.: LA / G3 / AD / TP..." />
-            <datalist id="ciaList">
-                <option value="AA">American Airlines</option>
-                <option value="AC">Air Canada</option>
-                <option value="AF">Air France</option>
-                <option value="AM">Aeromexico</option>
-                <option value="AR">Aerolineas Argentinas</option>
-                <option value="AV">Avianca</option>
-                <option value="AZ">ITA Airways</option>
-                <option value="BA">British Airways</option>
-                <option value="CA">Air China</option>
-                <option value="CM">Copa Airlines</option>
-                <option value="CX">Cathay Pacific</option>
-                <option value="DL">Delta Air Lines</option>
-                <option value="EK">Emirates</option>
-                <option value="ET">Ethiopian Airlines</option>
-                <option value="EY">Etihad Airways</option>
-                <option value="G3">GOL</option>
-                <option value="GP">APG Airlines</option>
-                <option value="H1">Hahn Air Systems</option>
-                <option value="HR">Hahn Air</option>
-                <option value="H2">Sky Airline</option>
-                <option value="IB">Iberia</option>
-                <option value="JA">JetSmart</option>
-                <option value="JL">Japan Airlines</option>
-                <option value="KL">KLM</option>
-                <option value="KQ">Kenya Airways</option>
-                <option value="LA">LATAM</option>
-                <option value="LH">Lufthansa</option>
-                <option value="LY">El Al</option>
-                <option value="MU">China Eastern</option>
-                <option value="NH">ANA</option>
-                <option value="NZ">Air New Zealand</option>
-                <option value="OU">Croatia Airlines</option>
-                <option value="OS">Austrian Airlines</option>
-                <option value="QF">Qantas</option>
-                <option value="QR">Qatar Airways</option>
-                <option value="RK">Ryanair UK</option>
-                <option value="S4">Azores Airlines / SATA</option>
-                <option value="SA">South African Airways</option>
-                <option value="SK">SAS</option>
-                <option value="SQ">Singapore Airlines</option>
-                <option value="SV">Saudia</option>
-                <option value="TA">TACA</option>
-                <option value="TC">Air Tanzania</option>
-                <option value="TK">Turkish Airlines</option>
-                <option value="TP">TAP Air Portugal</option>
-                <option value="UA">United Airlines</option>
-                <option value="UX">Air Europa</option>
-                <option value="VA">Virgin Australia</option>
-                <option value="VS">Virgin Atlantic</option>
-                <option value="VN">Vietnam Airlines</option>
-                <option value="VY">Vueling</option>
-                <option value="W2">FlexFlight</option>
-                <option value="WB">RwandAir</option>
-                <option value="WY">Oman Air</option>
-                <option value="XL">LATAM Ecuador / legado</option>
-                <option value="XLM">Universal Assistance</option>
-                <option value="XQ">SunExpress</option>
-                <option value="7M">MAP Linhas Aéreas</option>
-                <option value="DT">TAAG Angola Airlines</option>
-                <option value="AT">Royal Air Maroc</option>
-                <option value="AD">Azul</option>
-            </datalist>
+            <input id="cia" placeholder="Ex.: LA / G3 / AD / TP..." />
 </div>
 <div class="grid3" style="grid-column: 1 / -1;">
             <div>
@@ -1030,16 +966,16 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             </div>
           </div>
 <div>
-            <label>Qtd ADT</label>
-            <input id="paxq_adt" value="1" inputmode="numeric" />
+            <label>Qtd ADT *</label>
+            <input id="paxq_adt" value="1" inputmode="numeric" aria-required="true" />
           </div>
           <div>
-            <label>Qtd CHD</label>
-            <input id="paxq_chd" value="0" inputmode="numeric" />
+            <label>Qtd CHD *</label>
+            <input id="paxq_chd" value="0" inputmode="numeric" aria-required="true" />
           </div>
           <div>
-            <label>Qtd INF</label>
-            <input id="paxq_inf" value="0" inputmode="numeric" />
+            <label>Qtd INF *</label>
+            <input id="paxq_inf" value="0" inputmode="numeric" aria-required="true" />
           </div>
           <div style="grid-column:1/-1">
             <div class="paxBox" id="paxBox">
@@ -1062,11 +998,11 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
           </div>
           <div>
             <label>Passageiro(s) (auto)</label>
-            <input id="pax" placeholder="Ex.: SILVA/JOAO MR; SOUZA/MARIA MRS"  readonly placeholder="Gerado automaticamente" />
+            <input id="pax" placeholder="Gerado automaticamente" readonly />
           </div>
           <div>
             <label>Bilhete(s) (auto)</label>
-            <input id="tks" placeholder="Ex.: 957-1234567890 / OAC 012345"  readonly placeholder="Gerado automaticamente (957-1234567890)" />
+            <input id="tks" placeholder="Gerado automaticamente (957-1234567890)" readonly />
           </div>
           <div>
             <label>Bagagem</label>
@@ -1080,11 +1016,13 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
             </select>
           </div>
         </div>
+        </div>
 
         <div class="hr"></div>
 
         <!-- PANELS -->
         <div id="panelNac" role="tabpanel" aria-labelledby="tabNac">
+          <div id="commonAnchorNac"></div>
           <div class="muted small"><b>Nacional</b> — valores em BRL (R$). Dif. tarifa = (Tarifa nova − Tarifa antiga).</div>
 
           <div class="hr"></div>
@@ -1152,6 +1090,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <div id="nac_folio_wrap" style="display:none; flex:1; min-width:260px; max-width:520px">
                 <label>Fólio (texto livre)</label>
                 <textarea id="nac_folio_text" placeholder="Digite o fólio/observação aqui (opcional)" style="min-height:42px"></textarea>
+                <div class="muted small" id="nac_folio_text_count">0 caracteres</div>
                 <div class="agencyOptBox">
                   <label class="agencyOpt"><input type="checkbox" id="nac_folio_agencia" /> Incluir fólio também no e-mail da agência</label>
                   <div class="muted small" style="margin-top:6px">Desmarcado = o fólio fica apenas no contexto interno.</div>
@@ -1179,6 +1118,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
           <label>Regras / observações (opcional)</label>
           <textarea id="nac_regras" placeholder="Ex.: LOC deve ser cancelado em até 30 min se não prosseguir, risco de ADM..."></textarea>
+          <div class="muted small" id="nac_regras_count">0 caracteres</div>
         </div>
 
         <div id="panelInter" role="tabpanel" aria-labelledby="tabInter" class="hidden">
@@ -1202,12 +1142,13 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <input id="inter_cur_other" placeholder="Ex.: JPY, CAD, ARS..." maxlength="3" />
             </div>
             <div>
-              <label>Câmbio (Moeda → BRL)</label>
-              <input id="inter_fx" placeholder="Ex.: 5,40" />
+              <label>Câmbio (Moeda → BRL) *</label>
+              <input id="inter_fx" placeholder="Ex.: 5,40" aria-required="true" />
+              <div class="muted small" id="inter_fx_status" role="status" aria-live="polite" style="margin-top:4px"></div>
             </div>
             <div id="inter_fx_usd_wrap" class="hidden">
-              <label>Câmbio (USD → BRL) (RC)</label>
-              <input id="inter_fx_usd" placeholder="Ex.: 5,40" />
+              <label>Câmbio (USD → BRL) (RC) * <span class="rentMuted">(quando houver RC)</span></label>
+              <input id="inter_fx_usd" placeholder="Ex.: 5,40" aria-required="true" />
             </div>
             <div>
               <label>Recuperação de incentivo?</label>
@@ -1221,6 +1162,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <select id="inter_tipo">
                 <option>Manual</option>
                 <option>Automático</option>
+                <option>Automático com dados manuais</option>
               </select>
             </div>
             <div>
@@ -1238,10 +1180,70 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
           <div class="hr"></div>
 
+                    <div id="interFxqIntro" class="note" style="border-left:3px solid rgba(var(--accent-rgb),.65); background: rgba(var(--accent-rgb),.10);">
+            <div class="muted small"><b>Automático (Amadeus FXQ/FXO)</b> — fluxo: <b>1)</b> cole a máscara do PNR → <b>2)</b> cole o FXO por tipo → <b>3)</b> cole FA/FHE dos bilhetes.</div>
+            <div class="muted small" id="fxqStatus" role="status" aria-live="polite" style="margin-top:6px"></div>
+          </div>
+
+          <div class="hr"></div>
+
+          <label id="lbl_inter_voos">1) Itinerário / Máscara (cole o PNR)</label>
+          <textarea id="inter_voos" placeholder="Cole aqui RP/... com PAX + segmentos (Amadeus)."></textarea>
+
+          <div class="hr"></div>
+
+          <div id="fxoWrap" class="hidden">
+            <div class="muted small"><b>2) Recálculo por tipo (FXO)</b> — cole o FXO (ou FXQ) de cada tipo abaixo. O sistema preenche Dif. tarifa, Multa e Dif. taxas automaticamente.</div>
+            <div class="hr"></div>
+
+            <div id="fxoBox_ADT_wrap" class="hidden">
+              <label>FXO (ADT)</label>
+              <textarea id="fxoBox_ADT" placeholder="Cole aqui o FXO do ADT"></textarea>
+              <div class="muted small" id="fxoBox_ADT_status" role="status" aria-live="polite" style="margin-top:6px"></div>
+            </div>
+
+            <div id="fxoBox_CHD_wrap" class="hidden">
+              <label>FXO (CHD)</label>
+              <textarea id="fxoBox_CHD" placeholder="Cole aqui o FXO do CHD"></textarea>
+              <div class="muted small" id="fxoBox_CHD_status" role="status" aria-live="polite" style="margin-top:6px"></div>
+            </div>
+
+            <div id="fxoBox_INF_wrap" class="hidden">
+              <label>FXO (INF)</label>
+              <textarea id="fxoBox_INF" placeholder="Cole aqui o FXO do INF"></textarea>
+              <div class="muted small" id="fxoBox_INF_status" role="status" aria-live="polite" style="margin-top:6px"></div>
+            </div>
+          </div>
+
+          <div id="manualInternoWrap">
+            <label>Cálculo (uso interno) — opcional</label>
+            <textarea id="inter_interno" placeholder="Cole aqui observações internas / máscara / prints (não enviar ao cliente se não quiser)"></textarea>
+            <div class="muted small" id="inter_interno_count">0 caracteres</div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div id="ticketsWrap" class="hidden">
+            <label id="lbl_inter_original">3) Bilhetes (FA/FHE/TKT)</label>
+            <textarea id="inter_original" placeholder="Cole aqui FA/FHE ou máscara TKT (com /P1, /P2... quando houver)"></textarea>
+            <div class="muted small" id="ticketsStatus" role="status" aria-live="polite" style="margin-top:6px"></div>
+          </div>
+          <div id="btnFinalizarAutoWrap" class="hidden" style="margin-top:10px">
+            <button class="action primary" id="btnFinalizarAuto" type="button">Concluir preenchimento</button>
+            <div class="muted small" style="margin-top:6px">Libera os campos de valor e a geração das saídas. Se algum dado não veio automático, dá pra preencher manualmente antes de gerar.</div>
+          </div>
+
+          <div class="hr" id="hrCommonSep"></div>
+
+          <div id="commonAnchorInter"></div>
+
+          <div class="hr" id="hrValuesSep"></div>
+
+          <div id="interValuesWrap">
           <div class="muted small"><b>Valores por tipo de pax (na moeda selecionada • RC sempre em USD)</b></div>
           <div class="hr"></div>
 
-          
+
 
           <div class="row paxTypeRow" data-pax-type="ADT" id="interRow_ADT">
             <div class="qtywrap"><label>QTD ADT</label><input id="inter_qty_ADT" value="1" inputmode="numeric" /></div>
@@ -1280,8 +1282,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <div class="v" id="inter_total_brl">R$ 0,00</div>
             </div>
           </div>
+          </div>
 
-          
           <div class="hr"></div>
 
           <!-- INTER: Endosso (texto livre) -->
@@ -1294,6 +1296,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
               <div id="inter_endosso_wrap" style="display:none; flex:1; min-width:260px; max-width:720px">
                 <label>Endosso (texto livre)</label>
                 <textarea id="inter_endosso_text" placeholder="Digite o endosso aqui (opcional)" style="min-height:42px"></textarea>
+                <div class="muted small" id="inter_endosso_text_count">0 caracteres</div>
                 <div class="agencyOptBox">
                   <label class="agencyOpt"><input type="checkbox" id="inter_endosso_agencia" /> Incluir endosso também no e-mail da agência</label>
                   <div class="muted small" style="margin-top:6px">Desmarcado = o endosso fica apenas no contexto interno.</div>
@@ -1306,57 +1309,6 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
           <div id="rentAnchorInter"></div>
 
-          <div class="hr"></div>
-
-
-
-                    <div id="interFxqIntro" class="note" style="border-left:3px solid rgba(155,92,255,.65); background: rgba(155,92,255,.10);">
-            <div class="muted small"><b>Automático (Amadeus FXQ/FXO)</b> — fluxo: <b>1)</b> cole a máscara do PNR → <b>2)</b> cole o FXO por tipo → <b>3)</b> cole FA/FHE dos bilhetes. <b>CRR5 intocado.</b></div>
-            <div class="muted small" id="fxqStatus" style="margin-top:6px"></div>
-          </div>
-
-          <div class="hr"></div>
-
-          <label id="lbl_inter_voos">1) Itinerário / Máscara (cole o PNR)</label>
-          <textarea id="inter_voos" placeholder="Cole aqui RP/... com PAX + segmentos (Amadeus)."></textarea>
-
-          <div class="hr"></div>
-
-          <div id="fxoWrap" class="hidden">
-            <div class="muted small"><b>2) Recálculo por tipo (FXO)</b> — cole o FXO (ou FXQ) de cada tipo abaixo. O sistema preenche Dif. tarifa, Multa e Dif. taxas automaticamente.</div>
-            <div class="hr"></div>
-
-            <div id="fxoBox_ADT_wrap" class="hidden">
-              <label>FXO (ADT)</label>
-              <textarea id="fxoBox_ADT" placeholder="Cole aqui o FXO do ADT"></textarea>
-              <div class="muted small" id="fxoBox_ADT_status" style="margin-top:6px"></div>
-            </div>
-
-            <div id="fxoBox_CHD_wrap" class="hidden">
-              <label>FXO (CHD)</label>
-              <textarea id="fxoBox_CHD" placeholder="Cole aqui o FXO do CHD"></textarea>
-              <div class="muted small" id="fxoBox_CHD_status" style="margin-top:6px"></div>
-            </div>
-
-            <div id="fxoBox_INF_wrap" class="hidden">
-              <label>FXO (INF)</label>
-              <textarea id="fxoBox_INF" placeholder="Cole aqui o FXO do INF"></textarea>
-              <div class="muted small" id="fxoBox_INF_status" style="margin-top:6px"></div>
-            </div>
-          </div>
-
-          <div id="manualInternoWrap">
-            <label>Cálculo (uso interno) — opcional</label>
-            <textarea id="inter_interno" placeholder="Cole aqui observações internas / máscara / prints (não enviar ao cliente se não quiser)"></textarea>
-          </div>
-
-          <div class="hr"></div>
-
-          <div id="ticketsWrap" class="hidden">
-            <label id="lbl_inter_original">3) Bilhetes (FA/FHE/TKT)</label>
-            <textarea id="inter_original" placeholder="Cole aqui FA/FHE ou máscara TKT (com /P1, /P2... quando houver)"></textarea>
-            <div class="muted small" id="ticketsStatus" style="margin-top:6px"></div>
-          </div>
         </div>
 
         <div class="hr"></div>
@@ -1368,7 +1320,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
     </section>
 
     <!-- OUTPUT -->
-    <section class="card outputsCard">
+    <section class="card outputsCard" id="outputsCard">
       <div class="hd">
         <div>
           <div style="font-weight:900">Saídas</div>
@@ -1386,6 +1338,11 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
         <div class="outputPanel is-active" id="outPanelAgency" data-output-panel="agency">
           <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--agency">AGÊNCIA</span> <b>1) Preview do e-mail (agência)</b> — gere/atualize antes de colar no Outlook.</div>
+          <div class="muted small" style="margin-bottom:6px">Prévia sempre em fundo claro (como no Outlook)</div>
+          <label class="muted small" style="display:flex; align-items:flex-start; gap:6px; margin-bottom:6px">
+            <input type="checkbox" id="agency_lang_en" style="width:16px; height:16px; flex:0 0 auto; margin-top:2px; padding:0;" />
+            <span>Gerar em inglês (cliente de fora) — só os textos fixos do modelo; campos de texto livre continuam como digitados</span>
+          </label>
           <div id="preview" class="preview" contenteditable="true" aria-label="Pré-visualização do e-mail"></div>
           <div class="btns" style="margin-top:10px">
             <button class="action primary calc" id="btnGerar">Gerar / Atualizar E-mail</button>
@@ -1396,6 +1353,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
         <div class="outputPanel" id="outPanelCco" data-output-panel="cco">
           <div class="muted small outTitle" style="margin-bottom:6px"><span class="tag tag--cco">CCO</span> <b>2) Código para OBS (OP no RF)</b> — cole direto na observação pra equipe de reemissão (CCO) ver a tabela.</div>
           <textarea id="obsCode" class="codebox" style="min-height:240px" spellcheck="false" aria-label="Código para Observação no RF"></textarea>
+          <div class="muted small" id="obsCode_count">0 caracteres</div>
           <div class="btns" style="margin-top:10px">
             <button class="action cco" id="btnCopiarObs">Copiar código OBS (RF)</button>
           </div>
@@ -1422,14 +1380,16 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
           <div class="btns" style="margin-top:10px">
             <button class="action" id="btnCarregarRACode">Carregar CRR</button>
           </div>
-          <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR5/CRR4/CRR2-...</b> (ou <b>CRR1/RA1</b> antigos).</div>
+          <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR5/CRR4/CRR2-...</b> (ou <b>CRR1/RA1</b> antigos). CRR5 ainda é lido (compatibilidade com cotações antigas), mas esta build nunca gera CRR5 novo — o e-mail sempre leva o CRR4 completo.</div>
         </div>
 
       </div>      </div>
     </section>
   </div>
 
-  <div class="toast" id="toast">Copiado!</div>
+  <div class="toast" id="toast" role="status" aria-live="polite">Copiado!</div>
+
+  <div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.13-test</div>
 
   <script>
 
@@ -1440,7 +1400,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
       const t = document.getElementById("toast");
       t.textContent = msg || "OK";
       t.classList.add("show");
-      setTimeout(()=>t.classList.remove("show"), 1400);
+      const duration = Math.max(1400, Math.min(4000, (msg || "").length * 40));
+      setTimeout(()=>t.classList.remove("show"), duration);
     }
     // ---- Rentabilização (uso interno): controla campos e gera bloco para OBS (RF) ----
     function getRentData(){
@@ -1455,11 +1416,8 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
         enabled,
         multa, diftar, diftax,
         anyType,
-        multa_pago: v("rent_pago_cia_multa"),
         multa_cobrar: v("rent_cobrar_ag_multa"),
-        diftar_pago: v("rent_pago_cia_diftar"),
         diftar_cobrar: v("rent_cobrar_ag_diftar"),
-        diftax_pago: v("rent_pago_cia_diftax"),
         diftax_cobrar: v("rent_cobrar_ag_diftax"),
         multa_lucro: v("rent_lucro_multa"),
         diftar_lucro: v("rent_lucro_diftar"),
@@ -1912,6 +1870,19 @@ function updateRentComputed(mode, calc){
       (isInter ? aI : aN).appendChild(sec);
     }
 
+    function placeCommonSection(){
+      const sec = document.getElementById("commonSection");
+      const aN = document.getElementById("commonAnchorNac");
+      const aI = document.getElementById("commonAnchorInter");
+      if(!sec || !aN || !aI) return;
+
+      const tabNac = document.getElementById("tabNac");
+      const nacOn = tabNac ? (tabNac.getAttribute("aria-selected")==="true") : true;
+      const isInter = !nacOn;
+
+      (isInter ? aI : aN).appendChild(sec);
+    }
+
 
 
     function brToHtml(s){
@@ -1934,8 +1905,8 @@ function updateRentComputed(mode, calc){
       const n = parseFloat(x);
       return Number.isFinite(n) ? n : 0;
     }
-    function fmtBRL(n){
-      return new Intl.NumberFormat("pt-BR", {style:"currency", currency:"BRL"}).format(n || 0);
+    function fmtBRL(n, useEn){
+      return new Intl.NumberFormat(useEn ? "en-US" : "pt-BR", {style:"currency", currency:"BRL"}).format(n || 0);
     }
     function safeCurrency(code){
       const c = String(code || "USD").toUpperCase().replace(/[^A-Z]/g,"").slice(0,3);
@@ -1977,6 +1948,109 @@ function fmtNumPT4(n){
       return new Intl.NumberFormat("pt-BR", {minimumFractionDigits:4, maximumFractionDigits:4}).format(v);
     }
 
+    // ----- Câmbio oficial do dia (BCB PTAX) -----
+    const BCB_FX_TIMEOUT_MS = 6000;
+    // Só USD é automatizado: o câmbio IATA/BSR de EUR e GBP usa uma metodologia própria
+    // (ROE da IATA) que não coincide com o fechamento PTAX do BCB — testado e confirmado
+    // com o painel "câmbio IATA" do usuário, que só bate exatamente para USD.
+    const BCB_FX_SUPPORTED = ["USD"];
+    const BCB_FX_CACHE_KEY = "bcb_fx_cache_v1";
+
+    function _bcbDateParam(d){
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${mm}-${dd}-${d.getFullYear()}`;
+    }
+    function _todayKey(d){ return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`; }
+
+    async function _fetchBcbVenda(currency, dateObj){
+      const dateParam = _bcbDateParam(dateObj);
+      const url = currency === "USD"
+        ? `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarDia(dataCotacao=@dataCotacao)?@dataCotacao='${dateParam}'&$format=json`
+        : `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaDia(moeda=@moeda,dataCotacao=@dataCotacao)?@moeda='${currency}'&@dataCotacao='${dateParam}'&$format=json`;
+      const ctrl = new AbortController();
+      const timer = setTimeout(()=>ctrl.abort(), BCB_FX_TIMEOUT_MS);
+      try{
+        const res = await fetch(url, { signal: ctrl.signal });
+        if(!res.ok) return null;
+        const data = await res.json();
+        const list = (data && data.value) || [];
+        if(!list.length) return null;
+        const entry = list.find(e => e.tipoBoletim === "Fechamento PTAX") || list[list.length-1];
+        return Number.isFinite(entry.cotacaoVenda) ? entry.cotacaoVenda : null;
+      }catch(e){
+        return null;
+      }finally{
+        clearTimeout(timer);
+      }
+    }
+
+    // Busca o câmbio vigente HOJE aplicando a regra de vigência (o fechamento do último dia
+    // útil anterior). Fins de semana/feriados retornam vazio na API do BCB, então basta recuar
+    // dia a dia até achar o último fechamento disponível — sem precisar de calendário fixo.
+    async function fetchOfficialFx(currency){
+      if(!BCB_FX_SUPPORTED.includes(currency)) return null;
+
+      const today = new Date();
+      let cache = {};
+      try{ cache = JSON.parse(localStorage.getItem(BCB_FX_CACHE_KEY) || "{}") || {}; }catch(e){}
+      const cached = cache[currency];
+      if(cached && cached.todayKey === _todayKey(today)) return cached;
+
+      const probe = new Date(today);
+      let value = null, closDate = null;
+      for(let i=1; i<=10 && value === null; i++){
+        probe.setDate(probe.getDate() - 1);
+        const v = await _fetchBcbVenda(currency, probe);
+        if(v !== null){ value = v; closDate = new Date(probe); }
+      }
+      if(value === null) return null;
+
+      const result = { value, closDate: closDate.toISOString().slice(0,10), todayKey: _todayKey(today) };
+      cache[currency] = result;
+      try{ localStorage.setItem(BCB_FX_CACHE_KEY, JSON.stringify(cache)); }catch(e){}
+      return result;
+    }
+
+    let __fxAutofillSeq = 0;
+    async function maybeAutofillFx(){
+      const mySeq = ++__fxAutofillSeq;
+      const isStale = ()=> mySeq !== __fxAutofillSeq;
+      const cur = getInterCurrency();
+      const fxEl = document.getElementById("inter_fx");
+      const fxStatus = document.getElementById("inter_fx_status");
+      const usdEl = document.getElementById("inter_fx_usd");
+      const usdWrap = document.getElementById("inter_fx_usd_wrap");
+
+      if(!BCB_FX_SUPPORTED.includes(cur)){
+        if(fxEl && fxEl.dataset.auto === "1"){ fxEl.value = ""; delete fxEl.dataset.auto; }
+        if(usdEl && usdEl.dataset.auto === "1"){ usdEl.value = ""; delete usdEl.dataset.auto; }
+        if(fxStatus) fxStatus.textContent = "Informar manualmente.";
+        return;
+      }
+
+      if(fxStatus) fxStatus.textContent = "Buscando câmbio...";
+      const data = await fetchOfficialFx(cur);
+      if(isStale()) return;
+      if(!data){
+        if(fxStatus) fxStatus.textContent = "Informar manualmente.";
+        return;
+      }
+
+      const willFill = fxEl && (!fxEl.value.trim() || fxEl.dataset.auto === "1");
+      if(willFill){
+        fxEl.value = fmtNumPT4(data.value);
+        fxEl.dataset.auto = "1";
+      }
+      if(fxStatus) fxStatus.textContent = willFill ? "Preenchimento automático." : "Valor mantido do rascunho — confira o câmbio.";
+
+      if(usdWrap && !usdWrap.classList.contains("hidden") && usdEl && (!usdEl.value.trim() || usdEl.dataset.auto === "1")){
+        const usdData = await fetchOfficialFx("USD");
+        if(isStale()) return;
+        if(usdData){ usdEl.value = fmtNumPT4(usdData.value); usdEl.dataset.auto = "1"; }
+      }
+    }
+
     function intVal(id){
       const v = parseInt(String(document.getElementById(id).value||"0").replace(/[^\d\-]/g,""),10);
       return Number.isFinite(v) ? v : 0;
@@ -2008,9 +2082,6 @@ function fmtNumPT4(n){
     }
 
     function escAttr(s){
-      // safer for RF-ish environments
-      return escapeHtml(s).replace(/`/g,"");
-    }function escAttr(s){
       // safer for RF-ish environments
       return escapeHtml(s).replace(/`/g,"");
     }
@@ -2164,12 +2235,12 @@ const store = getPaxStore();
           return `
             <div class="paxRow">
               <div>
-                <label>Nome ${key}${idx}</label>
-                <input data-role="pax-name" data-type="${key}" data-idx="${i}" value="${escapeHtml(normalizePaxName(p.name))}" placeholder="Ex.: SILVA/JOAO MR" />
+                <label>Nome ${key}${idx} *</label>
+                <input data-role="pax-name" data-type="${key}" data-idx="${i}" value="${escapeHtml(normalizePaxName(p.name))}" placeholder="Ex.: SILVA/JOAO MR" aria-required="true" />
               </div>
               <div>
-                <label>Bilhete ${key}${idx}</label>
-                <input data-role="pax-ticket" data-type="${key}" data-idx="${i}" value="${escapeHtml(p.ticket)}" placeholder="957-1234567890" />
+                <label>Bilhete ${key}${idx} *</label>
+                <input data-role="pax-ticket" data-type="${key}" data-idx="${i}" value="${escapeHtml(p.ticket)}" placeholder="957-1234567890" aria-required="true" />
               </div>
             </div>
           `;
@@ -2284,6 +2355,26 @@ const store = getPaxStore();
       }
 
       return errors;
+    }
+
+    // Avisos que NÃO bloqueiam a geração do e-mail — só chamam atenção antes de enviar.
+    function collectSoftWarnings(){
+      const warnings = [];
+      const cia = (document.getElementById("cia")?.value || "").trim();
+      const loc = (document.getElementById("loc")?.value || "").trim();
+      if(!cia) warnings.push("CIA não informada");
+      if(!loc) warnings.push("LOC não informado");
+
+      const mode = getActiveMode();
+      if(mode === "NAC"){
+        const c = calcNac();
+        if(Math.abs(c.totalBRL) < 0.005) warnings.push("total NAC em R$ 0,00");
+      }else{
+        const c = calcInter();
+        if(Math.abs(c.totalBRL) < 0.005) warnings.push("total INTER em R$ 0,00");
+        if(c.fx > 0 && (c.fx < 0.5 || c.fx > 15)) warnings.push(`câmbio ${fmtNumPT(c.fx)} parece fora do normal`);
+      }
+      return warnings;
     }
 
     function chunk4(s){
@@ -2636,6 +2727,13 @@ const store = getPaxStore();
 
     // ----- CRR4: mesmo conteúdo do CRR3, mas com chaves compactadas (reduz bem o tamanho) -----
     // Mapeia ids de campos -> índice base36 (ex.: "cia" -> "a") antes de compactar.
+    //
+    // ATENÇÃO — NÃO REORDENAR NEM REMOVER ITENS DESTA LISTA.
+    // A posição (índice) de cada string É a chave usada nos códigos CRR4/CRR5 já
+    // gerados e salvos (e-mails enviados, links compartilhados, cache do servidor).
+    // Remover, reordenar ou inserir no meio quebra a leitura de todo CRR4/CRR5
+    // já existente (o índice passa a apontar para outro campo).
+    // Só é seguro ADICIONAR itens novos no FINAL do array.
     const CRR4_KEYS = ["themeSel","rentab","op_rf","agencia","filial","rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia_multa_adt","rent_pago_cia_multa_chd","rent_pago_cia_multa_inf","rent_cobrar_ag_multa","rent_lucro_multa","rent_pago_cia_diftar_adt","rent_pago_cia_diftar_chd","rent_pago_cia_diftar_inf","rent_cobrar_ag_diftar","rent_lucro_diftar","rent_pago_cia_diftax_adt","rent_pago_cia_diftax_chd","rent_pago_cia_diftax_inf","rent_cobrar_ag_diftax","rent_lucro_diftax","cia","prazo","loc","oac","novo_loc","paxq_adt","paxq_chd","paxq_inf","pax_json","familia","pax","tks","bag","parcelamento","nac_fp","nac_link","nac_qty_ADT","nac_old_ADT","nac_new_ADT","nac_tax_ADT","nac_du_ADT","nac_pen_ADT","nac_qty_CHD","nac_old_CHD","nac_new_CHD","nac_tax_CHD","nac_du_CHD","nac_pen_CHD","nac_qty_INF","nac_old_INF","nac_new_INF","nac_tax_INF","nac_du_INF","nac_pen_INF","nac_services_on","nac_services_brl","nac_folio_on","nac_folio_text","nac_folio_agencia","nac_voos","nac_regras","inter_cur","inter_cur_other","inter_fx","inter_fx_usd","inter_incentivo","inter_tipo","inter_fp","inter_link","inter_qty_ADT","inter_fare_ADT","inter_tax_ADT","inter_du_ADT","inter_pen_ADT","inter_fee_ADT","inter_qty_CHD","inter_fare_CHD","inter_tax_CHD","inter_du_CHD","inter_pen_CHD","inter_fee_CHD","inter_qty_INF","inter_fare_INF","inter_tax_INF","inter_du_INF","inter_pen_INF","inter_fee_INF","inter_endosso_on","inter_endosso_text","inter_endosso_agencia","inter_original","inter_voos","inter_interno","rf_include_racode","rf_mask_numbers","rf_include_tks"];
     const CRR4_ID2K = {};
     const CRR4_K2ID = {};
@@ -2688,8 +2786,12 @@ function buildCRRCode(){
     }
 
 
-// ===== CRR5 (curto via Cloudflare Worker + Upstash) =====
-// Mantém o CRR4 local como fallback/offline.
+// ===== CRR5 nesta build: só LEITURA, nunca geração =====
+// Esta build nunca cria CRR5 novo (sem chamada a /save, sem id curto no
+// e-mail). O código que vai no e-mail é sempre o CRR4 montado localmente
+// por buildCRRCode(). Mas um CRR5 colado em "Carregar CRR" — de uma
+// cotação enviada antes da virada para CRR4-only — ainda é resolvido via
+// Worker, para não perder o acesso a cálculos já enviados nesse formato.
 const CRR5_API = "https://crr-api.rexturfacilita.workers.dev/".replace(/\/+$/,"");
 
 function extractCRR5(text){
@@ -2699,74 +2801,27 @@ function extractCRR5(text){
   return `CRR5-${mm[1].toLowerCase()}`;
 }
 
-async function saveCRR5FromCRR4(crr4){
-  const r = await fetch(`${CRR5_API}/save`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ payload: String(crr4 || "") }),
-  });
-  if(!r.ok) throw new Error("Falha ao salvar CRR curto");
-  const data = await r.json().catch(()=>null);
-  if(!data || !data.id) throw new Error("Resposta inválida do servidor");
-  return `CRR5-${String(data.id).toLowerCase()}`;
-}
+const CRR5_TIMEOUT_MS = 6000;
 
 async function loadCRR5ToCRR4(crr5){
   const id = String(crr5 || "").trim().replace(/^CRR5-/i,"").toLowerCase();
-  const r = await fetch(`${CRR5_API}/load?id=${encodeURIComponent(id)}`);
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), CRR5_TIMEOUT_MS);
+  let r;
+  try{
+    r = await fetch(`${CRR5_API}/load?id=${encodeURIComponent(id)}`, { signal: ctrl.signal });
+  }catch(e){
+    if(e && e.name === "AbortError") throw new Error("Servidor CRR5 não respondeu a tempo");
+    throw new Error("Falha de conexão ao carregar CRR curto");
+  }finally{ clearTimeout(timer); }
   if(!r.ok) throw new Error("CRR curto não encontrado (ou expirou)");
   const data = await r.json().catch(()=>null);
   if(!data || typeof data.payload !== "string") throw new Error("Resposta inválida do servidor");
   return data.payload;
 }
 
-const __CRR5_CACHE = new Map(); // key: CRR4 -> CRR5
-
 function getCRRCodeForEmail(){
-  const ta = document.getElementById("raCode");
-  const c5 = extractCRR5(ta ? ta.value : "");
-  return c5 || buildCRRCode();
-}
-
-function invalidateCRR5OnEdit(){
-  const ta = document.getElementById("raCode");
-  if(!ta) return;
-  // se estava "travado" em CRR5, destrava para obrigar gerar um novo após qualquer ajuste
-  if(ta.dataset && ta.dataset.manual === "1" && extractCRR5(ta.value)){
-    ta.dataset.manual = "0";
-    ta.dataset.sig = "";
-  }
-}
-
-async function ensureCRR5Current(){
-  const crr4 = buildCRRCode();
-  const ta = document.getElementById("raCode");
-  const existing5 = extractCRR5(ta ? ta.value : "");
-
-  // Reaproveita CRR5 se ele foi gerado para este mesmo CRR4 (assinatura)
-  if(existing5 && ta && ta.dataset && ta.dataset.sig === crr4){
-    __CRR5_CACHE.set(crr4, existing5);
-    return existing5;
-  }
-
-  const cached = __CRR5_CACHE.get(crr4);
-  if(cached){
-    if(ta){
-      ta.dataset.manual = "1";
-      ta.dataset.sig = crr4;
-      ta.value = cached;
-    }
-    return cached;
-  }
-
-  const crr5 = await saveCRR5FromCRR4(crr4);
-  __CRR5_CACHE.set(crr4, crr5);
-  if(ta){
-    ta.dataset.manual = "1";
-    ta.dataset.sig = crr4;
-    ta.value = crr5;
-  }
-  return crr5;
+  return buildCRRCode();
 }
 
 
@@ -2856,6 +2911,9 @@ async function ensureCRR5Current(){
         }
         if(["loc","novo_loc","oac","familia"].includes(k) && typeof v === "string"){ el.value = v.toUpperCase(); }
         else{ el.value = v; }
+        // o valor veio do CRR (fixo, já decidido) — não é auto-fill do câmbio
+        // do dia, então não deixa uma busca automática pendente sobrescrever.
+        if(el.dataset) delete el.dataset.auto;
       }
 
       // migração: CRR antigos (campos únicos) -> novo formato por tipo (preenche em ADT como padrão)
@@ -2870,6 +2928,17 @@ async function ensureCRR5Current(){
       migrateOne("rent_pago_cia_multa","rent_pago_cia_multa_adt");
       migrateOne("rent_pago_cia_diftar","rent_pago_cia_diftar_adt");
       migrateOne("rent_pago_cia_diftax","rent_pago_cia_diftax_adt");
+
+      // um CRR salvo é um cálculo já concluído: reabrir deve mostrar tudo, não a tela escondida do fluxo guiado
+      if(String(mode).toUpperCase() === "INTER"){
+        window.__interFinalized = false;
+        window.__interPaxReady = false;
+        if(typeof window.__interApplyInterTipoUI === 'function') window.__interApplyInterTipoUI();
+        const tipoVal = document.getElementById('inter_tipo') ? document.getElementById('inter_tipo').value : '';
+        if(/autom/i.test(tipoVal||'') && typeof window.__interFinalizeAutoFlow === 'function'){
+          window.__interFinalizeAutoFlow();
+        }
+      }
 
       renderPaxFields();
       updateAll();
@@ -2956,7 +3025,7 @@ async function ensureCRR5Current(){
     function getCommon(){
       return {
         cia: document.getElementById("cia").value.trim(),
-        prazo: (document.getElementById("prazo") ? document.getElementById("prazo").value.trim() : "Imediato"),
+        prazo: "Imediato",
         loc: document.getElementById("loc").value.trim().toUpperCase(),
         novo_loc: (document.getElementById("novo_loc") ? document.getElementById("novo_loc").value.trim().toUpperCase() : ""),
         pax: document.getElementById("pax").value.trim(),
@@ -2970,21 +3039,23 @@ async function ensureCRR5Current(){
     }
 
     
-    function buildPaxTicketPairsHtml(common){
+    function buildPaxTicketPairsHtml(common, isEN){
       // Preferir o cadastro por PAX (Nome/Bilhete) para vincular corretamente.
       const store = getPaxStore();
       const ciaRaw = String(common?.cia || "");      const isNoTicket = /(^|[\s,\/])(?:AD|AZUL)($|[\s,\/])/i.test(ciaRaw.trim());
+      const noNameTxt = isEN ? AGENCY_EMAIL_I18N.en.noName : "(sem nome)";
+      const noTicketTxt = isEN ? AGENCY_EMAIL_I18N.en.noTicket : "(sem bilhete)";
       const pairs = [];
       function push(arr){
         for(const it of (arr || [])){
           const n = String(it?.name || "").trim();
           const t = String(it?.ticket || "").trim();
           if(!n && !t) continue;
-          const nn = n || "(sem nome)";
+          const nn = n || noNameTxt;
           if(isNoTicket){
             pairs.push(`${escapeHtml(nn)}`);
           } else {
-            const tt = t || "(sem bilhete)";
+            const tt = t || noTicketTxt;
             pairs.push(`${escapeHtml(nn)} — ${escapeHtml(tt)}`);
           }
         }
@@ -3041,6 +3112,8 @@ async function ensureCRR5Current(){
       `.trim();
     }
     function buildEmailHtmlNac(){
+      const isEN = isAgencyEmailEN();
+      const t = isEN ? AGENCY_EMAIL_I18N.en : AGENCY_EMAIL_I18N.pt;
       const common = getCommon();
       const calc = calcNac();
       const crr = getCRRCodeForEmail();
@@ -3051,7 +3124,7 @@ async function ensureCRR5Current(){
       const folioOn = !!(document.getElementById("nac_folio_on") && document.getElementById("nac_folio_on").checked);
       const folioAgencyOn = !!(document.getElementById("nac_folio_agencia") && document.getElementById("nac_folio_agencia").checked);
       const folio = (document.getElementById("nac_folio_text") ? document.getElementById("nac_folio_text").value.trim() : "");
-      const folioRow = (folioOn && folio && folioAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>Fólio</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(folio)}</td></tr>` : "";
+      const folioRow = (folioOn && folio && folioAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>${t.folio}</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(folio)}</td></tr>` : "";
 
       const regrasUserRaw = document.getElementById("nac_regras").value.trim();
       const isAzul = /(^|[\s,\/])(?:AD|AZUL)($|[\s,\/])/i.test(String(common.cia||"").trim());
@@ -3077,8 +3150,8 @@ async function ensureCRR5Current(){
 const servicesRow = (calc.servicesBRL && calc.servicesBRL > 0)
         ? `
             <tr>
-              <td colspan="8" style="text-align:right"><b>Serviços (abatimento)</b></td>
-              <td style="text-align:right"><b>-${fmtBRL(calc.servicesBRL)}</b></td>
+              <td colspan="8" style="text-align:right"><b>${t.servicesAbat}</b></td>
+              <td style="text-align:right"><b>-${fmtBRL(calc.servicesBRL, isEN)}</b></td>
             </tr>
           `
         : "";
@@ -3086,87 +3159,90 @@ const servicesRow = (calc.servicesBRL && calc.servicesBRL > 0)
       const paxRows = calc.rows.map(r => `
         <tr>
           <td><b>${r.t}</b> <span style="display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:#EDE9FE;border:1px solid #C4B5FD;color:#111827;font-size:12px;font-weight:700;line-height:18px;">x${r.qty}</span></td>
-          <td style="text-align:right">${fmtBRL(r.oldFare)}</td>
-          <td style="text-align:right">${fmtBRL(r.newFare)}</td>
-          <td style="text-align:right">${fmtBRL(r.diffFare)}</td>
-          <td style="text-align:right">${fmtBRL(r.diffTax)}</td>
-          <td style="text-align:right">${fmtBRL(r.du)}</td>
-          <td style="text-align:right">${fmtBRL(r.pen)}</td>
-          <td style="text-align:right"><b>${fmtBRL(r.perPax)}</b></td>
-          <td style="text-align:right"><b>${fmtBRL(r.totalTipo)}</b></td>
+          <td style="text-align:right">${fmtBRL(r.oldFare, isEN)}</td>
+          <td style="text-align:right">${fmtBRL(r.newFare, isEN)}</td>
+          <td style="text-align:right">${fmtBRL(r.diffFare, isEN)}</td>
+          <td style="text-align:right">${fmtBRL(r.diffTax, isEN)}</td>
+          <td style="text-align:right">${fmtBRL(r.du, isEN)}</td>
+          <td style="text-align:right">${fmtBRL(r.pen, isEN)}</td>
+          <td style="text-align:right"><b>${fmtBRL(r.perPax, isEN)}</b></td>
+          <td style="text-align:right"><b>${fmtBRL(r.totalTipo, isEN)}</b></td>
         </tr>
       `);
 
-      const payLabel = "Faturado ou Cartão de Crédito";
+      const payLabel = t.payLabel;
       const linkHref = link ? ( /^https?:\/\//i.test(link) ? link : `https://${link}` ) : "";
       const linkLine = `
-        <p style="margin:8px 0 0">Forma de pagamento: <b>${payLabel}</b></p>
-        ${link ? `<p style="margin:6px 0 0">Link de pagamento: <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
+        <p style="margin:8px 0 0">${t.payMethod}: <b>${payLabel}</b></p>
+        ${link ? `<p style="margin:6px 0 0">${t.payLink} <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
       `.trim();
 
-      const azulRuleLi = isAzul ? `<li>${escapeHtml(AZUL_RULE_TEXT)}</li>` : "";
-      const latamGolRuleLi = (isLatamGol && !isAzul) ? `<li>${escapeHtml(LATAM_GOL_RULE_TEXT)}</li>` : "";
+      const azulRuleLi = isAzul ? `<li>${escapeHtml(t.azulRule)}</li>` : "";
+      const latamGolRuleLi = (isLatamGol && !isAzul) ? `<li>${escapeHtml(t.latamGolRule)}</li>` : "";
       const regrasPadrao = `
         <ul style="margin:8px 0 0; padding-left:18px">
           ${azulRuleLi}
           ${latamGolRuleLi}
-<li>Solicitações com menos de <b>2h</b> do embarque original poderão acarretar em multa de <b>no show</b>.</li>
+<li>${t.noShowRule}</li>
         </ul>
       `;
-const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b><br/>${brToHtml(regrasUser)}</p>` : "";
+const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>${t.obs}</b><br/>${brToHtml(regrasUser)}</p>` : "";
+      const parcelamentoLabel = common.parcelamento === "Sim" ? t.yes : (common.parcelamento === "Não" ? t.no : common.parcelamento);
 
       return `
         <div style="font-family:Arial, sans-serif; font-size:13px; color:#0b0f17">
-          <p>Segue abaixo cálculo de reemissão conforme solicitado.</p>
-          
+          <p>${t.intro}</p>
+
 
           <table border="1" cellspacing="0" cellpadding="6" width="760" style="width:760px; max-width:760px; margin:0; mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; border:1px solid #c7ced9">
-            <tr><td colspan="2" style="background-color:#d9cce3; font-weight:bold; text-align:center; padding:8px; font-size:14px;">CÁLCULO DE REEMISSÃO NACIONAL</td></tr>
-            <tr><td colspan="2" style="text-align:center; padding:8px;"><b>ATENÇÃO:</b> CONFIRA TODOS OS DADOS ANTES DE APROVAR A REEMISSÃO.<br/>VALORES SUJEITOS A ALTERAÇÃO</td></tr>
-            <tr><td style="width:32%"><b>Cia Aérea</b></td><td>${escapeHtml(ciaFullNameForAgency(common.cia))}</td></tr>
-            <tr><td><b>Prazo</b></td><td>${escapeHtml(common.prazo)}</td></tr>
-            <tr><td><b>Localizador</b></td><td>${escapeHtml(common.loc)}</td></tr>
-            ${common.novo_loc ? `<tr><td><b>Novo LOC</b></td><td>${escapeHtml(common.novo_loc)}</td></tr>` : ""}
-            <tr><td><b>Passageiro(s) / Bilhete(s)</b></td><td>${buildPaxTicketPairsHtml(common)}</td></tr>${common.oac ? `<tr><td><b>OAC</b></td><td>${escapeHtml(common.oac)}</td></tr>` : ``}
-            <tr><td><b>Família Tarifária</b></td><td>${escapeHtml(common.familia)}</td></tr>
-            <tr><td><b>Bagagem</b></td><td>${escapeHtml(common.bag)}</td></tr>
-<tr><td><b>Permite parcelamento?</b></td><td>${escapeHtml(common.parcelamento)}</td></tr>
+            <tr><td colspan="2" style="background-color:#d9cce3; font-weight:bold; text-align:center; padding:8px; font-size:14px;">${t.titleNac}</td></tr>
+            <tr><td colspan="2" style="text-align:center; padding:8px;"><b>${t.attention}</b><br/>${t.valuesSubject}</td></tr>
+            <tr><td style="width:32%"><b>${t.cia}</b></td><td>${escapeHtml(ciaFullNameForAgency(common.cia))}</td></tr>
+            <tr><td><b>${t.prazo}</b></td><td>${escapeHtml(t.prazoValue)}</td></tr>
+            <tr><td><b>${t.loc}</b></td><td>${escapeHtml(common.loc)}</td></tr>
+            ${common.novo_loc ? `<tr><td><b>${t.novoLoc}</b></td><td>${escapeHtml(common.novo_loc)}</td></tr>` : ""}
+            <tr><td><b>${t.paxTicket}</b></td><td>${buildPaxTicketPairsHtml(common, isEN)}</td></tr>${common.oac ? `<tr><td><b>${t.oac}</b></td><td>${escapeHtml(common.oac)}</td></tr>` : ``}
+            <tr><td><b>${t.familia}</b></td><td>${escapeHtml(common.familia)}</td></tr>
+            <tr><td><b>${t.bag}</b></td><td>${escapeHtml(common.bag)}</td></tr>
+<tr><td><b>${t.parcelamento}</b></td><td>${escapeHtml(parcelamentoLabel)}</td></tr>
           ${folioRow}
           </table>
 
-          <p style="margin:12px 0 6px"><b>Descritivo de valores (por pax)</b></p>
+          <p style="margin:12px 0 6px"><b>${t.descritivo}</b></p>
           <table border="1" cellspacing="0" cellpadding="6" width="760" style="width:760px; max-width:760px; margin:0; mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; border:1px solid #c7ced9">
             <tr>
-              <th style="background-color:#a99ac5; color:white; text-align:left">Tipo</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Tarifa antiga</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Tarifa nova</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Dif. tarifa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Dif. taxa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">DU/Rav</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Multa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Total por pax</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Total (tipo)</th>
+              <th style="background-color:#a99ac5; color:white; text-align:left">${t.colType}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colOldFare}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colNewFare}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDiffFare}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDiffTax}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDU}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colPen}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colPerPax}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colTotalTipo}</th>
             </tr>
-            ${paxRows.join("") || `<tr><td colspan="9">Sem valores informados.</td></tr>`}
+            ${paxRows.join("") || `<tr><td colspan="9">${t.noValues}</td></tr>`}
             ${servicesRow}
             <tr>
-              <td colspan="8" style="text-align:right; background-color:#d9cce3"><b>TOTAL A PAGAR (BRL)</b></td>
-              <td style="text-align:right; background-color:#d9cce3"><b>${fmtBRL(calc.totalBRL)}</b></td>
+              <td colspan="8" style="text-align:right; background-color:#d9cce3"><b>${t.totalToPay}</b></td>
+              <td style="text-align:right; background-color:#d9cce3"><b>${fmtBRL(calc.totalBRL, isEN)}</b></td>
             </tr>
           </table>
 
           ${linkLine}
-          <p style="margin:6px 0 0"><i>*Após o preenchimento, responda o e-mail para darmos continuidade ao processo</i></p>
-          <p style="margin:6px 0 0">Em respeito a LGPD, não é permitido trafegar informações que envolvam dados de cartão de crédito.</p>
+          <p style="margin:6px 0 0"><i>${t.replyNote}</i></p>
+          <p style="margin:6px 0 0">${t.lgpd}</p>
 
-          ${buildEmailSectionBlock("VOOS SIMULADOS", voos, { strong:true })}
-          ${buildEmailSectionBlock("REGRAS", `${regrasPadrao}${regrasExtra}`, { html:true, mono:false, bodyStyle:'padding:14px 16px;' })}
+          ${buildEmailSectionBlock(t.voosSimulados, voos, { strong:true })}
+          ${buildEmailSectionBlock(t.regras, `${regrasPadrao}${regrasExtra}`, { html:true, mono:false, bodyStyle:'padding:14px 16px;' })}
           <p style="margin:6px 0 0; font-size:9px; color:#999">${crrEmailHtml}</p>
         </div>
       `.trim();
     }
 
     function buildEmailHtmlInter(){
+      const isEN = isAgencyEmailEN();
+      const t = isEN ? AGENCY_EMAIL_I18N.en : AGENCY_EMAIL_I18N.pt;
       const common = getCommon();
       const calc = calcInter();
       const crr = getCRRCodeForEmail();
@@ -3183,20 +3259,10 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
       const endossoOn = !!(document.getElementById("inter_endosso_on") && document.getElementById("inter_endosso_on").checked);
       const endossoAgencyOn = !!(document.getElementById("inter_endosso_agencia") && document.getElementById("inter_endosso_agencia").checked);
       const endosso = (document.getElementById("inter_endosso_text") ? document.getElementById("inter_endosso_text").value.trim() : "");
-      const endossoRow = (endossoOn && endosso && endossoAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>Endosso</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(endosso)}</td></tr>` : "";
+      const endossoRow = (endossoOn && endosso && endossoAgencyOn) ? `<tr><td style="background-color:#efe9f8; padding:6px 8px; border:1px solid #e6def3;"><b>${t.endosso}</b></td><td style="background-color:#ffffff; padding:6px 8px; border:1px solid #e6def3;">${escapeHtml(endosso)}</td></tr>` : "";
 
       const isAzul = /(^|[\s,\/])(?:AD|AZUL)($|[\s,\/])/i.test(String(common.cia||"").trim());
       const azulMsg = "";
-
-
-      const servicesRow = (calc.servicesBRL && calc.servicesBRL > 0)
-        ? `
-            <tr>
-              <td colspan="8" style="text-align:right"><b>Serviços (abatimento)</b></td>
-              <td style="text-align:right"><b>-${fmtBRL(calc.servicesBRL)}</b></td>
-            </tr>
-          `
-        : "";
 
       const paxRows = calc.rows.map(r => `
         <tr>
@@ -3211,67 +3277,71 @@ const regrasExtra = regrasUser ? `<p style="margin:8px 0 0"><b>Observações:</b
         </tr>
       `);
 
-      const payLabel = "Faturado ou Cartão de Crédito";
+      const payLabel = t.payLabel;
       const linkHref = link ? ( /^https?:\/\//i.test(link) ? link : `https://${link}` ) : "";
       const linkLine = `
-        <p style="margin:8px 0 0">Forma de pagamento: <b>${payLabel}</b></p>
-        ${link ? `<p style="margin:6px 0 0">Link de pagamento: <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
+        <p style="margin:8px 0 0">${t.payMethod}: <b>${payLabel}</b></p>
+        ${link ? `<p style="margin:6px 0 0">${t.payLink} <b><a href="${escapeHtml(linkHref)}" target="_blank" rel="noopener">${escapeHtml(link)}</a></b></p>` : ""}
       `.trim();
 
       const fxLine = calc.fx > 0
-        ? `<p style="margin:6px 0 0"><b>Câmbio informado:</b> 1 ${escapeHtml(calc.cur)} = ${calc.fx.toFixed(4).replace(".",",")} BRL • <b>Total (BRL):</b> ${fmtBRL(calc.totalBRL)}</p>`
-        : `<p style="margin:6px 0 0; color:#6b4b00"><b>Atenção:</b> informe o câmbio (Moeda → BRL) para gerar o total em BRL.</p>`;
+        ? `<p style="margin:6px 0 0"><b>${t.fxInformado}</b> 1 ${escapeHtml(calc.cur)} = ${calc.fx.toFixed(4).replace(".", isEN ? "." : ",")} BRL • <b>${t.totalBrl}</b> ${fmtBRL(calc.totalBRL, isEN)}</p>`
+        : `<p style="margin:6px 0 0; color:#6b4b00"><b>${isEN ? "Attention:" : "Atenção:"}</b> ${t.fxMissing.replace(/^Atenção: |^Attention: /, "")}</p>`;
+
+      const incentivoLabel = incentivo === "Sim" ? t.yes : (incentivo === "Não" ? t.no : incentivo);
+      const parcelamentoLabel = common.parcelamento === "Sim" ? t.yes : (common.parcelamento === "Não" ? t.no : common.parcelamento);
+      const tipoLabel = t.tipoValue[tipo] || tipo;
 
       return `
         <div style="font-family:Arial, sans-serif; font-size:13px; color:#0b0f17">
-          <p>Segue abaixo cálculo de reemissão conforme solicitado.</p>
+          <p>${t.intro}</p>
           ${azulMsg}
 
           <table border="1" cellspacing="0" cellpadding="6" width="760" style="width:760px; max-width:760px; margin:0; mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; border:1px solid #c7ced9">
-            <tr><td colspan="2" style="background-color:#d9cce3; font-weight:bold; text-align:center; padding:8px; font-size:14px;">CÁLCULO DE REEMISSÃO INTERNACIONAL</td></tr>
-            <tr><td colspan="2" style="text-align:center; padding:8px;"><b>ATENÇÃO:</b> CONFIRA TODOS OS DADOS ANTES DE APROVAR A REEMISSÃO.<br/>VALORES SUJEITOS A ALTERAÇÃO</td></tr>
-            <tr><td style="width:32%"><b>Cia Aérea</b></td><td>${escapeHtml(ciaFullNameForAgency(common.cia))}</td></tr>
-            <tr><td><b>Prazo</b></td><td>${escapeHtml(common.prazo)}</td></tr>
-            <tr><td><b>Localizador do Cálculo</b></td><td>${escapeHtml(common.loc)}</td></tr>
-            ${common.novo_loc ? `<tr><td><b>Novo LOC</b></td><td>${escapeHtml(common.novo_loc)}</td></tr>` : ""}
-            <tr><td><b>Passageiro(s) / Bilhete(s)</b></td><td>${buildPaxTicketPairsHtml(common)}</td></tr>
-            <tr><td><b>Família Tarifária</b></td><td>${escapeHtml(common.familia)}</td></tr>
-            <tr><td><b>Bagagem</b></td><td>${escapeHtml(common.bag)}</td></tr>
-            <tr><td><b>Permite parcelamento?</b></td><td>${escapeHtml(common.parcelamento)}</td></tr>
-            <tr><td><b>Moeda</b></td><td>${escapeHtml(calc.cur)}</td></tr>
-            <tr><td><b>Recuperação de incentivo?</b></td><td>${escapeHtml(incentivo)}</td></tr>
+            <tr><td colspan="2" style="background-color:#d9cce3; font-weight:bold; text-align:center; padding:8px; font-size:14px;">${t.titleInter}</td></tr>
+            <tr><td colspan="2" style="text-align:center; padding:8px;"><b>${t.attention}</b><br/>${t.valuesSubject}</td></tr>
+            <tr><td style="width:32%"><b>${t.cia}</b></td><td>${escapeHtml(ciaFullNameForAgency(common.cia))}</td></tr>
+            <tr><td><b>${t.prazo}</b></td><td>${escapeHtml(t.prazoValue)}</td></tr>
+            <tr><td><b>${t.locCalc}</b></td><td>${escapeHtml(common.loc)}</td></tr>
+            ${common.novo_loc ? `<tr><td><b>${t.novoLoc}</b></td><td>${escapeHtml(common.novo_loc)}</td></tr>` : ""}
+            <tr><td><b>${t.paxTicket}</b></td><td>${buildPaxTicketPairsHtml(common, isEN)}</td></tr>
+            <tr><td><b>${t.familia}</b></td><td>${escapeHtml(common.familia)}</td></tr>
+            <tr><td><b>${t.bag}</b></td><td>${escapeHtml(common.bag)}</td></tr>
+            <tr><td><b>${t.parcelamento}</b></td><td>${escapeHtml(parcelamentoLabel)}</td></tr>
+            <tr><td><b>${t.moeda}</b></td><td>${escapeHtml(calc.cur)}</td></tr>
+            <tr><td><b>${t.incentivo}</b></td><td>${escapeHtml(incentivoLabel)}</td></tr>
           ${endossoRow}
           </table>
 
-          <p style="margin:12px 0 6px"><b>Descritivo de valores (por pax) — ${escapeHtml(calc.cur)} <span style="font-weight:700; color:#475569">(RC em USD)</span></b></p>
+          <p style="margin:12px 0 6px"><b>${t.descritivo} — ${escapeHtml(calc.cur)} <span style="font-weight:700; color:#475569">${t.rcUsdNote}</span></b></p>
           <table border="1" cellspacing="0" cellpadding="6" width="760" style="width:760px; max-width:760px; margin:0; mso-table-lspace:0pt; mso-table-rspace:0pt; border-collapse:collapse; border:1px solid #c7ced9">
             <tr>
-              <th style="background-color:#a99ac5; color:white; text-align:left">Tipo</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Dif. tarifa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Dif. taxa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">DU/Rav</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Multa</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">RC (USD)</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Total por pax</th>
-              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">Total (tipo)</th>
+              <th style="background-color:#a99ac5; color:white; text-align:left">${t.colType}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDiffFare}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDiffTax}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colDU}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colPen}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colFeeUsd}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colPerPax}</th>
+              <th class="right" style="background-color:#a99ac5; color:white; text-align:right">${t.colTotalTipo}</th>
             </tr>
-            ${paxRows.join("") || `<tr><td colspan="8">Sem valores informados.</td></tr>`}
+            ${paxRows.join("") || `<tr><td colspan="8">${t.noValues}</td></tr>`}
             <tr>
-              <td colspan="7" style="text-align:right; background-color:#d9cce3"><b>TOTAL (${escapeHtml(calc.cur)})</b></td>
+              <td colspan="7" style="text-align:right; background-color:#d9cce3"><b>${t.totalCur(escapeHtml(calc.cur))}</b></td>
               <td style="text-align:right; background-color:#d9cce3"><b>${fmtCur(calc.totalCur)}</b></td>
             </tr>
           </table>
 
           ${fxLine}
-          <p style="margin:6px 0 0"><b>Tipo de cálculo:</b> ${escapeHtml(tipo)}</p>
+          <p style="margin:6px 0 0"><b>${t.tipoCalc}</b> ${escapeHtml(tipoLabel)}</p>
 
           ${linkLine}
-          <p style="margin:6px 0 0"><i>*Após o preenchimento, responda o e-mail para darmos continuidade ao processo</i></p>
-          <p style="margin:6px 0 0">Em respeito a LGPD, não é permitido trafegar informações que envolvam dados de cartão de crédito.</p>
+          <p style="margin:6px 0 0"><i>${t.replyNote}</i></p>
+          <p style="margin:6px 0 0">${t.lgpd}</p>
 
-          ${buildEmailSectionBlock("VOOS SIMULADOS", voos, { strong:true })}
-          ${buildEmailSectionBlock("CÁLCULO - USO INTERNO", interno)}
-          ${buildEmailSectionBlock("BILHETE ORIGINAL", original)}
+          ${buildEmailSectionBlock(t.voosSimulados, voos, { strong:true })}
+          ${buildEmailSectionBlock(isEN ? "CALCULATION - INTERNAL USE" : "CÁLCULO - USO INTERNO", interno)}
+          ${buildEmailSectionBlock(isEN ? "ORIGINAL TICKET" : "BILHETE ORIGINAL", original)}
           <p style="margin:6px 0 0; font-size:9px; color:#999">${crrEmailHtml}</p>
         </div>
       `.trim();
@@ -3800,12 +3870,14 @@ ${endossoRow}
 
     // ---------- subject ----------
     function suggestedSubject(){
+      const isEN = isAgencyEmailEN();
+      const t = isEN ? AGENCY_EMAIL_I18N.en : AGENCY_EMAIL_I18N.pt;
       const mode = getActiveMode();
       const loc = (document.getElementById("loc").value || "").trim();
       const cia = (document.getElementById("cia").value || "").trim();
-      if(mode === "NAC") return `Cálculo de reemissão NAC${loc ? " — " + loc : ""}${cia ? " — " + cia : ""}`.trim();
+      if(mode === "NAC") return t.subjectNac(loc, cia);
       const cur = getInterCurrency();
-      return `Cálculo de reemissão INTER (${cur})${loc ? " — " + loc : ""}${cia ? " — " + cia : ""}`.trim();
+      return t.subjectInter(cur, loc, cia);
     }
 
     // ---------- copy ----------
@@ -3871,8 +3943,43 @@ ${endossoRow}
     }
 
     // ---------- UI ----------
+    window.__interFinalized = false;
+    window.__interPaxReady = false;
+    function updateFlowVisibility(){
+      const nacOn = document.getElementById("tabNac").getAttribute("aria-selected") === "true";
+      const valuesWrap = document.getElementById("interValuesWrap");
+      const commonWrap = document.getElementById("commonSection");
+      const outputsCard = document.getElementById("outputsCard");
+      const finalizeWrap = document.getElementById("btnFinalizarAutoWrap");
+      const hrCommonSep = document.getElementById("hrCommonSep");
+      const hrValuesSep = document.getElementById("hrValuesSep");
+      const modeSel = document.getElementById("inter_tipo");
+      const modeVal = modeSel ? modeSel.value : "Manual";
+      const isAutoLike = /autom/i.test(modeVal || "");
+      const isHybrid = modeVal === "Automático com dados manuais";
+      const showValues = nacOn ? true : (!isAutoLike || (isHybrid && window.__interPaxReady) || window.__interFinalized);
+      if(valuesWrap) valuesWrap.classList.toggle("hidden", !showValues);
+      if(commonWrap) commonWrap.classList.toggle("hidden", !showValues);
+      if(hrCommonSep) hrCommonSep.classList.toggle("hidden", !showValues);
+      if(hrValuesSep) hrValuesSep.classList.toggle("hidden", !showValues);
+      // Saídas (inclui a aba "Carregar CRR") fica sempre visível, mesmo no meio do fluxo guiado Automático,
+      // pra permitir carregar um CRR salvo sem precisar trocar de modo antes.
+      if(outputsCard) outputsCard.classList.toggle("hidden", false);
+      if(finalizeWrap) finalizeWrap.classList.toggle("hidden", nacOn || !isAutoLike || window.__interFinalized);
+    }
     function switchTab(which){
       const nacOn = (which === "tabNac");
+      const wasNacOn = !document.getElementById("panelNac").classList.contains("hidden");
+      const modeChanged = (nacOn !== wasNacOn);
+      // ao trocar de fato entre Nacional/Internacional (não ao reclicar na mesma aba,
+      // nem na restauração inicial da última aba usada), zera as flags do fluxo guiado
+      // do Internacional — senão um cálculo INTER "concluído" fica marcado como pronto
+      // mesmo depois de ir para o Nacional e voltar, escondendo passos do wizard.
+      if(modeChanged){
+        window.__interFinalized = false;
+        window.__interPaxReady = false;
+        if(!nacOn) maybeAutofillFx();
+      }
       document.getElementById("tabNac").setAttribute("aria-selected", nacOn ? "true" : "false");
       document.getElementById("tabInter").setAttribute("aria-selected", nacOn ? "false" : "true");
       document.getElementById("panelNac").classList.toggle("hidden", !nacOn);
@@ -3880,8 +3987,10 @@ ${endossoRow}
       const oacW = document.getElementById("oacWrap");
       if(oacW) oacW.classList.toggle("hidden", !nacOn);
       placeRentPanel();
+      placeCommonSection();
       updateAll({silent:true});
       renderPaxFields();
+      updateFlowVisibility();
       try{ localStorage.setItem("ra_calc_last_mode", nacOn ? "NAC" : "INTER"); }catch(e){}
     }
 
@@ -3920,6 +4029,86 @@ ${endossoRow}
     const AZUL_RULE_TEXT = "Em reemissões Azul, o serviço pago previamente será utilizado como crédito no recalculo de reemissão e é necessário a nova compra do mesmo.";
 const LATAM_GOL_RULE_TEXT = "Se reemitido através de um novo LOC, o localizador original deverá ser cancelado após a reemissão.";
 let __lastCiaForAzul = "";
+
+    // ----- E-mail Agência em inglês (opcional) -----
+    // Só troca o texto FIXO do template (rótulos, cabeçalhos, frases padrão).
+    // Campos de texto livre digitados pelo usuário (bagagem, regras, voos, nomes
+    // etc.) nunca são traduzidos automaticamente — ficam como foram digitados.
+    const AGENCY_EMAIL_I18N = {
+      pt: {
+        intro: "Segue abaixo cálculo de reemissão conforme solicitado.",
+        titleNac: "CÁLCULO DE REEMISSÃO NACIONAL",
+        titleInter: "CÁLCULO DE REEMISSÃO INTERNACIONAL",
+        attention: "ATENÇÃO: CONFIRA TODOS OS DADOS ANTES DE APROVAR A REEMISSÃO.",
+        valuesSubject: "VALORES SUJEITOS A ALTERAÇÃO",
+        cia: "Cia Aérea", prazo: "Prazo", prazoValue: "Imediato",
+        loc: "Localizador", locCalc: "Localizador do Cálculo", novoLoc: "Novo LOC",
+        paxTicket: "Passageiro(s) / Bilhete(s)", oac: "OAC",
+        familia: "Família Tarifária", bag: "Bagagem",
+        parcelamento: "Permite parcelamento?", yes: "Sim", no: "Não",
+        folio: "Fólio", endosso: "Endosso", moeda: "Moeda",
+        incentivo: "Recuperação de incentivo?",
+        descritivo: "Descritivo de valores (por pax)", rcUsdNote: "(RC em USD)",
+        colType: "Tipo", colOldFare: "Tarifa antiga", colNewFare: "Tarifa nova",
+        colDiffFare: "Dif. tarifa", colDiffTax: "Dif. taxa", colDU: "DU/Rav",
+        colPen: "Multa", colFeeUsd: "RC (USD)", colPerPax: "Total por pax",
+        colTotalTipo: "Total (tipo)", totalToPay: "TOTAL A PAGAR (BRL)",
+        totalCur: (cur)=>`TOTAL (${cur})`, noValues: "Sem valores informados.",
+        servicesAbat: "Serviços (abatimento)", payMethod: "Forma de pagamento",
+        payLabel: "Faturado ou Cartão de Crédito", payLink: "Link de pagamento:",
+        fxInformado: "Câmbio informado:", totalBrl: "Total (BRL):",
+        fxMissing: "Atenção: informe o câmbio (Moeda → BRL) para gerar o total em BRL.",
+        tipoCalc: "Tipo de cálculo:",
+        tipoValue: {"Manual":"Manual","Automático":"Automático","Automático com dados manuais":"Automático com dados manuais"},
+        replyNote: "*Após o preenchimento, responda o e-mail para darmos continuidade ao processo",
+        lgpd: "Em respeito a LGPD, não é permitido trafegar informações que envolvam dados de cartão de crédito.",
+        voosSimulados: "VOOS SIMULADOS", regras: "REGRAS", obs: "Observações:",
+        noShowRule: "Solicitações com menos de <b>2h</b> do embarque original poderão acarretar em multa de <b>no show</b>.",
+        azulRule: AZUL_RULE_TEXT, latamGolRule: LATAM_GOL_RULE_TEXT,
+        noName: "(sem nome)", noTicket: "(sem bilhete)",
+        subjectNac: (loc,cia)=> `Cálculo de reemissão NAC${loc?" — "+loc:""}${cia?" — "+cia:""}`.trim(),
+        subjectInter: (cur,loc,cia)=> `Cálculo de reemissão INTER (${cur})${loc?" — "+loc:""}${cia?" — "+cia:""}`.trim(),
+      },
+      en: {
+        intro: "Please find below the reissue calculation as requested.",
+        titleNac: "DOMESTIC REISSUE CALCULATION",
+        titleInter: "INTERNATIONAL REISSUE CALCULATION",
+        attention: "ATTENTION: PLEASE CHECK ALL DATA BEFORE APPROVING THE REISSUE.",
+        valuesSubject: "VALUES SUBJECT TO CHANGE",
+        cia: "Airline", prazo: "Deadline", prazoValue: "Immediate",
+        loc: "Locator", locCalc: "Calculation Locator", novoLoc: "New LOC",
+        paxTicket: "Passenger(s) / Ticket(s)", oac: "OAC",
+        familia: "Fare Family", bag: "Baggage",
+        parcelamento: "Installments allowed?", yes: "Yes", no: "No",
+        folio: "Folio", endosso: "Endorsement", moeda: "Currency",
+        incentivo: "Incentive recovery?",
+        descritivo: "Value breakdown (per pax)", rcUsdNote: "(RC in USD)",
+        colType: "Type", colOldFare: "Old fare", colNewFare: "New fare",
+        colDiffFare: "Fare diff.", colDiffTax: "Tax diff.", colDU: "DU/Rav",
+        colPen: "Penalty", colFeeUsd: "RC (USD)", colPerPax: "Total per pax",
+        colTotalTipo: "Total (type)", totalToPay: "TOTAL DUE (BRL)",
+        totalCur: (cur)=>`TOTAL (${cur})`, noValues: "No values informed.",
+        servicesAbat: "Services (deduction)", payMethod: "Payment method",
+        payLabel: "Invoiced or Credit Card", payLink: "Payment link:",
+        fxInformado: "Exchange rate used:", totalBrl: "Total (BRL):",
+        fxMissing: "Attention: please inform the exchange rate (Currency → BRL) to generate the BRL total.",
+        tipoCalc: "Calculation type:",
+        tipoValue: {"Manual":"Manual","Automático":"Automatic","Automático com dados manuais":"Automatic with manual data"},
+        replyNote: "*After filling in, please reply to this email so we can proceed",
+        lgpd: "In compliance with data protection regulations, credit card information must not be shared by email.",
+        voosSimulados: "SIMULATED FLIGHTS", regras: "RULES", obs: "Notes:",
+        noShowRule: "Requests made less than <b>2h</b> before the original departure may incur a <b>no-show</b> penalty.",
+        azulRule: "For Azul reissues, any service already paid will be used as credit in the reissue recalculation and must be purchased again.",
+        latamGolRule: "If reissued under a new LOC, the original locator must be cancelled after the reissue.",
+        noName: "(no name)", noTicket: "(no ticket)",
+        subjectNac: (loc,cia)=> `Reissue calculation NAC${loc?" — "+loc:""}${cia?" — "+cia:""}`.trim(),
+        subjectInter: (cur,loc,cia)=> `Reissue calculation INTER (${cur})${loc?" — "+loc:""}${cia?" — "+cia:""}`.trim(),
+      }
+    };
+    function isAgencyEmailEN(){
+      const el = document.getElementById("agency_lang_en");
+      return !!(el && el.checked);
+    }
 
 function normalizeCia(v){
   return String(v || "").trim().toUpperCase();
@@ -4040,7 +4229,7 @@ function updateAll(arg){
 
     function generateEmail(){
       const errs = validateBeforeGenerate();
-      if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs[0]); return ""; }
+      if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs.join(" | ")); return ""; }
 
       // garante que cálculos e ocultações estejam atualizados
       try{ updateAll(); }catch(e){}
@@ -4066,11 +4255,15 @@ function updateAll(arg){
         rfp.innerHTML = sicaHtml || "";
       }
 
-      showToast("Preview atualizado!");
+      const warnings = collectSoftWarnings();
+      showToast(warnings.length ? ("Preview atualizado — atenção: " + warnings.join(" | ")) : "Preview atualizado!");
       return html;
     }
 
 function clearAll(silent){
+      if(!silent){
+        if(!confirm("Limpar todos os campos preenchidos?")) return;
+      }
       const ids = Array.from(document.querySelectorAll("input, textarea")).map(e=>e.id);
       for(const id of ids){
         const el = document.getElementById(id);
@@ -4094,17 +4287,60 @@ document.getElementById("paxq_adt").value = "1";
       document.getElementById("paxq_chd").value = "0";
       document.getElementById("paxq_inf").value = "0";
       document.getElementById("pax_json").value = "";
-      const _fol = document.getElementById("nac_folio_on"); if(_fol) _fol.checked = false;
-      const _folAg = document.getElementById("nac_folio_agencia"); if(_folAg) _folAg.checked = false;
-      const _end = document.getElementById("inter_endosso_on"); if(_end) _end.checked = false;
-      const _endAg = document.getElementById("inter_endosso_agencia"); if(_endAg) _endAg.checked = false;
+
+      // reseta TODOS os checkboxes e selects para o valor padrão declarado no HTML
+      // (antes só 4 checkboxes específicos eram tratados; selects não eram tocados)
+      for(const cb of document.querySelectorAll('input[type="checkbox"]')){
+        cb.checked = cb.defaultChecked;
+      }
+      for(const sel of document.querySelectorAll("select")){
+        const opts = Array.from(sel.options);
+        const def = opts.find(o=>o.defaultSelected) || opts[0];
+        if(def) sel.value = def.value;
+      }
       const _endT = document.getElementById("inter_endosso_text"); if(_endT) _endT.value = "";
+      window.__interFinalized = false;
+      window.__interPaxReady = false;
+
+      // reseta o estado do wizard FXO (INTER Automático/Híbrido) — muta o objeto
+      // existente (não substitui a referência, que outras funções mantêm em closure)
+      if(window.__FXQ_WIZ){
+        const s = window.__FXQ_WIZ;
+        s.paxList = [];
+        s.pIndexToTypePos = {};
+        s.requiredTypes = [];
+        s.fxoOk = {ADT:false, CHD:false, INF:false};
+        s.bagByType = {ADT:null, CHD:null, INF:null};
+        s.familyByType = {ADT:null, CHD:null, INF:null};
+        s.bagAuto = false;
+        s.parseMeta = {warnings:[], segments:[], confidence:0, loc:""};
+      }
+      for(const id of ["fxqStatus","fxoBox_ADT_status","fxoBox_CHD_status","fxoBox_INF_status","ticketsStatus"]){
+        const el = document.getElementById(id);
+        if(el) el.textContent = "";
+      }
+      const _ticketsWrap = document.getElementById("ticketsWrap");
+      if(_ticketsWrap) _ticketsWrap.classList.add("hidden");
+      const _subjPill = document.getElementById("subjectPill");
+      if(_subjPill) _subjPill.textContent = "Assunto: —";
+      const _rfp = document.getElementById("rentFormPreview");
+      if(_rfp) _rfp.innerHTML = "";
+
+      if(typeof window.__interApplyInterTipoUI === 'function') window.__interApplyInterTipoUI();
       updateAll();
       renderPaxFields();
+      // campo de câmbio foi zerado acima junto com os demais inputs — sem isso,
+      // o câmbio automático só voltava a aparecer depois de recarregar a página.
+      // Só busca em clear "de verdade" (botão Limpar): loadCRRCode() chama
+      // clearAll(true) antes de aplicar os campos do CRR, e essa busca é
+      // assíncrona — se disparasse aqui, podia resolver DEPOIS do CRR já ter
+      // preenchido o câmbio salvo e sobrescrever com a cotação de hoje.
+      if(!silent && getActiveMode() === "INTER") maybeAutofillFx();
+      try{ localStorage.removeItem("ra_reemissao_v3"); }catch(e){}
       if(!silent) showToast("Limpo!");
     }
 
-    function saveLocal(){
+    function saveLocal(silent){
       const data = {};
       for(const el of document.querySelectorAll("input, select, textarea")){
         if(!el.id) continue;
@@ -4116,12 +4352,12 @@ document.getElementById("paxq_adt").value = "1";
         }
       }
       localStorage.setItem("ra_reemissao_v3", JSON.stringify(data));
-      showToast("Salvo no navegador!");
+      if(!silent) showToast("Salvo no navegador!");
     }
 
-    function loadLocal(){
+    function loadLocal(silent){
       const raw = localStorage.getItem("ra_reemissao_v3");
-      if(!raw){ showToast("Nada salvo ainda."); return; }
+      if(!raw){ if(!silent) showToast("Nada salvo ainda."); return; }
       try{
         const data = JSON.parse(raw);
         for(const [k,v] of Object.entries(data)){
@@ -4132,11 +4368,23 @@ document.getElementById("paxq_adt").value = "1";
         }
         updateAll();
         renderPaxFields();
-        showToast("Carregado!");
+        if(!silent) showToast("Carregado!");
       }catch(e){
-        showToast("Erro ao carregar.");
+        if(!silent) showToast("Erro ao carregar.");
       }
     }
+
+    // ----- Autosave silencioso no navegador (rascunho local, não é o CRR) -----
+    // Salva o estado do formulário a cada alteração (com debounce) para não perder
+    // dados em caso de fechar a aba/recarregar por acidente. "Limpar" também limpa
+    // este rascunho (ver clearAll). Não interfere no CRR/CRR5 nem em cálculos.
+    let __autosaveTimer = null;
+    function __scheduleAutosave(){
+      clearTimeout(__autosaveTimer);
+      __autosaveTimer = setTimeout(()=>{ try{ saveLocal(true); }catch(e){} }, 800);
+    }
+    document.addEventListener("input", __scheduleAutosave);
+    document.addEventListener("change", __scheduleAutosave);
 
     // wire tabs
     document.getElementById("tabNac").addEventListener("click", ()=>switchTab("tabNac"));
@@ -4154,6 +4402,8 @@ document.getElementById("paxq_adt").value = "1";
       const lastOut = localStorage.getItem("ra_output_last_tab") || "agency";
       switchOutputTab(lastOut);
     }catch(e){ switchOutputTab("agency"); }
+    // restaura rascunho salvo automaticamente (se houver) — silencioso, sem toast
+    try{ loadLocal(true); }catch(e){}
 
     // NAC: seletor de cia (GOL/LATAM/AZUL)
     for(const btn of document.querySelectorAll("#ciaNacSelector .airBtn")){
@@ -4183,12 +4433,17 @@ document.getElementById("paxq_adt").value = "1";
         bagByType: {ADT:null, CHD:null, INF:null},
         familyByType: {ADT:null, CHD:null, INF:null},
         bagAuto: false,
-        parseMeta: {warnings:[], segments:[], confidence:0, loc:"", flightCarriers:[], ticketCarriers:[]}
+        parseMeta: {warnings:[], segments:[], confidence:0, loc:""}
       };
 
       function isInterAuto(){
         const sel = $("inter_tipo");
         return sel && String(sel.value||"").toLowerCase().includes("autom");
+      }
+
+      function isInterHybrid(){
+        const sel = $("inter_tipo");
+        return !!(sel && String(sel.value||"") === "Automático com dados manuais");
       }
 
       function setStatus(msg){
@@ -4348,44 +4603,18 @@ document.getElementById("paxq_adt").value = "1";
         return segs.map(seg=>`${seg.carrier}${String(seg.flight).padStart(0,"0")} ${seg.bookingClass} ${seg.date} ${seg.origin}${seg.destination} ${seg.dep}${seg.arr?` ${seg.arr}`:""}${seg.arrDate?` ${seg.arrDate}`:""}`.trim()).join("\n");
       }
 
-      function getUniqueFlightCarriers(segs){
-        return [...new Set((Array.isArray(segs) ? segs : []).map(seg=>String(seg && seg.carrier || '').trim().toUpperCase()).filter(Boolean))];
-      }
-
-      function formatCarrierList(codes){
-        return (Array.isArray(codes) ? codes : []).filter(Boolean).join(', ');
-      }
-
-      function setCarrierFieldFromTicketInfo(airlineInfos){
-        const ciaInput = $('cia');
-        if(!ciaInput) return { applied:false, code:'', note:'' };
-        const infos = Array.isArray(airlineInfos) ? airlineInfos.filter(Boolean) : [];
-        state.parseMeta.ticketCarriers = infos.map(info=>String(info.code||'').toUpperCase()).filter(Boolean);
-        if(infos.length !== 1){
-          delete ciaInput.dataset.ticketCarrierValidated;
-          return {
-            applied:false,
-            code:'',
-            note: infos.length > 1
-              ? 'Mais de uma dona de bilhete foi identificada; confirme a cia principal manualmente.'
-              : 'Bilhete ainda não identificou uma dona única.'
-          };
-        }
-        ciaInput.value = infos[0].code;
-        ciaInput.dataset.ticketCarrierValidated = '1';
-        try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
-        try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
-        return { applied:true, code:infos[0].code, note:`Cia final validada pelo bilhete: ${infos[0].code}` };
-      }
-
       function applyPassengerData(parsed){
         const pax = parsed && Array.isArray(parsed.pax) ? parsed.pax : [];
         if(!pax.length){
           setStatus("Cole a máscara do PNR (RP/...) contendo passageiros.");
+          window.__interPaxReady = false;
           show($("fxoWrap"), false);
+          show($("interValuesWrap"), false);
           show($("ticketsWrap"), false);
+          if(typeof updateFlowVisibility === 'function') updateFlowVisibility();
           return false;
         }
+        window.__interPaxReady = true;
 
         const counts = parsed.qty || {ADT:0, CHD:0, INF:0};
         const store = {ADT:[], CHD:[], INF:[]};
@@ -4425,32 +4654,40 @@ document.getElementById("paxq_adt").value = "1";
         const bagEl = $("bag"); if(bagEl){ bagEl.value = ""; delete bagEl.dataset.auto; }
         const famEl = $("familia"); if(famEl && famEl.dataset.auto === "1"){ famEl.value = ""; delete famEl.dataset.auto; }
 
-        show($("fxoWrap"), true);
-        for(const t of ["ADT","CHD","INF"]){
-          show($(`fxoBox_${t}_wrap`), state.requiredTypes.includes(t));
-          const st = $(`fxoBox_${t}_status`); if(st) st.textContent = "";
+        if(isInterHybrid()){
+          show($("fxoWrap"), false);
+          show($("interValuesWrap"), true);
+          show($("ticketsWrap"), true);
+        } else {
+          show($("fxoWrap"), true);
+          for(const t of ["ADT","CHD","INF"]){
+            show($(`fxoBox_${t}_wrap`), state.requiredTypes.includes(t));
+            const st = $(`fxoBox_${t}_status`); if(st) st.textContent = "";
+          }
+          show($("ticketsWrap"), false);
         }
-        show($("ticketsWrap"), false);
         if($("ticketsStatus")) $("ticketsStatus").textContent = "";
+        if(typeof updateFlowVisibility === 'function') updateFlowVisibility();
 
         if(parsed.loc && $("loc") && !$("loc").value.trim()) $("loc").value = parsed.loc;
 
         const segs = parseSegments($("inter_voos")?.value || "");
         state.parseMeta.segments = segs;
-        state.parseMeta.flightCarriers = getUniqueFlightCarriers(segs);
         const segInfo = segs.length ? ` • ${segs.length} trecho(s)` : "";
-        const flightHint = state.parseMeta.flightCarriers.length ? ` • voos ${formatCarrierList(state.parseMeta.flightCarriers)}` : "";
         const warnTxt = (parsed.warnings||[]).length ? ` • aviso: ${(parsed.warnings||[]).join(" | ")}` : "";
-        setStatus(`Detectado: ${counts.ADT||0} ADT • ${counts.CHD||0} CHD • ${counts.INF||0} INF${parsed.loc?` • LOC ${parsed.loc}`:""}${segInfo}${flightHint} • confiança ${parsed.confidence||0}%${warnTxt}. Agora cole o FXO por tipo.`);
+        setStatus(`Detectado: ${counts.ADT||0} ADT • ${counts.CHD||0} CHD • ${counts.INF||0} INF${parsed.loc?` • LOC ${parsed.loc}`:""}${segInfo} • confiança ${parsed.confidence||0}%${warnTxt}. Agora cole o FXO por tipo.`);
         return true;
       }
 
+      // Restringe a moedas ISO 4217 conhecidas para não confundir com abreviações do GDS
+      // (ex.: "TKT 123", "ADT 1") que também casam no padrão "3 letras + número".
+      const ISO_CURRENCIES = new Set(["USD","EUR","GBP","BRL","CAD","CHF","JPY","AUD","ARS","CLP","MXN","COP","PEN","UYU","PYG","CNY","AED","SGD","NZD","ZAR"]);
       function parseCurrencyPairs(chunk){
         const pairs = [];
         for(const m of String(chunk||"").matchAll(/\b([A-Z]{3})\s+(-?\d+(?:\.\d{1,2})?)/g)){
           const cur = String(m[1]).toUpperCase();
           const amt = parseFloat(m[2]);
-          if(cur && Number.isFinite(amt)) pairs.push({cur, amt});
+          if(cur && ISO_CURRENCIES.has(cur) && Number.isFinite(amt)) pairs.push({cur, amt});
         }
         return pairs;
       }
@@ -4458,7 +4695,6 @@ document.getElementById("paxq_adt").value = "1";
       function findLabelValue(text, label, preferCur){
         const src = normalizeGdsText(text).text;
         const labelsAnchor = '(?:OLD\\s+BASE\\s+FARE|NEW\\s+BASE\\s+FARE|FARE\\s+BALANCE|OLD\\s+TAX|NEW\\s+TAX|TAX\\s+BALANCE|TICKET\\s+DIFFERENCE|PENALTY|GRAND\\s+TOTAL|TOTAL\\s+ADD\\s+COLL|RESIDUAL\\s+VALUE)';
-
         const lineRe = new RegExp('^\\s*' + label + '\\b.*$', 'gim');
         for(const mLine of src.matchAll(lineRe)){
           const ownPairs = parseCurrencyPairs(mLine[0]);
@@ -4527,50 +4763,84 @@ document.getElementById("paxq_adt").value = "1";
         return { paxType, oldBase, newBase, fare, taxBal, tktDiff, pen, grand, add, residual, bag:bagInfo.text, family:familyInfo.text, familyItems:familyInfo.items, warnings, confidence:Math.min(100,confidence) };
       }
 
+
       function parseBagFromText(text){
-        const s = String(text||"");
+        const s = String(text || "");
         const lines = normalizeGdsText(s).lines;
-        const rows = [];
         let inTable = false;
-        for(const line of lines){
-          if(/AL\s+FLGT\s+BK\s+DATE\s+TIME.*\bBG\b/i.test(line)){ inTable = true; continue; }
+        let currentOrigin = "";
+        const routes = [];
+
+        function bagLabel(n){ return n > 0 ? `${n}PC` : 'Sem bagagem'; }
+        function pushRoute(from, to, pieces){
+          if(!from || !to) return;
+          routes.push({ from, to, pieces, label: bagLabel(pieces) });
+        }
+
+        for (const rawLine of lines){
+          const line = String(rawLine || "").trim().replace(/\s+/g, " ");
+          if(/AL\s+FLGT\s+BK\s+DATE\s+TIME.*BG/i.test(line)){ inTable = true; continue; }
           if(!inTable) continue;
           if(/ORIGIN\s+TRVL\s+CURRENCY|OLD\s+BASE\s+FARE/i.test(line)) break;
-          if(/S\s+U\s+R\s+F\s+A\s+C\s+E/i.test(line)) continue;
-          const m = line.match(/\b(NIL|0P|\d{1,2}P)\s*$/i);
-          if(!m) continue;
-          const raw = String(m[1]).toUpperCase();
-          const pieces = /NIL|0P/i.test(raw) ? 0 : parseInt(raw,10);
-          rows.push({pieces, raw});
+          if(!line) continue;
+
+          const surface = line.match(/^([A-Z]{3})\s+(?:S\s+U\s+R\s+F\s+A\s+C\s+E|ARNK)$/i);
+          if(surface){
+            currentOrigin = String(surface[1]).toUpperCase();
+            continue;
+          }
+
+          const loneCity = line.match(/^([A-Z]{3})$/i);
+          if(loneCity){
+            currentOrigin = String(loneCity[1]).toUpperCase();
+            continue;
+          }
+
+          const bagMatch = line.match(/\b(NIL|0P|\d{1,2}P)\s*$/i);
+          if(!bagMatch) continue;
+
+          const destMatch = line.match(/^([A-Z]{3})\b/);
+          if(!destMatch) continue;
+
+          const dest = String(destMatch[1]).toUpperCase();
+          const rawBag = String(bagMatch[1]).toUpperCase();
+          const pieces = /^(?:NIL|0P)$/i.test(rawBag) ? 0 : parseInt(rawBag, 10);
+
+          pushRoute(currentOrigin, dest, pieces);
+          currentOrigin = dest;
         }
-        if(!rows.length){
-          if(/\bNIL\b|\b0P\b/i.test(s)) return {pieces:[0], text:'Sem bag', groups:[]};
-          return {pieces:[], text:'', groups:[]};
+
+        if(!routes.length){
+          if(/\bNIL\b|\b0P\b/i.test(s)) return {pieces:[0], text:'Sem bagagem', groups:[], routes:[]};
+          return {pieces:[], text:'', groups:[], routes:[]};
         }
-        const segs = Array.isArray(state?.parseMeta?.segments) ? state.parseMeta.segments.filter(x=>x && (x.source === 'PNR' || x.segNo)) : [];
-        const mapped = rows.map((r, idx)=>({ pieces:r.pieces, segNo: segs[idx] && segs[idx].segNo ? segs[idx].segNo : null }));
-        const uniq = Array.from(new Set(mapped.map(x=>x.pieces))).sort((a,b)=>a-b);
-        function bagLabel(n){ return n > 0 ? `${n}PC` : 'Sem bag'; }
-        if(uniq.length===1) return {pieces:uniq, text:bagLabel(uniq[0]), groups:[{pieces:uniq[0], segFrom:mapped[0].segNo, segTo:mapped[mapped.length-1].segNo}]};
+
+        const uniq = Array.from(new Set(routes.map(r => r.pieces)));
+        if(uniq.length === 1){
+          const only = uniq[0];
+          return {
+            pieces: uniq,
+            text: only > 0 ? `${only}PC` : 'Sem bagagem',
+            groups: [{ pieces: only, routes: routes.map(r => `${r.from}-${r.to}`) }],
+            routes
+          };
+        }
+
         const groups = [];
-        for(const item of mapped){
-          const last = groups[groups.length-1];
-          const contiguous = last && Number.isFinite(last.segTo) && Number.isFinite(item.segNo) && item.segNo === last.segTo + 1;
-          if(last && last.pieces === item.pieces && contiguous){
-            last.segTo = item.segNo;
+        for (const r of routes){
+          const last = groups[groups.length - 1];
+          const routeLabel = `${r.from}-${r.to}`;
+          if(last && last.pieces === r.pieces){
+            last.routes.push(routeLabel);
           } else {
-            groups.push({pieces:item.pieces, segFrom:item.segNo, segTo:item.segNo});
+            groups.push({ pieces: r.pieces, routes: [routeLabel] });
           }
         }
-        const textOut = groups.map(g=>{
-          const label = bagLabel(g.pieces);
-          if(Number.isFinite(g.segFrom) && g.segFrom>0){
-            return `${label} (SEG ${g.segFrom}${g.segTo && g.segTo !== g.segFrom ? `-${g.segTo}` : ''})`;
-          }
-          return label;
-        }).join(' • ');
-        return {pieces:uniq, text:textOut, groups};
+
+        const textOut = groups.map(g => `${bagLabel(g.pieces)}: ${g.routes.join(', ')}`).join(' • ');
+        return { pieces: uniq, text: textOut, groups, routes };
       }
+
 
       function parseFareFamilies(text){
         const items = Array.from(String(text||"").matchAll(/FARE\s+FAMILY:FC\d+:(\d+(?:-\d+)?):([A-Z0-9]+)/gi)).map(m=>({seg:m[1], fam:String(m[2]).toUpperCase()}));
@@ -4608,25 +4878,40 @@ document.getElementById("paxq_adt").value = "1";
 
         if(anyBRL && !(fx > 0)) return {canApply:false, needsFx:true, fx:0, inferred:false};
 
+        let curMismatch = false;
         function toWant(obj){
           if(!hasAny(obj)) return null;
           if(obj.cur === 'BRL' && wantCur !== 'BRL') return {cur:wantCur, amt:obj.amt / fx, srcCur:'BRL'};
+          // moeda do FXO diferente da selecionada e não é BRL (não convertemos, só avisamos):
+          // o valor é usado como está (mesmo comportamento de antes), mas agora sinalizado.
+          if(obj.cur !== wantCur) curMismatch = true;
           return {cur:obj.cur, amt:obj.amt, srcCur:obj.cur};
         }
-        return { canApply:true, needsFx:false, fx:fx||0, inferred, fare:toWant(parsed.fare), pen:toWant(parsed.pen), add:toWant(parsed.add), taxBal:toWant(parsed.taxBal), tktDiff:toWant(parsed.tktDiff) };
+        const result = { canApply:true, needsFx:false, fx:fx||0, inferred, fare:toWant(parsed.fare), pen:toWant(parsed.pen), add:toWant(parsed.add), taxBal:toWant(parsed.taxBal), tktDiff:toWant(parsed.tktDiff) };
+        result.curMismatch = curMismatch;
+        return result;
       }
+
 
       function updateBagSummary(){
         const bagEl = $("bag");
         if(!bagEl) return;
         const canOverwrite = !bagEl.value.trim() || bagEl.dataset.auto === '1';
         if(!canOverwrite) return;
-        const vals = state.requiredTypes.filter(t=>state.bagByType[t]).map(t=>`${t}: ${state.bagByType[t]}`);
+
+        const vals = state.requiredTypes
+          .filter(t => state.bagByType[t])
+          .map(t => `${t}: ${state.bagByType[t]}`);
+
         if(!vals.length) return;
-        const uniqVals = Array.from(new Set(vals.map(v=>v.split(': ')[1])));
+
+        const onlyBagText = vals.map(v => v.replace(/^[A-Z]{3}:\s*/, ''));
+        const uniqVals = Array.from(new Set(onlyBagText));
+
         bagEl.value = uniqVals.length === 1 ? uniqVals[0] : vals.join(' | ');
         bagEl.dataset.auto = '1';
       }
+
 
       function updateFamilySummary(){
         const famEl = $("familia");
@@ -4659,12 +4944,12 @@ document.getElementById("paxq_adt").value = "1";
         syncInternoFromBoxes();
         const wantCur = (typeof getInterCurrency === 'function') ? getInterCurrency() : 'USD';
         const resolved = resolveFxoCurrency(parsed, wantCur);
-        const fareEl = $(`inter_fare_${type}`), taxEl = $(`inter_tax_${type}`), penEl = $(`inter_pen_${type}`), duEl = $(`inter_du_${type}`), feeEl = $(`inter_fee_${type}`);
+        // inter_du_*/inter_fee_* não são preenchidos por este parser — não zerar,
+        // senão qualquer edição no FXO apaga silenciosamente o que foi digitado manualmente.
+        const fareEl = $(`inter_fare_${type}`), taxEl = $(`inter_tax_${type}`), penEl = $(`inter_pen_${type}`);
         if(fareEl) fareEl.value = '';
         if(taxEl) taxEl.value = '';
         if(penEl) penEl.value = '';
-        if(duEl) duEl.value = '';
-        if(feeEl) feeEl.value = '';
 
         if(!resolved.canApply){
           state.fxoOk[type] = false;
@@ -4701,6 +4986,7 @@ document.getElementById("paxq_adt").value = "1";
             const msg = [`OK — ${wantCur}`];
             if(resolved.fx>0 && (resolved.inferred || parseBRNumber($("inter_fx")?.value)>0)) msg.push(`câmbio ${fmtNumPT(resolved.fx)}${resolved.inferred?' (inferido)':''}`);
             if(parsed.confidence) msg.push(`confiança ${parsed.confidence}%`);
+            if(resolved.curMismatch) msg.push(`⚠ moeda do FXO diverge de ${wantCur} — confira antes de gerar`);
             if(parsed.warnings.length) msg.push(parsed.warnings.join(' | '));
             st.textContent = msg.join(' • ');
           }else{
@@ -4730,106 +5016,306 @@ document.getElementById("paxq_adt").value = "1";
         const prefix = raw.slice(0,3);
         const map = {
           '001':{code:'AA', name:'American Airlines'},
+          '004':{code:'BV', name:'Blue Panorama'},
           '006':{code:'DL', name:'Delta Air Lines'},
+          '009':{code:'QD', name:'JC International Airlines (Camboja)'},
           '014':{code:'AC', name:'Air Canada'},
           '016':{code:'UA', name:'United Airlines'},
+          '018':{code:'HO', name:'Juneyao Airlines'},
           '027':{code:'AS', name:'Alaska Airlines'},
+          '030':{code:'VY', name:'Vueling Airlines'},
+          '031':{code:'PW', name:'Precision Air'},
+          '032':{code:'KP', name:'Asky Airlines'},
+          '033':{code:'F7', name:'Darwin Airlines'},
+          '034':{code:'U8', name:'TUS Airways'},
           '037':{code:'US', name:'US Airways'},
+          '040':{code:'QC', name:'Camair-Co.'},
+          '041':{code:'JQ', name:'Jetstar Airways'},
+          '043':{code:'KA', name:'Dragonair'},
           '044':{code:'AR', name:'Aerolineas Argentinas'},
-          '045':{code:'AV', name:'Avianca'},
+          '045':{code:'LA', name:'LATAM'},
           '047':{code:'TP', name:'TAP Air Portugal'},
-          '055':{code:'AZ', name:'ITA Airways / Alitalia legado'},
+          '050':{code:'OA', name:'Olympic Air'},
+          '053':{code:'EI', name:'Aer Lingus'},
+          '055':{code:'AZ', name:'Alitalia / ITA legado'},
           '057':{code:'AF', name:'Air France'},
+          '061':{code:'HM', name:'Air Seychelles'},
+          '063':{code:'SB', name:'Air Caledonie International'},
           '064':{code:'OK', name:'Czech Airlines'},
+          '065':{code:'SV', name:'Saudia'},
+          '066':{code:'8Q', name:'Onur Air'},
+          '068':{code:'TM', name:'LAM Linhas Aereas de Mocambique'},
           '071':{code:'ET', name:'Ethiopian Airlines'},
+          '072':{code:'GF', name:'Gulf Air'},
           '074':{code:'KL', name:'KLM'},
           '075':{code:'IB', name:'Iberia'},
+          '076':{code:'ME', name:'MEA - Middle East Airlines'},
+          '077':{code:'MS', name:'Egyptair'},
+          '079':{code:'PR', name:'Philippine Airlines'},
+          '080':{code:'LO', name:'LOT Polish Airlines'},
           '081':{code:'QF', name:'Qantas'},
+          '082':{code:'SN', name:'Brussels Airlines'},
           '083':{code:'SA', name:'South African Airways'},
+          '086':{code:'NZ', name:'Air New Zealand'},
+          '098':{code:'AI', name:'Air India'},
+          '101':{code:'EN', name:'Air Dolomiti'},
+          '105':{code:'AY', name:'Finnair'},
+          '106':{code:'BW', name:'Caribbean Airlines'},
+          '107':{code:'W4', name:'LC Busre / LC Peru'},
+          '108':{code:'FI', name:'Icelandair'},
+          '110':{code:'UJ', name:'AlMasria Universal Airlines'},
+          '111':{code:'UP', name:'Bahamasair'},
+          '114':{code:'LY', name:'EL AL Israel Airlines'},
+          '115':{code:'JU', name:'Air Serbia'},
+          '117':{code:'SK', name:'SAS'},
+          '124':{code:'AH', name:'Air Algerie'},
           '125':{code:'BA', name:'British Airways'},
+          '126':{code:'GA', name:'Garuda Indonesia'},
+          '127':{code:'G3', name:'GOL Linhas Aereas'},
+          '128':{code:'UO', name:'Hong Kong Express'},
+          '130':{code:'5F', name:'Flyone'},
+          '131':{code:'JL', name:'Japan Airlines'},
+          '133':{code:'LR', name:'Lineas Aereas Costarricenses'},
           '134':{code:'AV', name:'Avianca'},
+          '135':{code:'VT', name:'Air Tahiti'},
           '139':{code:'AM', name:'Aeromexico'},
-          '142':{code:'LX', name:'Swiss'},
-          '145':{code:'UX', name:'Air Europa'},
+          '140':{code:'LI', name:'LIAT'},
+          '141':{code:'FZ', name:'Flydubai'},
+          '145':{code:'UC', name:'LAN Cargo'},
+          '147':{code:'AT', name:'Royal Air Maroc'},
+          '148':{code:'LN', name:'Libyan Airlines'},
+          '149':{code:'LG', name:'Luxair'},
+          '151':{code:'R5', name:'Jordan Aviation'},
+          '154':{code:'IO', name:'Iraero'},
+          '155':{code:'ES', name:'DHL Aviation EEMEA'},
+          '156':{code:'2I', name:'Star Peru'},
           '157':{code:'QR', name:'Qatar Airways'},
           '160':{code:'CX', name:'Cathay Pacific'},
+          '168':{code:'UM', name:'Air Zimbabwe'},
+          '169':{code:'HR', name:'Hahn Air'},
+          '171':{code:'FT', name:'FlyEgypt'},
+          '172':{code:'CV', name:'Cargolux'},
+          '173':{code:'HA', name:'Hawaiian Airlines'},
           '176':{code:'EK', name:'Emirates'},
+          '179':{code:'AJ', name:'Aztec Airways'},
           '180':{code:'KE', name:'Korean Air'},
-          '183':{code:'LY', name:'El Al'},
-          '205':{code:'NH', name:'ANA'},
+          '184':{code:'4B', name:'Boutique Air'},
+          '185':{code:'7N', name:'Pan Am World Airways Dominicana'},
+          '186':{code:'SW', name:'Air Namibia'},
+          '188':{code:'K6', name:'Cambodia Angkor Air'},
+          '191':{code:'IG', name:'MeridianaFly'},
+          '192':{code:'PY', name:'Surinam Airways'},
+          '193':{code:'IE', name:'Solomon Airlines'},
+          '199':{code:'TU', name:'Tunisair'},
+          '202':{code:'TA', name:'TACA International Airlines'},
+          '205':{code:'NH', name:'All Nippon Airways'},
+          '206':{code:'YE', name:'Yan Air'},
+          '209':{code:'AG', name:'Aruba Airlines'},
+          '214':{code:'PK', name:'Pakistan International Airlines'},
           '217':{code:'TG', name:'Thai Airways'},
+          '218':{code:'NF', name:'Air Vanuatu'},
           '220':{code:'LH', name:'Lufthansa'},
+          '228':{code:'UK', name:'TATA SIA Airline (Vistara)'},
+          '229':{code:'KU', name:'Kuwait Airways'},
           '230':{code:'CM', name:'Copa Airlines'},
+          '232':{code:'MH', name:'Malaysian Airlines System'},
           '235':{code:'TK', name:'Turkish Airlines'},
+          '238':{code:'IZ', name:'Arkia Israeli Airlines'},
+          '239':{code:'MK', name:'Air Mauritius'},
+          '241':{code:'EL', name:'Ellinair'},
+          '244':{code:'TN', name:'Air Tahiti Nui'},
+          '246':{code:'ST', name:'Germania'},
+          '247':{code:'O6', name:'Oceanair Linhas Aereas'},
+          '249':{code:'S3', name:'Santa Barbara Airlines'},
+          '250':{code:'HY', name:'Uzbekistan Airlines'},
           '257':{code:'OS', name:'Austrian Airlines'},
-          '390':{code:'A3', name:'Aegean'},
-          '462':{code:'QY', name:'European Air Transport'},
-          '530':{code:'VX', name:'Virgin America legado'},
-          '577':{code:'AD', name:'Azul'},
+          '258':{code:'MD', name:'Air Madagascar'},
+          '260':{code:'FJ', name:'Fiji Airways'},
+          '262':{code:'U6', name:'Ural Airlines'},
+          '267':{code:'BE', name:'Flybe'},
+          '269':{code:'EQ', name:'TAME'},
+          '279':{code:'B6', name:'JetBlue'},
+          '281':{code:'RO', name:'Tarom'},
+          '285':{code:'RA', name:'Royal Nepal Airlines'},
+          '289':{code:'OM', name:'MIAT Mongolian Airlines'},
+          '294':{code:'T7', name:'Twin Jet'},
+          '297':{code:'CI', name:'China Airlines'},
+          '298':{code:'UT', name:'UTair Aviation'},
+          '307':{code:'WE', name:'Centurion Air Cargo'},
+          '308':{code:'V0', name:'Conviasa'},
+          '312':{code:'6E', name:'IndiGo'},
+          '316':{code:'5N', name:'JSC Nordavia'},
+          '319':{code:'8D', name:'Expo Aviation'},
+          '324':{code:'SC', name:'Shandong Airlines'},
+          '325':{code:'NP', name:'Nile Air'},
+          '328':{code:'DY', name:'Norwegian Air Shuttle'},
+          '331':{code:'S4', name:'SATA International Airlines'},
+          '333':{code:'VO', name:'VLM Airlines'},
+          '334':{code:'FN', name:'Fastjet Airlines'},
+          '347':{code:'WP', name:'Hawaii Island Air'},
+          '355':{code:'E7', name:'Estafeta Carga Aerea'},
+          '356':{code:'C8', name:'Cargolux Italia'},
+          '357':{code:'8G', name:'Fly Mid Africa'},
+          '362':{code:'7R', name:'Rusline'},
+          '365':{code:'W2', name:'Flexflight'},
+          '366':{code:'8H', name:'BH Air'},
+          '369':{code:'5Y', name:'Atlas Air'},
+          '376':{code:'BB', name:'Seaborne Airlines'},
+          '378':{code:'KX', name:'Cayman Airways'},
+          '381':{code:'SM', name:'Air Cairo'},
+          '390':{code:'A3', name:'Aegean Airlines'},
+          '403':{code:'PO', name:'Polar Air Cargo'},
+          '408':{code:'M4', name:'Mistral Air'},
+          '409':{code:'YM', name:'Montenegro Airlines'},
+          '413':{code:'SZ', name:'Air Company Somon Air'},
+          '417':{code:'E6', name:'Bringer Corporation'},
+          '421':{code:'S7', name:'Siberia Airlines'},
+          '425':{code:'DP', name:'Pobeda Airlines'},
+          '427':{code:'TX', name:'Air Caraibes'},
+          '429':{code:'VL', name:'Med View Airlines'},
+          '439':{code:'ZI', name:'Aigle Azur'},
+          '452':{code:'3O', name:'Air Arabia Maroc'},
+          '459':{code:'WB', name:'Rwandair Express'},
+          '460':{code:'EB', name:'Wamos Air'},
+          '464':{code:'Z8', name:'Amaszonas'},
+          '465':{code:'KC', name:'Air Astana'},
+          '467':{code:'T3', name:'Eastern Airways (UK)'},
+          '469':{code:'4M', name:'LAN Argentina'},
+          '474':{code:'NT', name:'Binter Canarias Airlines'},
+          '475':{code:'0B', name:'Blue Air'},
+          '477':{code:'NE', name:'Nesma Airlines'},
+          '478':{code:'XW', name:'NokScoot Airlines'},
+          '479':{code:'ZH', name:'Shenzhen Airlines'},
+          '480':{code:'BM', name:'British Midland Regional'},
+          '489':{code:'W8', name:'Cargojet Airways'},
+          '501':{code:'7L', name:'Silk Way West Airlines'},
+          '502':{code:'7J', name:'Tajik Air'},
+          '512':{code:'RJ', name:'Royal Jordanian Airlines'},
+          '514':{code:'G9', name:'Air Arabia'},
+          '515':{code:'SF', name:'Tassili Airlines'},
+          '526':{code:'WN', name:'Southwest Airlines'},
+          '535':{code:'3J', name:'Jubba Airways'},
+          '544':{code:'LP', name:'LAN Peru'},
+          '547':{code:'2K', name:'AeroGal'},
+          '551':{code:'YU', name:'EuroAtlantic Airways'},
+          '555':{code:'SU', name:'Aeroflot'},
+          '558':{code:'5O', name:'Europe Airpost'},
+          '560':{code:'P3', name:'CargoLogicAir'},
+          '564':{code:'XQ', name:'SunExpress'},
+          '566':{code:'PS', name:'Ukraine International Airlines'},
+          '572':{code:'9U', name:'Air Moldova'},
+          '575':{code:'7C', name:'Coyne Air Limited'},
+          '576':{code:'GG', name:'Sky Lease I'},
+          '577':{code:'AD', name:'Azul Linhas Aereas'},
+          '580':{code:'RU', name:'AirBridgeCargo'},
+          '589':{code:'9W', name:'Jet Airways'},
+          '593':{code:'XY', name:'National Air Service (NAS)'},
+          '598':{code:'HZ', name:'SAT Airlines'},
+          '599':{code:'8M', name:'Myanmar Airways International'},
+          '602':{code:'P9', name:'Peruvian Air Line'},
+          '605':{code:'H2', name:'SKY Airline'},
+          '606':{code:'A9', name:'Georgian Airways'},
+          '607':{code:'EY', name:'Etihad'},
+          '610':{code:'KK', name:'AtlasJet Airlines'},
+          '615':{code:'QY', name:'European Air Transport'},
+          '618':{code:'SQ', name:'Singapore Airlines'},
+          '623':{code:'FB', name:'Bulgaria Air'},
+          '624':{code:'PC', name:'Pegasus Airlines'},
+          '627':{code:'QV', name:'Lao Airlines'},
+          '628':{code:'B2', name:'Belavia'},
+          '629':{code:'MI', name:'SilkAir'},
+          '631':{code:'GL', name:'Air Greenland'},
+          '633':{code:'GQ', name:'Skyexpress'},
+          '636':{code:'BP', name:'Air Botswana'},
+          '637':{code:'B8', name:'Eritrean Airlines'},
+          '643':{code:'KM', name:'Air Malta'},
+          '649':{code:'TS', name:'Air Transat'},
+          '650':{code:'OY', name:'Andes Lineas Aereas'},
+          '652':{code:'RX', name:'Regent Airways'},
+          '653':{code:'JY', name:'Intercaribbean Airlines'},
+          '655':{code:'DV', name:'SCAT Airlines'},
+          '656':{code:'PX', name:'Air Niugini'},
+          '657':{code:'BT', name:'Air Baltic'},
+          '659':{code:'P0', name:'Proflight Commuter Services'},
+          '664':{code:'YC', name:'Yamal Airlines'},
+          '665':{code:'UB', name:'Myanmar National Airlines'},
+          '668':{code:'TR', name:'Scoot'},
+          '672':{code:'BI', name:'Royal Brunei'},
+          '675':{code:'NX', name:'Air Macau'},
+          '688':{code:'BD', name:'Cambodia Bayon Airlines'},
+          '689':{code:'WX', name:'CityJet'},
+          '695':{code:'BR', name:'EVA Air'},
+          '696':{code:'VR', name:'TACV Cabo Verde Airlines'},
+          '699':{code:'UW', name:'Uni-Top Airlines'},
+          '700':{code:'5C', name:'Cargo Airlines Limited'},
+          '701':{code:'WF', name:'Wideroe'},
+          '706':{code:'KQ', name:'Kenya Airways'},
+          '712':{code:'V7', name:'Volotea'},
+          '717':{code:'R7', name:'Aserca Airlines'},
           '724':{code:'LX', name:'Swiss'},
-          '724':{code:'LX', name:'Swiss'},
-          '724':{code:'LX', name:'Swiss'},
-          '932':{code:'VS', name:'Virgin Atlantic'},
-          '933':{code:'KQ', name:'Kenya Airways'},
-          '957':{code:'LA', name:'LATAM / TAM legado'},
-          '996':{code:'UX', name:'Air Europa'}
+          '725':{code:'W3', name:'Arik Air International'},
+          '729':{code:'QT', name:'Tampa Cargo'},
+          '731':{code:'MF', name:'Xiamen Airlines'},
+          '738':{code:'VN', name:'Vietnam Airlines'},
+          '739':{code:'7V', name:'Federal Airlines'},
+          '742':{code:'9V', name:'Avior Airlines'},
+          '745':{code:'AB', name:'Air Berlin'},
+          '758':{code:'FK', name:'Kelowna Flightcraft Air Charter'},
+          '760':{code:'UU', name:'Air Austral'},
+          '767':{code:'RC', name:'Atlantic Airways'},
+          '771':{code:'J2', name:'Azerbaijan Airlines'},
+          '772':{code:'SX', name:'Skywork Airlines'},
+          '774':{code:'FM', name:'Shanghai Airlines'},
+          '781':{code:'MU', name:'China Eastern Airlines'},
+          '783':{code:'E9', name:'Evelop Airlines'},
+          '784':{code:'CZ', name:'China Southern Airlines'},
+          '795':{code:'VA', name:'Virgin Australia'},
+          '796':{code:'BJ', name:'Nouvelair'},
+          '803':{code:'AE', name:'Mandarin Airlines'},
+          '810':{code:'M6', name:'Amerijet International'},
+          '817':{code:'MJ', name:'Mihin Lanka'},
+          '818':{code:'6H', name:'Israir Airlines'},
+          '826':{code:'GS', name:'TianJin Airlines'},
+          '828':{code:'RH', name:'Hong Kong Air Cargo Carrier'},
+          '829':{code:'PG', name:'Bangkok Airways'},
+          '831':{code:'OU', name:'Croatia Airlines'},
+          '836':{code:'NS', name:'Hebei Airlines'},
+          '837':{code:'4O', name:'Interjet'},
+          '838':{code:'WS', name:'WestJet Airlines'},
+          '847':{code:'PN', name:'China West Air Company'},
+          '849':{code:'R3', name:'Air Company Yakutia'},
+          '851':{code:'HX', name:'Hong Kong Airlines'},
+          '859':{code:'8L', name:'Lucky Air'},
+          '861':{code:'MR', name:'Hunnu Air'},
+          '865':{code:'M7', name:'Aerotransportes Mas de Carga'},
+          '876':{code:'3U', name:'Sichuan Airlines'},
+          '880':{code:'HU', name:'Hainan Airlines'},
+          '881':{code:'DE', name:'Condor Flugdienst'},
+          '883':{code:'BU', name:'Compagnie Africaine d\'Aviation'},
+          '887':{code:'ZM', name:'Air Manas'},
+          '898':{code:'JD', name:'Beijing Capital Airlines'},
+          '910':{code:'WY', name:'Oman Air'},
+          '912':{code:'QW', name:'Qingdao Airlines'},
+          '923':{code:'SS', name:'Corsair'},
+          '930':{code:'OB', name:'Boliviana de Aviacion'},
+          '932':{code:'VS', name:'Virgin Atlantic Airways'},
+          '933':{code:'KZ', name:'Nippon Cargo Airlines'},
+          '942':{code:'VW', name:'Transportes Aeromar'},
+          '946':{code:'V4', name:'Vensecar Internacional'},
+          '957':{code:'LA', name:'LATAM'},
+          '961':{code:'LQ', name:'Lanmei Airlines'},
+          '969':{code:'ZA', name:'Sky Angkor Airlines'},
+          '978':{code:'VJ', name:'Vietjet Aviation'},
+          '980':{code:'CE', name:'Chalair Aviation'},
+          '984':{code:'VX', name:'Virgin America'},
+          '988':{code:'OZ', name:'Asiana Airlines'},
+          '992':{code:'D5', name:'DHL Aero Expreso'},
+          '996':{code:'UX', name:'Air Europa'},
+          '997':{code:'BG', name:'Biman Bangladesh Airlines'},
+          '999':{code:'CA', name:'Air China'}
         };
         return map[prefix] || null;
       }
-      const applyAirlineInputAlias = (()=>{
-        const aliasMap = {
-          'AMERICAN AIRLINES':'AA','AA':'AA',
-          'AIR CANADA':'AC','AC':'AC',
-          'AIR FRANCE':'AF','AF':'AF',
-          'AEROMEXICO':'AM','AM':'AM',
-          'AEROLINEAS ARGENTINAS':'AR','AR':'AR',
-          'AVIANCA':'AV','AV':'AV',
-          'ITA AIRWAYS':'AZ','AZ':'AZ','ALITALIA':'AZ',
-          'BRITISH AIRWAYS':'BA','BA':'BA',
-          'AIR CHINA':'CA','CA':'CA',
-          'COPA AIRLINES':'CM','CM':'CM',
-          'CATHAY PACIFIC':'CX','CX':'CX',
-          'DELTA':'DL','DELTA AIR LINES':'DL','DL':'DL',
-          'EMIRATES':'EK','EK':'EK',
-          'ETHIOPIAN':'ET','ETHIOPIAN AIRLINES':'ET','ET':'ET',
-          'ETIHAD':'EY','ETIHAD AIRWAYS':'EY','EY':'EY',
-          'GOL':'G3','GOL LINHAS AEREAS':'G3','G3':'G3',
-          'APG AIRLINES':'GP','GP':'GP',
-          'HAHN AIR':'HR','HR':'HR','HAHN AIR SYSTEMS':'H1','H1':'H1',
-          'IBERIA':'IB','IB':'IB',
-          'JETSMART':'JA','JA':'JA',
-          'KLM':'KL','KL':'KL',
-          'LATAM':'LA','LA':'LA','TAM':'LA',
-          'LUFTHANSA':'LH','LH':'LH',
-          'QATAR':'QR','QATAR AIRWAYS':'QR','QR':'QR',
-          'QANTAS':'QF','QF':'QF',
-          'ROYAL AIR MAROC':'AT','AT':'AT',
-          'SINGAPORE':'SQ','SINGAPORE AIRLINES':'SQ','SQ':'SQ',
-          'SOUTH AFRICAN':'SA','SOUTH AFRICAN AIRWAYS':'SA','SA':'SA',
-          'SKY AIRLINE':'H2','H2':'H2',
-          'SWISS':'LX','LX':'LX',
-          'TAP':'TP','TAP AIR PORTUGAL':'TP','TP':'TP',
-          'TURKISH':'TK','TURKISH AIRLINES':'TK','TK':'TK',
-          'UNITED':'UA','UNITED AIRLINES':'UA','UA':'UA',
-          'AIR EUROPA':'UX','UX':'UX',
-          'VIRGIN ATLANTIC':'VS','VS':'VS',
-          'AZUL':'AD','AD':'AD',
-          'TAAG':'DT','TAAG ANGOLA AIRLINES':'DT','DT':'DT',
-          'ANA':'NH','NH':'NH',
-          'KOREAN AIR':'KE','KE':'KE'
-        };
-        const fn = function(){
-          const el = document.getElementById('cia');
-          if(!el) return;
-          const raw = String(el.value || '').trim();
-          if(!raw) return;
-          const upper = raw.toUpperCase();
-          if(aliasMap[upper]) el.value = aliasMap[upper];
-        };
-        if(typeof window !== 'undefined') window.applyAirlineInputAlias = fn;
-        return fn;
-      })();
-
       function getAirlineByTicketPrefix(ticket){
         const info = getAirlineInfoByTicketPrefix(ticket);
         return info ? info.name : '';
@@ -4851,40 +5337,6 @@ document.getElementById("paxq_adt").value = "1";
       }
       function paxNameLooseKey(name){
         return canonicalPaxNameForMatch(name).replace(/[^A-Z0-9]+/g,'');
-      }
-      function extractTktMaskPassenger(line){
-        const raw = String(line || '');
-        const stripped = raw.replace(/^\s*\d+\.\s*/, '').trim();
-        if(!stripped) return { name:'', type:'' };
-        const tail = stripped.match(/(MRS|MISS|MSTR|MST|MR|MS)\s*(ADT|CHD|INF)\b|(ADT|CHD|INF)\b/i);
-        if(tail){
-          const type = (tail[2] || tail[3] || '').toUpperCase();
-          const namePart = stripped.slice(0, tail.index).trim();
-          return { name: normalizePaxName(namePart), type };
-        }
-        return { name: normalizePaxName(stripped), type:'' };
-      }
-      function nameMatchScore(a, b){
-        const ca = canonicalPaxNameForMatch(a || '');
-        const cb = canonicalPaxNameForMatch(b || '');
-        if(!ca || !cb) return 0;
-        if(ca === cb) return 100;
-        const la = paxNameLooseKey(ca);
-        const lb = paxNameLooseKey(cb);
-        if(!la || !lb) return 0;
-        if(la === lb) return 95;
-        if(la.includes(lb) || lb.includes(la)) return 85;
-        const ta = ca.replace(/\//g,' ').split(/\s+/).filter(Boolean);
-        const tb = cb.replace(/\//g,' ').split(/\s+/).filter(Boolean);
-        const sb = new Set(tb);
-        const common = ta.filter(t=>sb.has(t));
-        if(!common.length) return 0;
-        let score = common.length * 20;
-        const surA = (ca.split('/')[0] || '').trim();
-        const surB = (cb.split('/')[0] || '').trim();
-        if(surA && surB && surA === surB) score += 25;
-        if(ta[0] && tb[0] && ta[0] === tb[0]) score += 10;
-        return score;
       }
       function parseTickets(text){
         const src = String(text||'');
@@ -4921,11 +5373,10 @@ document.getElementById("paxq_adt").value = "1";
             let paxName = '';
             let paxType = '';
             for(const line of normalizeGdsText(block).lines){
-              if(!/^\s*\d+\./.test(String(line||''))) continue;
-              const parsedPax = extractTktMaskPassenger(line);
-              if(parsedPax.name || parsedPax.type){
-                paxName = parsedPax.name || '';
-                paxType = parsedPax.type || '';
+              const pm = String(line||'').match(/^\s*\d+\.\s*([A-Z][A-Z\s'\/\-]+?)\s+(ADT|CHD|INF)\b/i);
+              if(pm){
+                paxName = normalizePaxName(pm[1]);
+                paxType = (pm[2]||'').toUpperCase();
                 break;
               }
             }
@@ -5029,21 +5480,6 @@ document.getElementById("paxq_adt").value = "1";
               if(!found && wantLoose){
                 found = candidates.find(c=>!used.has(c.type+':'+c.idx) && (paxNameLooseKey(c.canonicalName)===wantLoose || paxNameLooseKey(c.canonicalName).includes(wantLoose) || wantLoose.includes(paxNameLooseKey(c.canonicalName))));
               }
-              if(!found){
-                const scored = candidates
-                  .filter(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType))
-                  .map(c=>({ c, score: nameMatchScore(canon, c.canonicalName) }))
-                  .sort((a,b)=> b.score - a.score);
-                if(scored.length && scored[0].score >= 45 && (!scored[1] || scored[0].score > scored[1].score)){
-                  found = scored[0].c;
-                }
-              }
-            }
-            if(!found){
-              const eligible = candidates.filter(c=>!used.has(c.type+':'+c.idx) && (!wantType || c.type===wantType));
-              if(eligible.length === 1 && tktMasks.length === 1){
-                found = eligible[0];
-              }
             }
             if(found && store[found.type] && store[found.type][found.idx]){
               store[found.type][found.idx].ticket = ensureTicketHyphen(row.ticket);
@@ -5054,8 +5490,12 @@ document.getElementById("paxq_adt").value = "1";
         }
         setPaxStore(store); renderPaxFields();
         const airlineInfos = parsed.meta?.airlineInfos || [];
-        const carrierResult = setCarrierFieldFromTicketInfo(airlineInfos);
         const ciaInput = $('cia');
+        if(ciaInput && airlineInfos.length === 1){
+          ciaInput.value = airlineInfos[0].code;
+          try{ ciaInput.dispatchEvent(new Event('input', {bubbles:true})); }catch(e){}
+          try{ ciaInput.dispatchEvent(new Event('change', {bubbles:true})); }catch(e){}
+        }
         const locInput = $('loc');
         if(locInput && parsed.meta?.loc && !String(locInput.value||'').trim()){
           locInput.value = parsed.meta.loc;
@@ -5064,15 +5504,11 @@ document.getElementById("paxq_adt").value = "1";
         }
         if(ts){
           const airlines = airlineInfos.map(a=>a.name);
-          const flightCarriers = Array.isArray(state.parseMeta?.flightCarriers) ? state.parseMeta.flightCarriers : [];
-          const mode = tktMasks.length && !(keys.length || infKeys.length) ? 'pela máscara TKT/nome' : 'pelo P1/P2';
-          const flightTxt = flightCarriers.length ? ` • Voos identificados: ${formatCarrierList(flightCarriers)}` : '';
-          const ticketTxt = airlines.length ? ` • Dona do bilhete: ${airlines.join(', ')}` : '';
-          const carrierTxt = carrierResult.note ? ` • ${carrierResult.note}` : '';
           if(applied){
-            ts.textContent = `OK — distribuí ${applied} bilhete(s) ${mode}.${ticketTxt}${flightTxt}${carrierTxt}`;
+            const mode = tktMasks.length && !(keys.length || infKeys.length) ? 'pela máscara TKT/nome' : 'pelo P1/P2';
+            ts.textContent = `OK — distribuí ${applied} bilhete(s) ${mode}.${airlines.length ? ' Cia detectada: '+airlines.join(', ') : ''}${(ciaInput && airlineInfos.length===1) ? ' • Cia preenchida: '+airlineInfos[0].code : ''}`;
           } else {
-            ts.textContent = `Encontrei bilhetes, mas não consegui mapear P1/P2/nome.${ticketTxt}${flightTxt}${carrierTxt}`;
+            ts.textContent = 'Encontrei bilhetes, mas não consegui mapear P1/P2/nome.';
           }
         }
         if(applied) showToast('Bilhetes preenchidos no PAX');
@@ -5080,6 +5516,7 @@ document.getElementById("paxq_adt").value = "1";
 
       function applyInterTipoUI(){
         const auto = isInterAuto();
+        const hybrid = isInterHybrid();
         const manualWrap = $("manualInternoWrap");
         const lblVoos = $("lbl_inter_voos"); const voosTA = $("inter_voos");
         const lblTk = $("lbl_inter_original"); const tkTA = $("inter_original");
@@ -5090,8 +5527,15 @@ document.getElementById("paxq_adt").value = "1";
           if(tkTA) tkTA.placeholder = 'Cole aqui FA/FHE ou máscara TKT (com /P1, /P2... quando houver)';
           if(manualWrap) manualWrap.classList.add('hidden');
           const parsed = parsePassengersData(voosTA?.value || '');
-          if(parsed.pax.length) show($("fxoWrap"), true);
-          show($("ticketsWrap"), false);
+          window.__interPaxReady = !!parsed.pax.length;
+          if(hybrid){
+            show($("fxoWrap"), false);
+            if(parsed.pax.length) show($("interValuesWrap"), true);
+            show($("ticketsWrap"), parsed.pax.length ? true : false);
+          } else {
+            if(parsed.pax.length) show($("fxoWrap"), true);
+            show($("ticketsWrap"), false);
+          }
         } else {
           if(lblVoos) lblVoos.textContent = 'Voos simulados (opcional)';
           if(voosTA) voosTA.placeholder = 'Cole aqui os voos simulados (um por linha)';
@@ -5102,18 +5546,33 @@ document.getElementById("paxq_adt").value = "1";
           show($("ticketsWrap"), true);
           setStatus('');
         }
+        if(typeof updateFlowVisibility === 'function') updateFlowVisibility();
       }
+
+      window.__interApplyInterTipoUI = applyInterTipoUI;
+
+      function finalizeAutoFlow(){
+        window.__interFinalized = true;
+        show($("interValuesWrap"), true);
+        show($("outputsCard"), true);
+        if(typeof updateFlowVisibility === 'function') updateFlowVisibility();
+        showToast('Preenchimento concluído — campos liberados para edição');
+      }
+      window.__interFinalizeAutoFlow = finalizeAutoFlow;
 
       function maybeAutoFromPnr(val){
         if(isInterAuto()) return;
         if(/(^|\n)\s*RP\//i.test(String(val||''))){
           const sel = $("inter_tipo");
-          if(sel){ sel.value = 'Automático'; applyInterTipoUI(); }
+          if(sel){ window.__interFinalized = false; window.__interPaxReady = false; sel.value = 'Automático'; applyInterTipoUI(); }
         }
       }
 
       const interTipo = $("inter_tipo");
-      if(interTipo) interTipo.addEventListener('change', applyInterTipoUI);
+      if(interTipo) interTipo.addEventListener('change', ()=>{ window.__interFinalized = false; window.__interPaxReady = false; applyInterTipoUI(); });
+
+      const btnFinalizarAuto = $("btnFinalizarAuto");
+      if(btnFinalizarAuto) btnFinalizarAuto.addEventListener('click', finalizeAutoFlow);
 
       const it = $("inter_voos");
       if(it){
@@ -5148,78 +5607,86 @@ document.getElementById("paxq_adt").value = "1";
 // buttons
     let lastEmailHtml = "";
     document.getElementById("btnGerar").addEventListener("click", async ()=>{
-      try{ await ensureCRR5Current(); }
-      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
-      lastEmailHtml = generateEmail();
+      const btn = document.getElementById("btnGerar");
+      btn.disabled = true;
+      try{
+        lastEmailHtml = generateEmail();
+      } finally { btn.disabled = false; }
     });
 
     document.getElementById("btnCopiarHtml").addEventListener("click", async ()=>{
-      try{ await ensureCRR5Current(); }
-      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
-      lastEmailHtml = generateEmail();
-      if(!lastEmailHtml){ return; }
-      const ok = await copyHtmlToClipboard(lastEmailHtml);
-      if(!ok) showToast("Não deu pra copiar automático. Copie pelo preview.");
+      const btn = document.getElementById("btnCopiarHtml");
+      btn.disabled = true;
+      try{
+        lastEmailHtml = generateEmail();
+        if(!lastEmailHtml){ return; }
+        const ok = await copyHtmlToClipboard(lastEmailHtml);
+        if(!ok) showToast("Não deu pra copiar automático. Copie pelo preview.");
+      } finally { btn.disabled = false; }
     });
 
     document.getElementById("btnCopiarObs").addEventListener("click", async ()=>{
+      const btn = document.getElementById("btnCopiarObs");
       const errs = validateBeforeGenerate();
-      if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs[0]); return; }
-      const code = buildRfObsCode();
-      document.getElementById("obsCode").value = code;
+      if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs.join(" | ")); return; }
+      btn.disabled = true;
       try{
-        await navigator.clipboard.writeText(code);
-        showToast("Código OBS copiado!");
-      }catch(e){
-        showToast("Não deu pra copiar. Copie do campo de código.");
-      }
+        const code = buildRfObsCode();
+        document.getElementById("obsCode").value = code;
+        try{
+          await navigator.clipboard.writeText(code);
+          showToast("Código OBS copiado!");
+        }catch(e){
+          showToast("Não deu pra copiar. Copie do campo de código.");
+        }
+      } finally { btn.disabled = false; }
     });
     document.getElementById("btnCopiarRentForm").addEventListener("click", async ()=>{
+      const btn = document.getElementById("btnCopiarRentForm");
+      const errs = validateBeforeGenerate();
+      if(errs.length){ setPill(false, "Atenção: revisar dados"); showToast(errs.join(" | ")); return; }
       const htmlForm = buildSicaFormHtml();
       if(!htmlForm){
         showToast("Nada para copiar no formulário de rentabilização.");
         return;
       }
-      const rfp = document.getElementById("rentFormPreview");
-      if(rfp && document.activeElement !== rfp) rfp.innerHTML = htmlForm;
+      btn.disabled = true;
+      try{
+        const rfp = document.getElementById("rentFormPreview");
+        if(rfp && document.activeElement !== rfp) rfp.innerHTML = htmlForm;
 
-      const ok = await copyHtmlToClipboard(htmlForm);
-      if(!ok) showToast("Não deu pra copiar automático. Copie pelo preview.");
+        const ok = await copyHtmlToClipboard(htmlForm);
+        if(!ok) showToast("Não deu pra copiar automático. Copie pelo preview.");
+      } finally { btn.disabled = false; }
     });
 // CRR
     // (botão "Copiar CRR" removido)
 
-document.getElementById("btnGerarCRR5") && document.getElementById("btnGerarCRR5").addEventListener("click", async ()=>{
-      try{
-        const crr5 = await ensureCRR5Current();
-        try{ await navigator.clipboard.writeText(crr5); showToast("CRR5 copiado!"); }
-        catch(e){ showToast("CRR5 gerado. Copie do campo."); }
-      }catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); }
-    });
-
 document.getElementById("btnCarregarRACode").addEventListener("click", async ()=>{
       const code = (document.getElementById("raCode").value || "").trim();
       try{
+        // CRR5 colado (cotação antiga) é resolvido via Worker; o campo volta a
+        // mostrar o CRR4, que é o único formato que esta build gera.
         const c5 = extractCRR5(code);
-        if(c5){
-          const crr4 = await loadCRR5ToCRR4(c5);
-          loadCRRCode(crr4);
-          // mantém o CRR5 visível e marca assinatura para reuso
-          const rc = document.getElementById("raCode");
-          const sig = buildCRRCode();
-          __CRR5_CACHE.set(sig, c5);
-          if(rc){ rc.dataset.manual = "1"; rc.dataset.sig = sig; rc.value = c5; }
-        }else{
-          loadCRRCode(code);
-          const rc = document.getElementById("raCode");
-          if(rc){ rc.dataset.manual = "0"; rc.dataset.sig = ""; rc.value = buildCRRCode(); }
-        }
+        const crr4 = c5 ? await loadCRR5ToCRR4(c5) : code;
+        loadCRRCode(crr4);
+        const rc = document.getElementById("raCode");
+        if(rc){ rc.dataset.manual = "0"; rc.dataset.sig = ""; rc.value = buildCRRCode(); }
         lastEmailHtml = generateEmail();
       }catch(e){
         showToast((e && e.message) ? e.message : "Código inválido.");
       }
     });
-    document.getElementById("btnLimpar").addEventListener("click", clearAll);
+    document.getElementById("btnLimpar").addEventListener("click", ()=> clearAll());
+
+    for(const id of ["obsCode","inter_endosso_text","nac_folio_text","inter_interno","nac_regras"]){
+      const ta = document.getElementById(id);
+      const counter = document.getElementById(id + "_count");
+      if(!ta || !counter) continue;
+      const updateCount = ()=>{ counter.textContent = `${ta.value.length} caracteres`; };
+      ta.addEventListener("input", updateCount);
+      updateCount();
+    }
     function forceUpperKeepCursor(el){
       if(!el || typeof el.value !== "string") return;
       const start = el.selectionStart;
@@ -5233,8 +5700,8 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 // reactive calc
     for(const el of document.querySelectorAll("input, select, textarea")){
       if(el.id === "obsCode" || el.id === "raCode") continue;
-      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("input", ()=>{ updateAll(); });
+      el.addEventListener("change", ()=>{ updateAll(); });
     }
 
     // uppercase automático em campos-chave
@@ -5244,6 +5711,17 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
       el.addEventListener("input", ()=>forceUpperKeepCursor(el));
       el.addEventListener("blur", ()=>{ el.value = (el.value||"").trim().toUpperCase(); });
     }
+
+    // câmbio oficial (BCB): busca automática ao trocar moeda; edição manual "solta" o campo
+    for(const id of ["inter_cur","inter_cur_other"]){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener("change", ()=>maybeAutofillFx());
+    }
+    for(const id of ["inter_fx","inter_fx_usd"]){
+      const el = document.getElementById(id);
+      if(el) el.addEventListener("input", ()=>{ delete el.dataset.auto; });
+    }
+    if(getActiveMode() === "INTER") maybeAutofillFx();
 
     // init
 
@@ -5260,23 +5738,18 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
     }
 
     placeRentPanel();
+    placeCommonSection();
 
     const rentabEl = document.getElementById("rentab");
     if(rentabEl) rentabEl.addEventListener("change", ()=>{ toggleRentUI(); updateAll(); });
-    for(const id of ["rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia","rent_cobrar_ag"]){
+    for(const id of ["rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax"]){
       const el = document.getElementById(id);
       if(!el) continue;
-      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("input", ()=>{ updateAll(); });
+      el.addEventListener("change", ()=>{ updateAll(); });
     }
 
-    const _ciaInput = document.getElementById('cia');
-      if(_ciaInput){
-        const _airlineAliasHandler = ()=>{ try{ if(window.applyAirlineInputAlias) window.applyAirlineInputAlias(); }catch(_e){} };
-        _ciaInput.addEventListener('change', _airlineAliasHandler);
-        _ciaInput.addEventListener('blur', _airlineAliasHandler);
-      }
-      updateAll();
+    updateAll();
     syncOutputTabs();
     renderPaxFields();
 
@@ -5337,7 +5810,7 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
     // ----- Versão exibida no rodapé -----
     (function initVersionFooter(){
-      const APP_VERSION = "1.0.24c-stable-fxo-hotfix";
+      const APP_VERSION = "1.0.13-test";
       const footer = document.getElementById("appVersionFooter");
       if(footer) footer.textContent = `Versão: ${APP_VERSION}`;
     })();
@@ -5345,6 +5818,5 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 
 </script>
 
-<div class="app-version-footer" id="appVersionFooter" aria-label="Versão da calculadora">Versão: 1.0.24c-stable-fxo-hotfix</div>
 </body>
 </html>
