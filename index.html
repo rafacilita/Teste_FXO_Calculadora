@@ -1311,7 +1311,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
 
 
                     <div id="interFxqIntro" class="note" style="border-left:3px solid rgba(155,92,255,.65); background: rgba(155,92,255,.10);">
-            <div class="muted small"><b>Automático (Amadeus FXQ/FXO)</b> — fluxo: <b>1)</b> cole a máscara do PNR → <b>2)</b> cole o FXO por tipo → <b>3)</b> cole FA/FHE dos bilhetes. <b>CRR5 intocado.</b></div>
+            <div class="muted small"><b>Automático (Amadeus FXQ/FXO)</b> — fluxo: <b>1)</b> cole a máscara do PNR → <b>2)</b> cole o FXO por tipo → <b>3)</b> cole FA/FHE dos bilhetes.</div>
             <div class="muted small" id="fxqStatus" style="margin-top:6px"></div>
           </div>
 
@@ -1422,7 +1422,7 @@ h1{ margin:0 0 6px; font-size: 20px; font-weight: 800; letter-spacing:.2px; }
           <div class="btns" style="margin-top:10px">
             <button class="action" id="btnCarregarRACode">Carregar CRR</button>
           </div>
-          <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR5/CRR4/CRR2-...</b> (ou <b>CRR1/RA1</b> antigos).</div>
+          <div class="muted small" style="margin-top:8px">Se você colar um texto maior (ex.: a observação inteira do RF), o sistema tenta achar automaticamente o trecho <b>CRR5/CRR4/CRR2-...</b> (ou <b>CRR1/RA1</b> antigos). CRR5 ainda é lido (compatibilidade com cotações antigas), mas esta build nunca gera CRR5 novo — o e-mail sempre leva o CRR4 completo.</div>
         </div>
 
       </div>      </div>
@@ -2688,8 +2688,12 @@ function buildCRRCode(){
     }
 
 
-// ===== CRR5 (curto via Cloudflare Worker + Upstash) =====
-// Mantém o CRR4 local como fallback/offline.
+// ===== CRR5 nesta build: só LEITURA, nunca geração =====
+// Esta build nunca cria CRR5 novo (sem chamada a /save, sem id curto no
+// e-mail). O código que vai no e-mail é sempre o CRR4 montado localmente
+// por buildCRRCode(). Mas um CRR5 colado em "Carregar CRR" — de uma
+// cotação enviada antes da virada para CRR4-only — ainda é resolvido via
+// Worker, para não perder o acesso a cálculos já enviados nesse formato.
 const CRR5_API = "https://crr-api.rexturfacilita.workers.dev/".replace(/\/+$/,"");
 
 function extractCRR5(text){
@@ -2697,18 +2701,6 @@ function extractCRR5(text){
   const mm = compact.match(/CRR5-([A-Za-z0-9]{6,64})/i);
   if(!mm) return null;
   return `CRR5-${mm[1].toLowerCase()}`;
-}
-
-async function saveCRR5FromCRR4(crr4){
-  const r = await fetch(`${CRR5_API}/save`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ payload: String(crr4 || "") }),
-  });
-  if(!r.ok) throw new Error("Falha ao salvar CRR curto");
-  const data = await r.json().catch(()=>null);
-  if(!data || !data.id) throw new Error("Resposta inválida do servidor");
-  return `CRR5-${String(data.id).toLowerCase()}`;
 }
 
 async function loadCRR5ToCRR4(crr5){
@@ -2720,53 +2712,8 @@ async function loadCRR5ToCRR4(crr5){
   return data.payload;
 }
 
-const __CRR5_CACHE = new Map(); // key: CRR4 -> CRR5
-
 function getCRRCodeForEmail(){
-  const ta = document.getElementById("raCode");
-  const c5 = extractCRR5(ta ? ta.value : "");
-  return c5 || buildCRRCode();
-}
-
-function invalidateCRR5OnEdit(){
-  const ta = document.getElementById("raCode");
-  if(!ta) return;
-  // se estava "travado" em CRR5, destrava para obrigar gerar um novo após qualquer ajuste
-  if(ta.dataset && ta.dataset.manual === "1" && extractCRR5(ta.value)){
-    ta.dataset.manual = "0";
-    ta.dataset.sig = "";
-  }
-}
-
-async function ensureCRR5Current(){
-  const crr4 = buildCRRCode();
-  const ta = document.getElementById("raCode");
-  const existing5 = extractCRR5(ta ? ta.value : "");
-
-  // Reaproveita CRR5 se ele foi gerado para este mesmo CRR4 (assinatura)
-  if(existing5 && ta && ta.dataset && ta.dataset.sig === crr4){
-    __CRR5_CACHE.set(crr4, existing5);
-    return existing5;
-  }
-
-  const cached = __CRR5_CACHE.get(crr4);
-  if(cached){
-    if(ta){
-      ta.dataset.manual = "1";
-      ta.dataset.sig = crr4;
-      ta.value = cached;
-    }
-    return cached;
-  }
-
-  const crr5 = await saveCRR5FromCRR4(crr4);
-  __CRR5_CACHE.set(crr4, crr5);
-  if(ta){
-    ta.dataset.manual = "1";
-    ta.dataset.sig = crr4;
-    ta.value = crr5;
-  }
-  return crr5;
+  return buildCRRCode();
 }
 
 
@@ -5442,14 +5389,10 @@ document.getElementById("paxq_adt").value = "1";
 // buttons
     let lastEmailHtml = "";
     document.getElementById("btnGerar").addEventListener("click", async ()=>{
-      try{ await ensureCRR5Current(); }
-      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
       lastEmailHtml = generateEmail();
     });
 
     document.getElementById("btnCopiarHtml").addEventListener("click", async ()=>{
-      try{ await ensureCRR5Current(); }
-      catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); return; }
       lastEmailHtml = generateEmail();
       if(!lastEmailHtml){ return; }
       const ok = await copyHtmlToClipboard(lastEmailHtml);
@@ -5483,31 +5426,16 @@ document.getElementById("paxq_adt").value = "1";
 // CRR
     // (botão "Copiar CRR" removido)
 
-document.getElementById("btnGerarCRR5") && document.getElementById("btnGerarCRR5").addEventListener("click", async ()=>{
-      try{
-        const crr5 = await ensureCRR5Current();
-        try{ await navigator.clipboard.writeText(crr5); showToast("CRR5 copiado!"); }
-        catch(e){ showToast("CRR5 gerado. Copie do campo."); }
-      }catch(e){ showToast((e && e.message) ? e.message : "Falha ao gerar CRR5."); }
-    });
-
 document.getElementById("btnCarregarRACode").addEventListener("click", async ()=>{
       const code = (document.getElementById("raCode").value || "").trim();
       try{
+        // CRR5 colado (cotação antiga) é resolvido via Worker; o campo volta a
+        // mostrar o CRR4, que é o único formato que esta build gera.
         const c5 = extractCRR5(code);
-        if(c5){
-          const crr4 = await loadCRR5ToCRR4(c5);
-          loadCRRCode(crr4);
-          // mantém o CRR5 visível e marca assinatura para reuso
-          const rc = document.getElementById("raCode");
-          const sig = buildCRRCode();
-          __CRR5_CACHE.set(sig, c5);
-          if(rc){ rc.dataset.manual = "1"; rc.dataset.sig = sig; rc.value = c5; }
-        }else{
-          loadCRRCode(code);
-          const rc = document.getElementById("raCode");
-          if(rc){ rc.dataset.manual = "0"; rc.dataset.sig = ""; rc.value = buildCRRCode(); }
-        }
+        const crr4 = c5 ? await loadCRR5ToCRR4(c5) : code;
+        loadCRRCode(crr4);
+        const rc = document.getElementById("raCode");
+        if(rc){ rc.dataset.manual = "0"; rc.dataset.sig = ""; rc.value = buildCRRCode(); }
         lastEmailHtml = generateEmail();
       }catch(e){
         showToast((e && e.message) ? e.message : "Código inválido.");
@@ -5527,8 +5455,8 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
 // reactive calc
     for(const el of document.querySelectorAll("input, select, textarea")){
       if(el.id === "obsCode" || el.id === "raCode") continue;
-      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("input", ()=>{ updateAll(); });
+      el.addEventListener("change", ()=>{ updateAll(); });
     }
 
     // uppercase automático em campos-chave
@@ -5560,8 +5488,8 @@ document.getElementById("btnCarregarRACode").addEventListener("click", async ()=
     for(const id of ["rent_tipo_multa","rent_tipo_diftar","rent_tipo_diftax","rent_pago_cia","rent_cobrar_ag"]){
       const el = document.getElementById(id);
       if(!el) continue;
-      el.addEventListener("input", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
-      el.addEventListener("change", ()=>{ invalidateCRR5OnEdit(); updateAll(); });
+      el.addEventListener("input", ()=>{ updateAll(); });
+      el.addEventListener("change", ()=>{ updateAll(); });
     }
 
     const _ciaInput = document.getElementById('cia');
